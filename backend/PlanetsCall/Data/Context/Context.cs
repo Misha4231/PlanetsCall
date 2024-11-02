@@ -17,6 +17,11 @@ public sealed class PlatensCallContext : DbContext
     public DbSet<TopicComments> TopicComments { get; set; }
     public DbSet<Items> Items { get; set; }
     public DbSet<Logs> Logs { get; set; }
+    public DbSet<Cities> Cities { get; set; }
+    public DbSet<Countries> Countries { get; set; }
+    public DbSet<Regions> Regions { get; set; }
+    public DbSet<States> States { get; set; }
+    public DbSet<Subregions> Subregions { get; set; }
 
     public PlatensCallContext(DbContextOptions<PlatensCallContext> options) : base(options)
     { 
@@ -120,5 +125,51 @@ public sealed class PlatensCallContext : DbContext
             .HasOne<Users>(l => l.User)
             .WithMany(u => u.Actions)
             .OnDelete(DeleteBehavior.SetNull);
+        
+        // World
+        modelBuilder.Entity<Users>()
+            .HasOne<Cities>(u => u.City)
+            .WithMany(c => c.UsersCollection)
+            .OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<Users>()
+            .HasOne<Countries>(u => u.Country)
+            .WithMany(c => c.UsersCollection)
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        modelBuilder.Entity<Cities>()
+            .HasOne<States>(c => c.State)
+            .WithMany(s => s.CitiesCollection)
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasConstraintName("cities_country_id_fkey");
+
+        modelBuilder.Entity<Cities>()
+            .HasOne<Countries>(c => c.Country)
+            .WithMany(co => co.CitiesCollection)
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasConstraintName("cities_state_id_fkey");
+        
+        modelBuilder.Entity<Countries>()
+            .HasOne<Regions>(c => c.Region)
+            .WithMany(co => co.CountriesCollection)
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasConstraintName("countries_region_id_fkey");
+        
+        modelBuilder.Entity<Countries>()
+            .HasOne<Subregions>(c => c.Subregion)
+            .WithMany(co => co.CountriesCollection)
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasConstraintName("countries_subregion_id_fkey");
+        
+        modelBuilder.Entity<States>()
+            .HasOne<Countries>(s => s.Country)
+            .WithMany(c => c.StatesCollection)
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasConstraintName("states_country_id_fkey");
+        
+        modelBuilder.Entity<Subregions>()
+            .HasOne<Regions>(s => s.Region)
+            .WithMany(r => r.SubregionsCollection)
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasConstraintName("subregions_region_id_fkey");
     }
 }

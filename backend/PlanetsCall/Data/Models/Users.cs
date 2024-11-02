@@ -45,10 +45,12 @@ public class Users
     public string? LinkedinLink { get; set; }
     [MaxLength(100)]
     public string? YoutubeLink { get; set; }
-    [MaxLength(200)]
-    public string? Place { get; set; }
-    [MaxLength(200)]
-    public string? Country { get; set; }
+
+    public long? CityId { get; set; }
+    public Cities? City { get; set; }
+    public long? CountryId { get; set; }
+    public Countries? Country { get; set; }
+    
     public bool MailsSubscribed { get; set; }
     public int ThemePreference { get; set; }
     public int SingleTasksCompleted { get; set; }

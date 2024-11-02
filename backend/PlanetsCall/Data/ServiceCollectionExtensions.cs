@@ -9,11 +9,12 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection RegisterDataServices(this IServiceCollection services, IConfiguration configuration)
     {
+        string? DatabaseConnectionString = configuration.GetConnectionString("PostgresConnection");
         services.AddDbContext<PlatensCallContext>(o =>
         {
-            o.UseNpgsql(configuration.GetConnectionString("PostgresConnection"));
+            o.UseNpgsql(DatabaseConnectionString);
         });
-        
+
         return services;
     }
 }

@@ -21,4 +21,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+/*
+using (var scope = app.Services.CreateScope())
+{
+    var worldContext = scope.ServiceProvider.GetRequiredService<WorldDbContext>();
+    var city = worldContext.Cities.SingleOrDefault(c => c.Id == 1);
+    if (city != null)
+    {
+        Console.WriteLine(city.Name);
+    }
+    else
+    {
+        Console.WriteLine("City with Id 1 was not found.");
+    }
+}
+*/
+
 app.Run();
