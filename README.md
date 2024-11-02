@@ -35,3 +35,8 @@ Ta komenda utworzy wszystkie tabele w bazie danych.
    ```bash
    psql -U postgres -d planets_call -f world.sql
    ```
+
+### Krok 6: Otwórz backend/PlanetsCall/PlanetsCall.sln za pomocą Visual Studio lub innego IDE
+### Krok 7: Uruchom projekt:
+- **Dla Visual Studio**: Po prostu kliknij na `Run`
+- **Za pomocą terminalu**: wpisz komende `dotnet run --project PlanetsCall`
