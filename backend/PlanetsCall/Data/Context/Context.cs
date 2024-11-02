@@ -16,6 +16,7 @@ public sealed class PlatensCallContext : DbContext
     public DbSet<Topics> Topics { get; set; }
     public DbSet<TopicComments> TopicComments { get; set; }
     public DbSet<Items> Items { get; set; }
+    public DbSet<Logs> Logs { get; set; }
 
     public PlatensCallContext(DbContextOptions<PlatensCallContext> options) : base(options)
     { 
