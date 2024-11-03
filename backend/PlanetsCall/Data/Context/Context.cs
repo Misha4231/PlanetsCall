@@ -26,6 +26,7 @@ public sealed class PlatensCallContext : DbContext
     public PlatensCallContext(DbContextOptions<PlatensCallContext> options) : base(options)
     { 
         //Database.EnsureCreated();
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
