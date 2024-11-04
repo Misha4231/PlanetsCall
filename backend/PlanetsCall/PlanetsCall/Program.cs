@@ -1,4 +1,6 @@
+using Core.User;
 using Data;
+using Data.Repository.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +8,8 @@ builder.Services.AddControllers();
 
 
 builder.Services.RegisterDataServices(builder.Configuration);
-
+builder.Services.AddScoped<HashManager>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

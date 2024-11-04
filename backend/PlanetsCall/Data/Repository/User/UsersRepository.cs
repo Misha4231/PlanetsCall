@@ -8,11 +8,11 @@ namespace Data.Repository.User;
 public class UsersRepository : IUsersRepository
 {
     private readonly PlatensCallContext _context;
-    private readonly IConfiguration _configuration;
-    public UsersRepository(PlatensCallContext context, IConfiguration configuration)
+    private readonly HashManager _hashManager;
+    public UsersRepository(PlatensCallContext context, HashManager hashManager)
     {
         this._context = context;
-        this._configuration = configuration;
+        this._hashManager = hashManager;
     }
 
     public IEnumerable<Users> GetUsers()
@@ -56,8 +56,7 @@ public class UsersRepository : IUsersRepository
     {
         if (!string.IsNullOrEmpty(user.Password))
         {
-            var passwordManager = new PasswordManager(_configuration["SecretKey"]);
-            user.Password = passwordManager.Encrypt(user.Password);
+            user.Password = this._hashManager.Encrypt(user.Password);
         }
         
         _context.Users.Add(user);

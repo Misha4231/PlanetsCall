@@ -1,24 +1,24 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace Core.User;
 
-public class PasswordManager
+public class HashManager
 {
-    private readonly string _secretKey;
-
-    public PasswordManager(string? secretKey)
+    private readonly IConfiguration _configuration;
+    
+    public HashManager(IConfiguration configuration)
     {
-        if (string.IsNullOrEmpty(secretKey)) _secretKey = "";
-        else _secretKey = secretKey;
+        _configuration = configuration;
     }
 
-    public string Encrypt(string password)
+    public string Encrypt(string plainText)
     {
         using (var sha256 = SHA256.Create())
         {
-            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(_secretKey));
-            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(_configuration["SecretKey"]!));
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
             using (Aes aes = Aes.Create())
             {
@@ -29,7 +29,7 @@ public class PasswordManager
                 byte[] encryptedBytes;
                 using (var encryptor = aes.CreateEncryptor())
                 {
-                    encryptedBytes = encryptor.TransformFinalBlock(passwordBytes, 0, passwordBytes.Length);
+                    encryptedBytes = encryptor.TransformFinalBlock(plainTextBytes, 0, plainTextBytes.Length);
                 }
 
                 return Convert.ToBase64String(encryptedBytes);
@@ -37,12 +37,12 @@ public class PasswordManager
         }
     }
     
-    public string Decrypt(string encodedPassword)
+    public string Decrypt(string encodedString)
     {
         using (var sha256 = SHA256.Create())
         {
-            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(_secretKey));
-            byte[] encryptedBytes = Convert.FromBase64String(encodedPassword);
+            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(_configuration["SecretKey"]!));
+            byte[] encryptedBytes = Convert.FromBase64String(encodedString);
 
             using (Aes aes = Aes.Create())
             {

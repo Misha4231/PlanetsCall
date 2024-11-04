@@ -13,10 +13,12 @@ namespace PlanetsCall.Controllers.User
     {
         private readonly PlatensCallContext _context;
         private readonly IUsersRepository _usersRepository;
-        public AuthController(PlatensCallContext context, IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        public AuthController(PlatensCallContext context, IConfiguration configuration, IUsersRepository usersRepository)
         {
             _context = context;
-            _usersRepository = new UsersRepository(context, configuration);
+            _usersRepository = usersRepository;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -43,8 +45,8 @@ namespace PlanetsCall.Controllers.User
             errorMessages = _usersRepository.UniqueUserValidation(newUser);
             if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
             
-            
             Users createdUser = _usersRepository.InsertUser(newUser);
+            
             return Ok(createdUser);
         }
     }
