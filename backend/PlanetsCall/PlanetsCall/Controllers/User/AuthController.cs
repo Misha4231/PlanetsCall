@@ -1,9 +1,11 @@
+using Core.User;
 using Microsoft.AspNetCore.Mvc;
 using Data.Context;
 using Data.DTO.User;
 using Data.Models;
 using Data.Repository.User;
 using PlanetsCall.Controllers.Exceptions;
+using PlanetsCall.Helper;
 
 namespace PlanetsCall.Controllers.User
 {
@@ -14,11 +16,15 @@ namespace PlanetsCall.Controllers.User
         private readonly PlatensCallContext _context;
         private readonly IUsersRepository _usersRepository;
         private readonly IConfiguration _configuration;
-        public AuthController(PlatensCallContext context, IConfiguration configuration, IUsersRepository usersRepository)
+        private readonly EmailSender _emailSender;
+        private readonly HashManager _hashManager;
+        public AuthController(PlatensCallContext context, IConfiguration configuration, IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager)
         {
             _context = context;
             _usersRepository = usersRepository;
             _configuration = configuration;
+            this._emailSender = emailSender;
+            this._hashManager = hashManager;
         }
 
         [HttpPost]
@@ -46,8 +52,41 @@ namespace PlanetsCall.Controllers.User
             if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
             
             Users createdUser = _usersRepository.InsertUser(newUser);
+            this._emailSender.SendUserConfirmationEmail(createdUser);
             
             return Ok(createdUser);
+        }
+
+        [HttpPost]
+        [Route("activate/")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult ActivateProfile([FromBody] string activationCode)
+        {
+            List<string> errorMessages = new List<string>();
+            var userData = this._hashManager.Decrypt(activationCode).Split(':');
+            long timestamp;
+            if (!long.TryParse(userData[1], out timestamp))
+            {
+                errorMessages.Add("No timestamp in activation code");
+            }
+            else
+            {
+                if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - timestamp > 86400)
+                {
+                    errorMessages.Add("Activation code has expired");
+                }
+            }
+
+            Users? user = _usersRepository.GetUserByUsername(userData[0]);
+            if (user is null)
+            {
+                errorMessages.Add("Not existing user");
+            }
+            if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+
+            //TODO return jwtToken
+            return Ok();
         }
     }
 }
