@@ -64,6 +64,15 @@ public class UsersRepository : IUsersRepository
         return user;
     }
 
+    public Users UpdateUser(Users user)
+    {
+        user.UpdatedAt = DateTime.Now;
+        _context.Users.Update(user);
+        Save();
+
+        return user;
+    }
+    
     public void Save()
     {
         _context.SaveChanges();

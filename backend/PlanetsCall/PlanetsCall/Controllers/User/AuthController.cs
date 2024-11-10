@@ -1,10 +1,16 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Core.User;
 using Microsoft.AspNetCore.Mvc;
 using Data.Context;
 using Data.DTO.User;
 using Data.Models;
 using Data.Repository.User;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using PlanetsCall.Controllers.Exceptions;
+using PlanetsCall.Filters;
 using PlanetsCall.Helper;
 
 namespace PlanetsCall.Controllers.User
@@ -18,13 +24,15 @@ namespace PlanetsCall.Controllers.User
         private readonly IConfiguration _configuration;
         private readonly EmailSender _emailSender;
         private readonly HashManager _hashManager;
-        public AuthController(PlatensCallContext context, IConfiguration configuration, IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager)
+        private readonly JwtTokenManager _jwtTokenManager;
+        public AuthController(PlatensCallContext context, IConfiguration configuration, IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager)
         {
             _context = context;
             _usersRepository = usersRepository;
             _configuration = configuration;
-            this._emailSender = emailSender;
-            this._hashManager = hashManager;
+            _emailSender = emailSender;
+            _hashManager = hashManager;
+            _jwtTokenManager = jwtTokenManager;
         }
 
         [HttpPost]
@@ -52,7 +60,7 @@ namespace PlanetsCall.Controllers.User
             if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
             
             Users createdUser = _usersRepository.InsertUser(newUser);
-            this._emailSender.SendUserConfirmationEmail(createdUser);
+            this._emailSender.SendUserConfirmationMail(createdUser);
             
             return Ok(createdUser);
         }
@@ -60,13 +68,13 @@ namespace PlanetsCall.Controllers.User
         [HttpPost]
         [Route("activate/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ActivateProfile([FromBody] string activationCode)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult ActivateProfile([FromBody] DisposableCodeDto activationCodeDto)
         {
             List<string> errorMessages = new List<string>();
-            var userData = this._hashManager.Decrypt(activationCode).Split(':');
-            long timestamp;
-            if (!long.TryParse(userData[1], out timestamp))
+            var userData = this._hashManager.Decrypt(activationCodeDto.Code).Split(':');
+            
+            if (!long.TryParse(userData[1], out var timestamp))
             {
                 errorMessages.Add("No timestamp in activation code");
             }
@@ -78,15 +86,102 @@ namespace PlanetsCall.Controllers.User
                 }
             }
 
-            Users? user = _usersRepository.GetUserByUsername(userData[0]);
+            var user = _usersRepository.GetUserByUsername(userData[0]);
             if (user is null)
             {
                 errorMessages.Add("Not existing user");
             }
-            if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+            if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
 
-            //TODO return jwtToken
+            user!.IsActivated = true;
+            user!.IsVisible = true;
+            _usersRepository.UpdateUser(user!);
+
+            var token = _jwtTokenManager.GenerateToken(user);
+            return Ok(new AccessTokenDto() { AccessToken = token });
+        }
+
+        [HttpPost]
+        [Route("sign-in/")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult SignIn([FromBody] SignInUserDto user)
+        {
+            #nullable enable
+            
+            Users? foundUser = null;
+            foundUser = _usersRepository.GetUserByUsername(user.UniqueIdentifier) ?? _usersRepository.GetUserByEmail(user.UniqueIdentifier);
+            
+            if (foundUser is null)
+            {
+                return Unauthorized(new ErrorResponse(new List<string>(){"Invalid email or username"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+            }
+            if (string.IsNullOrEmpty(foundUser.Password))
+            {
+                return Unauthorized(new ErrorResponse(new List<string>(){"Your account was registered via google"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+            }
+            if (user.Password != _hashManager.Decrypt(foundUser.Password))
+            {
+                return Unauthorized(new ErrorResponse(new List<string>(){"Wrong password"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+            }
+            #nullable disable
+
+            foundUser.LastLogin = DateTime.Now;
+            _usersRepository.UpdateUser(foundUser);
+            
+            var token = _jwtTokenManager.GenerateToken(foundUser);
+            return Ok(new AccessTokenDto() { AccessToken = token });
+        }
+
+        [HttpPost]
+        [Route("forgot-password/")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult ForgotPassword([FromBody] UserIdentifierDto userIdentifier)
+        {
+            #nullable enable
+            
+            Users? foundUser = null;
+            foundUser = _usersRepository.GetUserByUsername(userIdentifier.UniqueIdentifier) ?? _usersRepository.GetUserByEmail(userIdentifier.UniqueIdentifier);
+            if (foundUser is null)
+            {
+                return Unauthorized(new ErrorResponse(new List<string>(){"Invalid email or username"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+            }
+            if (string.IsNullOrEmpty(foundUser.Password))
+            {
+                return Unauthorized(new ErrorResponse(new List<string>(){"Your account was registered via google"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+            }
+            #nullable disable
+
+            _emailSender.SendForgottenPasswordMail(foundUser);
             return Ok();
+        }
+        
+        /*[HttpPost]
+        [Route("forgot-password/change")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]*/
+        
+        [HttpGet]
+        [Route("me/full/")]
+        [TokenAuthorizeFilter]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetMeFull()
+        {
+            Users user = HttpContext.GetRouteValue("requestUser") as Users;
+            return Ok(new FullUserDto(user!));
+        }
+        
+        [HttpGet]
+        [Route("me/min/")]
+        [TokenAuthorizeFilter]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetMeMin()
+        {
+            Users user = HttpContext.GetRouteValue("requestUser") as Users;
+            return Ok(new MinUserDto(user!));
         }
     }
 }
