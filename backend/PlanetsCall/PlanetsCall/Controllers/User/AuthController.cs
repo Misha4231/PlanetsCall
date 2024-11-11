@@ -48,7 +48,7 @@ namespace PlanetsCall.Controllers.User
             {
                 Email = user.Email,
                 Username = user.Username,
-                Password = user.Password,
+                Password = user.Passwords?.Password,
                 IsActivated = false,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
@@ -62,7 +62,7 @@ namespace PlanetsCall.Controllers.User
             Users createdUser = _usersRepository.InsertUser(newUser);
             this._emailSender.SendUserConfirmationMail(createdUser);
             
-            return Ok(createdUser);
+            return Ok(new FullUserDto(createdUser));
         }
 
         [HttpPost]
@@ -71,33 +71,14 @@ namespace PlanetsCall.Controllers.User
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult ActivateProfile([FromBody] DisposableCodeDto activationCodeDto)
         {
-            List<string> errorMessages = new List<string>();
-            var userData = this._hashManager.Decrypt(activationCodeDto.Code).Split(':');
-            
-            if (!long.TryParse(userData[1], out var timestamp))
-            {
-                errorMessages.Add("No timestamp in activation code");
-            }
-            else
-            {
-                if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - timestamp > 86400)
-                {
-                    errorMessages.Add("Activation code has expired");
-                }
-            }
+            ConfirmationCodeValidationResponse codeValidationResponse = ValidateConfirmationCode(activationCodeDto.Code);
+            if (codeValidationResponse.ErrorMessages.Count() != 0) return BadRequest(new ErrorResponse(codeValidationResponse.ErrorMessages, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
 
-            var user = _usersRepository.GetUserByUsername(userData[0]);
-            if (user is null)
-            {
-                errorMessages.Add("Not existing user");
-            }
-            if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+            codeValidationResponse.FoundUser!.IsActivated = true;
+            codeValidationResponse.FoundUser!.IsVisible = true;
+            _usersRepository.UpdateUser(codeValidationResponse.FoundUser!);
 
-            user!.IsActivated = true;
-            user!.IsVisible = true;
-            _usersRepository.UpdateUser(user!);
-
-            var token = _jwtTokenManager.GenerateToken(user);
+            var token = _jwtTokenManager.GenerateToken(codeValidationResponse.FoundUser);
             return Ok(new AccessTokenDto() { AccessToken = token });
         }
 
@@ -156,11 +137,23 @@ namespace PlanetsCall.Controllers.User
             _emailSender.SendForgottenPasswordMail(foundUser);
             return Ok();
         }
-        
-        /*[HttpPost]
+
+        [HttpPost]
         [Route("forgot-password/change")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]*/
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult ChangeForgottenPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+        {
+            ConfirmationCodeValidationResponse codeValidationResponse = ValidateConfirmationCode(forgotPasswordDto.Code);
+            if (codeValidationResponse.ErrorMessages.Count() != 0) return BadRequest(new ErrorResponse(codeValidationResponse.ErrorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+            List<string> passwordMistakes = forgotPasswordDto.Passwords.IsValid();
+            if (passwordMistakes.Count() != 0) return BadRequest(new ErrorResponse(passwordMistakes, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+
+            codeValidationResponse.FoundUser!.Password = _hashManager.Encrypt(forgotPasswordDto.Passwords.Password!);
+            _usersRepository.UpdateUser(codeValidationResponse.FoundUser);
+            
+            return Ok();
+        }
         
         [HttpGet]
         [Route("me/full/")]
@@ -183,5 +176,53 @@ namespace PlanetsCall.Controllers.User
             Users user = HttpContext.GetRouteValue("requestUser") as Users;
             return Ok(new MinUserDto(user!));
         }
+
+        private ConfirmationCodeValidationResponse ValidateConfirmationCode(string code)
+        {
+            List<string> errorMessages = new List<string>();
+            var decodedCode = _hashManager.Decrypt(code);
+            if (string.IsNullOrEmpty(decodedCode))
+            {
+                errorMessages.Add("Not valid code");
+                return new ConfirmationCodeValidationResponse(errorMessages, null);
+            }
+            
+            var userData = decodedCode.Split(':');
+            
+            if (!long.TryParse(userData[1], out var timestamp))
+            {
+                errorMessages.Add("No timestamp in activation code");
+            }
+            else
+            {
+                if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - timestamp > 86400)
+                {
+                    errorMessages.Add("Activation code has expired");
+                }
+            }
+
+            var user = _usersRepository.GetUserByUsername(userData[0]);
+            if (user is null)
+            {
+                errorMessages.Add("Not existing user");
+            }
+
+            return new ConfirmationCodeValidationResponse(errorMessages, user);
+        }
     }
+
+    public class ConfirmationCodeValidationResponse
+    {
+#nullable enable
+        public ConfirmationCodeValidationResponse(List<string> errMsg, Users? user)
+        {
+            ErrorMessages = errMsg;
+            FoundUser = user;
+        }
+        public List<string> ErrorMessages { get; set; }
+        
+        public Users? FoundUser { get; set; }
+       
+    }
+#nullable disable
 }

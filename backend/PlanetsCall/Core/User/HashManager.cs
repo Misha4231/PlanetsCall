@@ -42,21 +42,28 @@ public class HashManager
         using (var sha256 = SHA256.Create())
         {
             byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(_configuration["SecretKey"]!));
-            byte[] encryptedBytes = Convert.FromBase64String(encodedString);
-
-            using (Aes aes = Aes.Create())
+            try
             {
-                aes.Key = secretBytes;
-                aes.Mode = CipherMode.ECB;
-                aes.Padding = PaddingMode.PKCS7;
-
-                byte[]? decryptedBytes = null;
-                using (var decryptor = aes.CreateDecryptor())
+                byte[] encryptedBytes = Convert.FromBase64String(encodedString);
+                
+                using (Aes aes = Aes.Create())
                 {
-                    decryptedBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
-                }
+                    aes.Key = secretBytes;
+                    aes.Mode = CipherMode.ECB;
+                    aes.Padding = PaddingMode.PKCS7;
 
-                return Encoding.UTF8.GetString(decryptedBytes);
+                    byte[]? decryptedBytes = null;
+                    using (var decryptor = aes.CreateDecryptor())
+                    {
+                        decryptedBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+                    }
+
+                    return Encoding.UTF8.GetString(decryptedBytes);
+                }
+                
+            } catch (Exception e)
+            {
+                return "";
             }
         }
     }
