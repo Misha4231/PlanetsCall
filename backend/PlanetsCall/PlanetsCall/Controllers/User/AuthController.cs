@@ -19,17 +19,13 @@ namespace PlanetsCall.Controllers.User
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly PlatensCallContext _context;
         private readonly IUsersRepository _usersRepository;
-        private readonly IConfiguration _configuration;
         private readonly EmailSender _emailSender;
         private readonly HashManager _hashManager;
         private readonly JwtTokenManager _jwtTokenManager;
-        public AuthController(PlatensCallContext context, IConfiguration configuration, IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager)
+        public AuthController(IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager)
         {
-            _context = context;
             _usersRepository = usersRepository;
-            _configuration = configuration;
             _emailSender = emailSender;
             _hashManager = hashManager;
             _jwtTokenManager = jwtTokenManager;

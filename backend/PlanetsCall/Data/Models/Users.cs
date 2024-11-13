@@ -38,7 +38,7 @@ public class Users
     [MaxLength(300)]
     public string? Description { get; set; }
     [MaxLength(50)]
-    public required string Status { get; set; }
+    public required string Status { get; set; } //active, offline 
     [MaxLength(100)]
     public string? InstagramLink { get; set; }
     [MaxLength(100)]
