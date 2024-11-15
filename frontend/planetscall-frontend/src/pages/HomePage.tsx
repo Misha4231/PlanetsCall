@@ -1,7 +1,6 @@
 import React from 'react'
 
-
-const AuthContext = () => {
+const HomePage = () => {
   return (
     <div>
       
@@ -9,4 +8,4 @@ const AuthContext = () => {
   )
 }
 
-export default AuthContext
+export default HomePage
