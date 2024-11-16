@@ -1,4 +1,5 @@
 using System.Text;
+using Core;
 using Core.User;
 using Data;
 using Data.Repository.User;
@@ -17,6 +18,7 @@ builder.Services.AddScoped<HashManager>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<JwtTokenManager>();
+builder.Services.AddScoped<FileService>();
 
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
 var jwtAudience = builder.Configuration.GetSection("Jwt:Audience").Get<string>();
@@ -51,6 +53,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseStaticFiles();
 
 app.MapControllers();
 

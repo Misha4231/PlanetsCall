@@ -20,8 +20,9 @@ public class UpdateUserDto
     public string? LastName { get; set; }
     public DateTime BirthDate { get; set; }
     public NewUserPasswordDto? Passwords { get; set; }
-    [MaxLength(300)]
+    [Base64String]
     public string? ProfileImage { get; set; }
+
     [MaxLength(5)]
     public required string PreferredLanguage { get; set; }
     public bool IsNotifiable { get; set; }

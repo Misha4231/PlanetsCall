@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Data.DTO.World;
 using Data.Models;
 
 namespace Data.DTO.User;
@@ -32,27 +33,13 @@ public class FullUserDto
             LinkedinLink = user.LinkedinLink;
             YoutubeLink = user.YoutubeLink;
             CityId = user.CityId;
-            City = user.City;
+            if (user.City != null)
+                City = new CityDto() { Id = user.City.Id, Name = user.City.Name };
             CountryId = user.CountryId;
-            Country = user.Country;
+            if (user.Country != null)
+                Country = new CountryDto() { Id = user.Country.Id, Name = user.Country.Name };
             MailsSubscribed = user.MailsSubscribed;
             ThemePreference = user.ThemePreference;
-            SingleTasksCompleted = user.SingleTasksCompleted;
-            GroupTasksCompleted = user.GroupTasksCompleted;
-            Friends = user.Friends;
-            FriendsOf = user.FriendsOf;
-            OwnedOrganizations = user.OwnedOrganizations;
-            OrganizationRoles = user.OrganizationRoles;
-            AchievementsCollection = user.AchievementsCollection;
-            TasksCreatedCollection = user.TasksCreatedCollection;
-            TasksCompleted = user.TasksCompleted;
-            TasksVerified = user.TasksVerified;
-            CreatedTopics = user.CreatedTopics;
-            LikedTopics = user.LikedTopics;
-            TopicCommentsCollection = user.TopicCommentsCollection;
-            LikedCommentsCollection = user.LikedCommentsCollection;
-            ItemsCollection = user.ItemsCollection;
-            Actions = user.Actions;
 
     }
     public int Id { get; set; }
@@ -80,25 +67,9 @@ public class FullUserDto
     public string? LinkedinLink { get; set; }
     public string? YoutubeLink { get; set; }
     public long? CityId { get; set; }
-    public Cities? City { get; set; }
+    public CityDto? City { get; set; }
     public long? CountryId { get; set; }
-    public Countries? Country { get; set; }
+    public CountryDto? Country { get; set; }
     public bool MailsSubscribed { get; set; }
     public int ThemePreference { get; set; }
-    public int SingleTasksCompleted { get; set; }
-    public int GroupTasksCompleted { get; set; }
-    public ICollection<Users>? Friends { get; set; }
-    public ICollection<Users>? FriendsOf { get; set; }
-    public ICollection<Organisations>? OwnedOrganizations { get; set; }
-    public ICollection<OrganizationUserRoles>? OrganizationRoles { get; set; }
-    public ICollection<UserAchievements>? AchievementsCollection { get; set; }
-    public ICollection<Tasks>? TasksCreatedCollection { get; set; }
-    public ICollection<TasksVerification>? TasksCompleted { get; set; }
-    public ICollection<TasksVerification>? TasksVerified { get; set; }
-    public ICollection<Topics>? CreatedTopics { get; set; }
-    public ICollection<Topics>? LikedTopics { get; set; }
-    public ICollection<TopicComments>? TopicCommentsCollection { get; set; }
-    public ICollection<TopicComments>? LikedCommentsCollection { get; set; }
-    public ICollection<Items>? ItemsCollection { get; set; }
-    public ICollection<Logs>? Actions { get; set; }
 }

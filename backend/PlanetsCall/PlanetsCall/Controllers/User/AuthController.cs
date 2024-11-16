@@ -159,7 +159,7 @@ namespace PlanetsCall.Controllers.User
         public IActionResult GetMeFull()
         {
             Users user = HttpContext.GetRouteValue("requestUser") as Users;
-            return Ok(new FullUserDto(user!));
+            return Ok(new FullUserDto(_usersRepository.GetFullUserById(user!.Id)!));
         }
         
         [HttpGet]
