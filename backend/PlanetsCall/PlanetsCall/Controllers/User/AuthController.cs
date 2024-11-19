@@ -72,7 +72,7 @@ namespace PlanetsCall.Controllers.User
 
             codeValidationResponse.FoundUser!.IsActivated = true;
             codeValidationResponse.FoundUser!.IsVisible = true;
-            _usersRepository.UpdateUser(codeValidationResponse.FoundUser!);
+            _usersRepository.UpdateUser(codeValidationResponse.FoundUser!, "activation");
 
             var token = _jwtTokenManager.GenerateToken(codeValidationResponse.FoundUser);
             return Ok(new AccessTokenDto() { AccessToken = token });
@@ -104,7 +104,7 @@ namespace PlanetsCall.Controllers.User
             #nullable disable
 
             foundUser.LastLogin = DateTime.Now;
-            _usersRepository.UpdateUser(foundUser);
+            _usersRepository.UpdateUser(foundUser, "sign in");
             
             var token = _jwtTokenManager.GenerateToken(foundUser);
             return Ok(new AccessTokenDto() { AccessToken = token });
@@ -146,7 +146,7 @@ namespace PlanetsCall.Controllers.User
             if (passwordMistakes.Count() != 0) return BadRequest(new ErrorResponse(passwordMistakes, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
 
             codeValidationResponse.FoundUser!.Password = _hashManager.Encrypt(forgotPasswordDto.Passwords.Password!);
-            _usersRepository.UpdateUser(codeValidationResponse.FoundUser);
+            _usersRepository.UpdateUser(codeValidationResponse.FoundUser, "change password");
             
             return Ok();
         }

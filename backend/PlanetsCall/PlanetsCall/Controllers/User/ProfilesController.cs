@@ -1,5 +1,6 @@
 ﻿using Data.DTO.User;
 using Data.Models;
+using Data.Repository.Log;
 using Data.Repository.User;
 using Microsoft.AspNetCore.Mvc;
 using PlanetsCall.Controllers.Exceptions;
@@ -12,10 +13,12 @@ namespace PlanetsCall.Controllers.User;
 public class ProfilesController : ControllerBase
 {
     private readonly IUsersRepository _usersRepository;
+    private readonly ILogsRepository _logsRepository;
     
-    public ProfilesController(IUsersRepository usersRepository)
+    public ProfilesController(IUsersRepository usersRepository, ILogsRepository logsRepository)
     {
         _usersRepository = usersRepository;
+        _logsRepository = logsRepository;
     }
 
     [HttpPut]
@@ -51,5 +54,23 @@ public class ProfilesController : ControllerBase
         Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         _usersRepository.DeleteUser(requestUser!);
         return NoContent();
+    }
+
+    [HttpGet]
+    [TokenAuthorizeFilter]
+    [Route("{username}/attendance/")]
+    public IActionResult GetAttendance(string username)
+    {
+        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        if (!requestUser!.IsVisible && !requestUser.IsAdmin && requestUser.Username != username) return StatusCode(StatusCodes.Status403Forbidden);
+
+        Users user = _usersRepository.GetUserByUsername(username);
+        if (user == null)
+        {
+            return BadRequest(new ErrorResponse(new List<string> { "user is not exists" },
+                StatusCodes.Status404NotFound, HttpContext.TraceIdentifier));
+        }
+        List<Logs> attendance = _logsRepository.GetAttendance(user);
+        return Ok(attendance);
     }
 }

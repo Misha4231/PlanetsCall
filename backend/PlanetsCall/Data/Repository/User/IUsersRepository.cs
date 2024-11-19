@@ -13,7 +13,7 @@ public interface IUsersRepository
     List<string> UniqueUserValidation(Users user);
     Users InsertUser(Users user);
     void Save();
-    Users UpdateUser(Users user);
+    Users UpdateUser(Users user, string additionalInfo = "");
     Users UpdateUser(UpdateUserDto user);
     List<string> UpdateUserValidation(UpdateUserDto user);
     void DeleteUser(Users user);

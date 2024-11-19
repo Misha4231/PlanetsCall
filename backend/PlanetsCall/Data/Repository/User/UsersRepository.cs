@@ -75,23 +75,43 @@ public class UsersRepository : IUsersRepository
         
         _context.Users.Add(user);
         Save();
+
+        var log = new Logs
+        {
+            Type = "Create account",
+            UserId = user.Id,
+            Data = "{}",
+            CreatedAt = DateTime.Now
+        };
+        _context.Logs.Add(log);
+        Save();
+        
         return user;
     }
 
-    public Users UpdateUser(Users user)
+    public Users UpdateUser(Users user, string additionalInfo = "")
     {
         user.UpdatedAt = DateTime.Now;
         _context.Users.Update(user);
         Save();
-
+        
+        var log = new Logs
+        {
+            Type = "Update user data",
+            UserId = user.Id,
+            Data = $"{{additionalInfo: \"{additionalInfo}\"}}",
+            CreatedAt = DateTime.Now
+        };
+        _context.Logs.Add(log);
+        Save();
+        
         return user;
     }
 
     public Users UpdateUser(UpdateUserDto user)
     {
         Users userToUpdate = GetUserById(user.Id)!;
-        
-        
+
         userToUpdate.Email = user.Email;
         userToUpdate.Username = user.Username;
         userToUpdate.FirstName = user.FirstName;
@@ -123,7 +143,7 @@ public class UsersRepository : IUsersRepository
             userToUpdate.Password = this._hashManager.Encrypt(user.Passwords.Password!);
         }
 
-        UpdateUser(userToUpdate);
+        UpdateUser(userToUpdate, "update settings");
         return userToUpdate;
     }
 
@@ -146,6 +166,9 @@ public class UsersRepository : IUsersRepository
         if (user.ProfileImage != null) _fileService.DeleteFile(user.ProfileImage);
         
         _context.Users.Remove(user);
+        var logs = _context.Logs.Where(log => log.UserId == user.Id).ToList();
+        _context.RemoveRange(logs);
+        
         Save();
     }
     

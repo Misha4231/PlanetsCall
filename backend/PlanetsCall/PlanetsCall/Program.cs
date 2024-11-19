@@ -2,6 +2,7 @@ using System.Text;
 using Core;
 using Core.User;
 using Data;
+using Data.Repository.Log;
 using Data.Repository.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -9,13 +10,15 @@ using PlanetsCall.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 
 builder.Services.RegisterDataServices(builder.Configuration);
 
 builder.Services.AddScoped<HashManager>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<ILogsRepository, LogsRepository>();
 builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<JwtTokenManager>();
 builder.Services.AddScoped<FileService>();
