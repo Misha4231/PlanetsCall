@@ -8,6 +8,7 @@ const Home: React.FC = () => {
     <div className="home">
       <Header/>
       <h1>Welcome to Home Paged</h1>
+      <p>To be continued...</p>
       <Footer/>
     </div>
   );

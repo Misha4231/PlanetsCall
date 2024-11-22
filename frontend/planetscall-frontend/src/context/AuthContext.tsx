@@ -1,5 +1,16 @@
 import React, { createContext, useState, ReactNode } from "react";
 
+
+interface userData {
+  user : string;
+  isAdmin : boolean;
+  money : number;
+  level: number;
+  achievements: string[];
+  badges: string[];
+}
+
+
 interface AuthContextType {
   user: string | null;
   logout: () => void;

@@ -3,6 +3,7 @@
     color: white;
     padding: 20px;
     text-align: center;
+    object-position:bottom center;
 }
 
 .footer-links ul {
