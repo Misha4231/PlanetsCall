@@ -17,6 +17,8 @@ interface AuthContextType {
   login: (username: string) => void;
 }
 
+const api = "http"
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
