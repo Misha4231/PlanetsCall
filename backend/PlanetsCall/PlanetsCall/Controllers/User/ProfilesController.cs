@@ -73,15 +73,30 @@ public class ProfilesController : ControllerBase
     public IActionResult GetAttendance(string username)
     {
         Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
-        if (!requestUser!.IsVisible && !requestUser.IsAdmin && requestUser.Username != username) return StatusCode(StatusCodes.Status403Forbidden);
-
         Users user = _usersRepository.GetUserByUsername(username);
         if (user == null)
         {
             return BadRequest(new ErrorResponse(new List<string> { "user is not exists" },
                 StatusCodes.Status404NotFound, HttpContext.TraceIdentifier));
         }
+        
+        if (!user!.IsVisible && !requestUser!.IsAdmin && requestUser.Username != username) return StatusCode(StatusCodes.Status403Forbidden);
+
         List<Logs> attendance = _logsRepository.GetAttendance(user);
         return Ok(attendance);
+    }
+
+    [HttpGet]
+    [Route("{username}/")]
+    public IActionResult GetUserProfile(string username)
+    {
+        Users user = _usersRepository.GetUserByUsername(username);
+        if (user == null)
+        {
+            return BadRequest(new ErrorResponse(new List<string> { "user is not exists" },
+                StatusCodes.Status404NotFound, HttpContext.TraceIdentifier));
+        }
+        
+        return Ok(new DisplayUserDto(user));
     }
 }
