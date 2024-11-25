@@ -58,6 +58,17 @@ public class ProfilesController : ControllerBase
 
     [HttpGet]
     [TokenAuthorizeFilter]
+    [Route("add-attendance/")]
+    public IActionResult SetAttendance()
+    {
+        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+
+        _logsRepository.AddAttendance(requestUser!);
+        return Ok();
+    }
+    
+    [HttpGet]
+    [TokenAuthorizeFilter]
     [Route("{username}/attendance/")]
     public IActionResult GetAttendance(string username)
     {

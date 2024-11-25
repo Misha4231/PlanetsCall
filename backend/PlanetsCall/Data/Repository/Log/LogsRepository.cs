@@ -13,7 +13,7 @@ public class LogsRepository : ILogsRepository
 
     public List<Logs> GetAttendance(Users user)
     {
-        List<Logs> attendance = _context.Logs.Where(log => log.UserId == user.Id && log.Data == "{additionalInfo: \"sign in\"}").Select(log => new Logs
+        List<Logs> attendance = _context.Logs.Where(log => log.UserId == user.Id && log.Type == "attendance").Select(log => new Logs
         {
             Id = log.Id,
             Type = log.Type,
@@ -23,5 +23,22 @@ public class LogsRepository : ILogsRepository
         }).ToList();
         
         return attendance;
+    }
+
+    public void AddAttendance(Users user)
+    {
+        if (!_context.Logs.Any(log =>
+                log.UserId == user.Id && log.Type == "attendance" && log.CreatedAt.Date == DateTime.Today))
+        {
+            _context.Logs.Add(new Logs()
+            {
+                Type = "attendance",
+                UserId = user.Id,
+                Data = "{}",
+                CreatedAt = DateTime.Now
+            });
+
+            _context.SaveChanges();
+        }
     }
 }
