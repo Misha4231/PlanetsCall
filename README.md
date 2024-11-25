@@ -39,7 +39,7 @@ Ta komenda utworzy wszystkie tabele w bazie danych.
 1. Po dodaniu folderu bin PostgreSQL do zmiennych środowiskowych, przejdź do katalogu, w którym znajduje się plik `world.sql`.
 2. Wykonaj poniższą komendę:
    ```bash
-   psql -U postgres -d planets_call -f world.sql
+   psql -U <nazwa użytkownika> -d planets_call -f world.sql
    ```
 
 ### Krok 6: Otwórz backend/PlanetsCall/PlanetsCall.sln za pomocą Visual Studio lub innego IDE

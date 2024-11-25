@@ -61,7 +61,7 @@ public class HashManager
                     return Encoding.UTF8.GetString(decryptedBytes);
                 }
                 
-            } catch (Exception e)
+            } catch ( Exception _)
             {
                 return "";
             }
