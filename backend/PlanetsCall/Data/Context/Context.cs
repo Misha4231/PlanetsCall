@@ -16,6 +16,7 @@ public sealed class PlatensCallContext : DbContext
     public DbSet<Topics> Topics { get; set; }
     public DbSet<TopicComments> TopicComments { get; set; }
     public DbSet<Items> Items { get; set; }
+    public DbSet<ItemsCategory> ItemsCategories { get; set; }
     public DbSet<Logs> Logs { get; set; }
     public DbSet<Cities> Cities { get; set; }
     public DbSet<Countries> Countries { get; set; }
@@ -120,6 +121,10 @@ public sealed class PlatensCallContext : DbContext
             .HasMany<Users>(i => i.Owners)
             .WithMany(u => u.ItemsCollection)
             .UsingEntity(j => j.ToTable("UserItems"));
+        modelBuilder.Entity<Items>()
+            .HasOne<ItemsCategory>(i => i.Category)
+            .WithMany(it => it.AttachedItems)
+            .OnDelete(DeleteBehavior.SetNull);
         
         // Logs
         modelBuilder.Entity<Logs>()
