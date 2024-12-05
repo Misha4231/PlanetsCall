@@ -1,4 +1,5 @@
-﻿using Data.DTO.Item;
+﻿using Data.DTO.Global;
+using Data.DTO.Item;
 using Data.Models;
 using Data.Repository.Item;
 using Data.Repository.Log;
@@ -23,6 +24,36 @@ public class ItemsController : ControllerBase
         _usersRepository = usersRepository;
         _logsRepository = logsRepository;
         _itemsRepository = itemsRepository;
+    }
+
+    [HttpGet]
+    [Route("{categoryId}/")]
+    public IActionResult GetItemsBatch([FromRoute] int categoryId, [FromQuery] int page = 1)
+    {
+        PaginatedList<Items> pageItems = _itemsRepository.GetItemsPartition(categoryId, page);
+
+        return Ok(pageItems);
+    }
+
+    [HttpPost]
+    [Route("buy/{itemId}/")]
+    [TokenAuthorizeFilter]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult BuyItem(int itemId)
+    {
+        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+
+        try
+        {
+            _itemsRepository.GiveItem(requestUser!, itemId);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new ErrorResponse(new List<string>() { e.Message }, 400, HttpContext.TraceIdentifier));
+        }
+
+        return Ok();
     }
 
     [HttpGet]

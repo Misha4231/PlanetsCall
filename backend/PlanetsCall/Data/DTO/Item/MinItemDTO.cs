@@ -10,6 +10,8 @@ public class MinItemDTO
     public required string Image { get; set; }
     [MaxLength(30)]
     public required string Rarity { get; set; }
+    [MaxLength(30)]
+    public required string Title { get; set; }
 }
 
 public class UpdateItemDTO

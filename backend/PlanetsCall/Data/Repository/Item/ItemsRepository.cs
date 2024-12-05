@@ -1,6 +1,8 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Collections;
+using System.Drawing.Imaging;
 using Core;
 using Data.Context;
+using Data.DTO.Global;
 using Data.DTO.Item;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -35,9 +37,21 @@ public class ItemsRepository : IItemsRepository
         return categoriesList;
     }
 
-    public List<ItemsListMember> GetItemsPartition(string categoryTitle, int page)
+    public PaginatedList<Items> GetItemsPartition(int categoryId, int page)
     {
-        throw new NotImplementedException();
+        int pageSize = _configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>();
+
+        var items = _context.Items
+            .OrderBy(i => i.Id)
+            .Where(i => i.CategoryId == categoryId)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var count = _context.Items.Count(i => i.CategoryId == categoryId);
+        var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+        
+        return new PaginatedList<Items>(items, page, totalPages);
     }
 
     public Items? AddItem(MinItemDTO itemData)
@@ -62,6 +76,7 @@ public class ItemsRepository : IItemsRepository
             CreatedAt = DateTime.Now,
             Image = imagePath,
             Rarity = itemData.Rarity,
+            Title = itemData.Title
         });
         _context.SaveChanges();
 
@@ -175,8 +190,23 @@ public class ItemsRepository : IItemsRepository
         return true;
     }
 
-    public void GiveItem(Users user, Items item)
+    public void GiveItem(Users user, int itemId)
     {
-        throw new NotImplementedException();
+        Items? item = _context.Items.Include(i => i.Owners).FirstOrDefault(i => i.Id == itemId);
+        if (item is null)
+            throw new Exception("Item not exist");
+        
+        if (user.Points < item.Price) 
+            throw new Exception("Not enough points to buy item");
+            
+        if (user.ItemsCollection is null) user.ItemsCollection = new List<Items>();
+        if (item.Owners is null) item.Owners = new List<Users>();
+        if (item.Owners.Contains(user))
+            throw new Exception("You already have that item");
+        
+        user.Points -= item.Price;
+        item.Owners.Add(user);
+            
+        _context.SaveChanges();
     }
 }

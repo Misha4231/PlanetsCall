@@ -8,8 +8,7 @@ public class Items
     public int Id { get; set; }
     
     public ItemsCategory? Category { get; set; }
-    [Required]
-    public int CategoryId { get; set; }
+    public int? CategoryId { get; set; }
     public int Price { get; set; }
     public DateTime CreatedAt { get; set; }
     [Required]
@@ -18,6 +17,11 @@ public class Items
     [Required]
     [MaxLength(30)]
     public required string Rarity { get; set; }
+
+    [Required]
+    [MaxLength(30)]
+    public required string Title { get; set; }
+
     
     public ICollection<Users>? Owners { get; set; }
 }
