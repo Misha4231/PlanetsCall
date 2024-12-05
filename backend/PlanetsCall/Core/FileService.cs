@@ -42,7 +42,7 @@ public class FileService
 
             img.Save(filePath); // Save the image
 
-            return Path.Combine(directory, fileName);;
+            return Path.Combine(directory, fileName).Replace("\\", "/");
         }
     }
 
