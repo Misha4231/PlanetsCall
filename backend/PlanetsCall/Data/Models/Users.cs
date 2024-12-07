@@ -57,7 +57,7 @@ public class Users
     public int GroupTasksCompleted { get; set; }
     
     public ICollection<Users>? Friends { get; set; }
-    public ICollection<Users>? FriendsOf { get; set; }
+    public ICollection<Users> FriendsOf { get; set; }
     
     public ICollection<Organisations>? OwnedOrganizations { get; set; }
     public ICollection<OrganizationUserRoles>? OrganizationRoles { get; set; }

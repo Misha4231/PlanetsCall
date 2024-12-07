@@ -25,7 +25,9 @@ public class ItemsRepository : IItemsRepository
     
     public List<CategoriesListMember> GetCategories()
     {
-        var categoriesList = _context.ItemsCategories.Include(c => c.AttachedItems).Select(category => new CategoriesListMember
+        var categoriesList = _context.ItemsCategories
+            .Include(c => c.AttachedItems)
+            .Select(category => new CategoriesListMember
         {
             Id = category.Id,
             Title = category.Title,

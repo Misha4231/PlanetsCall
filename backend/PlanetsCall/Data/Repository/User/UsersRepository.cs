@@ -2,6 +2,7 @@
 using Core;
 using Core.User;
 using Data.Context;
+using Data.DTO.Global;
 using Data.DTO.User;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,41 @@ namespace Data.Repository.User;
 public class UsersRepository : IUsersRepository
 {
     private readonly PlatensCallContext _context;
+    private readonly IConfiguration _configuration;
     private readonly HashManager _hashManager;
     private readonly FileService _fileService;
-    public UsersRepository(PlatensCallContext context, HashManager hashManager, FileService fileService)
+    public UsersRepository(PlatensCallContext context, HashManager hashManager, FileService fileService, IConfiguration configuration)
     {
         this._context = context;
         this._hashManager = hashManager;
         this._fileService = fileService;
+        this._configuration = configuration;
     }
 
     public IEnumerable<Users> GetUsers()
     {
         return _context.Users.ToList();
+    }
+
+    public PaginatedList<MinUserDto> SearchUsers(string searchString, int page)
+    {
+        int pageSize = _configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>();
+
+        var users = _context.Users
+            .OrderBy(u => u.Id)
+            .Where(u => u.Username.ToLower().Contains(searchString.ToLower()) ||
+                        (u.FirstName != null && u.FirstName.ToLower().Contains(searchString.ToLower())) ||
+                        (u.LastName != null && u.LastName.ToLower().Contains(searchString.ToLower())))
+            .Select(u => new MinUserDto(u));
+            
+        var paginatedUsers = users.Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+        
+        var count = users.Count();
+        var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+        
+        return new PaginatedList<MinUserDto>(paginatedUsers, page, totalPages);
     }
 
     public Users? GetUserById(int id)
