@@ -99,4 +99,16 @@ public class ProfilesController : ControllerBase
         
         return Ok(new DisplayUserDto(user));
     }
+
+    [HttpGet]
+    [Route("search/{searchString}/")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult SearchUser(string searchString, [FromQuery] int page = 1)
+    {
+        if (searchString.Length > 200) return BadRequest(new ErrorResponse(new List<string> { "Search string can't be longer than 200 symbols" }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+
+        var users = _usersRepository.SearchUsers(searchString, page);
+        return Ok(users);
+    }
 }
