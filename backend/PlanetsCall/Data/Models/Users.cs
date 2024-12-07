@@ -77,4 +77,5 @@ public class Users
     public ICollection<Items>? ItemsCollection { get; set; }
     
     public ICollection<Logs>? Actions { get; set; }
+    public ICollection<Organisations> RequestedOrganizations { get; set; }
 }

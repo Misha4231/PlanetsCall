@@ -59,6 +59,10 @@ public sealed class PlatensCallContext : DbContext
             .HasOne<OrganizationRoles>(o => o.OrganizationRole)
             .WithMany(o => o.UserRolesCollection)
             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Organisations>()
+            .HasMany<Users>(o => o.Requests)
+            .WithMany(u => u.RequestedOrganizations)
+            .UsingEntity(t => t.ToTable("OrganizationRequests"));
         
         // Osiągnięcia
         modelBuilder.Entity<UserAchievements>()
