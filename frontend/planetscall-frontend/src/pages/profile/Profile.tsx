@@ -1,6 +1,8 @@
 import React from 'react'
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
+import Sidebar from '../../components/Sidebar/Sidebar';
+import ProductCard from '../../components/ProductCard/ProductCard';
 import { Link } from 'react-router-dom';
 
 
@@ -8,6 +10,7 @@ const Profile = () => {
 
   return (
     <div className="profile">
+        <Sidebar />
       <Header/>
       <main>
         <div>
