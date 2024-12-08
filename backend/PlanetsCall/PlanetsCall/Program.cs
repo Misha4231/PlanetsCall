@@ -23,6 +23,7 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<ILogsRepository, LogsRepository>();
 builder.Services.AddScoped<IItemsRepository, ItemsRepository>();
 builder.Services.AddScoped<IFriendsRepository, FriendsRepository>();
+builder.Services.AddScoped<IOrganisationsRepository, OrganisationsRepository>();
 builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<JwtTokenManager>();
 builder.Services.AddScoped<FileService>();

@@ -8,7 +8,6 @@ public sealed class PlatensCallContext : DbContext
     public DbSet<Users> Users { get; set; }
     public DbSet<Organisations> Organizations { get; set; }
     public DbSet<OrganizationRoles> OrganizationRoles { get; set; }
-    public DbSet<OrganizationUserRoles> OrganizationUserRoles { get; set; }
     public DbSet<Achievements> Achievements { get; set; }
     public DbSet<UserAchievements> UserAchievement { get; set; }
     public DbSet<Tasks> Tasks { get; set; }
@@ -47,18 +46,14 @@ public sealed class PlatensCallContext : DbContext
             .UsingEntity(j => j.ToTable("Friends"));
 
         // Uprawnienia w zespołach
-        modelBuilder.Entity<OrganizationUserRoles>()
-            .HasOne<Users>(o => o.User)
-            .WithMany(u => u.OrganizationRoles)
+        modelBuilder.Entity<OrganizationRoles>()
+            .HasOne<Organisations>(o => o.Organisations)
+            .WithMany(o => o.Roles)
             .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<OrganizationUserRoles>()
-            .HasOne<Organisations>(o => o.Organisation)
-            .WithMany(o => o.UserRolesCollection)
-            .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<OrganizationUserRoles>()
-            .HasOne<OrganizationRoles>(o => o.OrganizationRole)
-            .WithMany(o => o.UserRolesCollection)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<OrganizationRoles>()
+            .HasMany<Users>(o => o.UsersWithRole)
+            .WithMany(o => o.OrganizationRoles)
+            .UsingEntity(t => t.ToTable("OrganizationUserRoles"));
         modelBuilder.Entity<Organisations>()
             .HasMany<Users>(o => o.Requests)
             .WithMany(u => u.RequestedOrganizations)

@@ -60,7 +60,7 @@ public class Users
     public ICollection<Users> FriendsOf { get; set; }
     
     public ICollection<Organisations>? OwnedOrganizations { get; set; }
-    public ICollection<OrganizationUserRoles>? OrganizationRoles { get; set; }
+    public ICollection<OrganizationRoles>? OrganizationRoles { get; set; }
     
     public ICollection<UserAchievements>? AchievementsCollection { get; set; }
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }

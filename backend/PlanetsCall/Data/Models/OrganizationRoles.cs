@@ -20,6 +20,7 @@ public class OrganizationRoles
     public bool CanDeleteTasks { get; set; }
     [MaxLength(300)]
     public string? Image { get; set; }
-    
-    public ICollection<OrganizationUserRoles>? UserRolesCollection { get; set; }
+    public int OrganisationId { get; set; }
+    public Organisations Organisations { get; set; }
+    public ICollection<Users> UsersWithRole { get; set; }
 }
