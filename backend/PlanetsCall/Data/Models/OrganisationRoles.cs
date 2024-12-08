@@ -2,7 +2,7 @@
 
 namespace Data.Models;
 
-public class OrganizationRoles
+public class OrganisationRoles
 {
     [Key]
     public int Id { get; set; }
@@ -21,6 +21,6 @@ public class OrganizationRoles
     [MaxLength(300)]
     public string? Image { get; set; }
     public int OrganisationId { get; set; }
-    public Organisations Organisations { get; set; }
+    public Organisations Organisation { get; set; }
     public ICollection<Users> UsersWithRole { get; set; }
 }

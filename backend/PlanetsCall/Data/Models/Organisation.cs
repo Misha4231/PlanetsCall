@@ -33,8 +33,8 @@ public class Organisations
     public required int CreatorId { get; set; }
     public required Users Creator { get; set; }
     
-    public ICollection<OrganizationRoles> Roles { get; set; }
-    
+    public ICollection<OrganisationRoles> Roles { get; set; }
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }
     public ICollection<Users> Requests { get; set; }
+    public ICollection<Users> Members { get; set; }
 }
