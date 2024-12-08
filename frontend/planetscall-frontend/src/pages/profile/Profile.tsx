@@ -1,7 +1,6 @@
 import React from 'react'
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
-import Sidebar from '../../components/Sidebar/Sidebar';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import { Link } from 'react-router-dom';
 
@@ -10,13 +9,38 @@ const Profile = () => {
 
   return (
     <div className="profile">
-        <Sidebar />
       <Header/>
+
+    <header>
+      <label> Liczba Monet [0]
+        </label>
+      <input type="search" placeholder='Wyszukaj'/>
+      <div>
+        <label>New</label>
+        <label>Promocje</label>
+        <label>Tanie eko ubrania</label>
+      </div>
+    
+    
+    </header>  
+    
+    <aside className='sidebar'>
+      <h4>Filtry</h4>
+      <div>
+        <label>
+          <input type="checkbox"/> Ubrania
+        </label>
+        <label>
+          <input type="checkbox"/> Nakrycia głowy
+        </label>
+        <label>
+          <input type="checkbox"/> Okulary
+        </label>
+      </div>
+    </aside>
+
       <main>
         <div>
-          <img
-            alt="Avatar"
-          />
           <div>
             <button>Zmień itemy</button>
           </div>
