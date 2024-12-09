@@ -1,8 +1,10 @@
 import React from 'react'
+import HeaderProfile from '../../components/Header/Profile/HeaderProfile'
 
 const LevelTree = () => {
   return (
     <div>
+      <HeaderProfile/>
       
     </div>
   )
