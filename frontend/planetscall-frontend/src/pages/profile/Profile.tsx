@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Footer from '../../components/Footer/Footer';
 import { Link } from 'react-router-dom';
 import HeaderProfile from '../../components/Header/Profile/HeaderProfile';
-import {User, Achievement} from './types';
+import {User} from './types';
 
 interface ProfileProps{
   user: User;
@@ -22,8 +22,14 @@ const Profile :React.FC<ProfileProps> = ({user}) => {
         </div>
         <div className="name">
           <p>
-            {user.username}
+            <h3>{user.username}</h3>
+            <p>{user.description}</p>
           </p>
+        </div>
+        <div className="stats">
+          <p><strong>Points:</strong> {user.points}</p>
+          <p><strong>Theme Preference:</strong> {user.theme_preference === 0 ? 'Light' : 'Dark'}</p>
+          <p><strong>Last Login:</strong> {new Date(user.last_login_at).toLocaleDateString()}</p>
         </div>
       </main>
       <Footer/>

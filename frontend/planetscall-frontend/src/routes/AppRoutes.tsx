@@ -13,6 +13,21 @@ import Statistics from '../pages/profile/Statistics';
 import Achievements from '../pages/profile/Achievements';
 import LevelTree from '../pages/profile/LevelTree';
 import Shop from '../pages/profile/Shop';
+import { User } from "../pages/profile/types";
+
+
+const mockUser: User = {
+  id: 1,
+  email: "example@example.com",
+  username: "John Doe",
+  profile_image: "https://example.com/profile.jpg",
+  points: 100,
+  description: "Passionate learner",
+  theme_preference: 0,
+  created_at: "2023-01-01",
+  last_login_at: "2023-12-01",
+};
+
 
 const router = createBrowserRouter([
   {
@@ -22,7 +37,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/profile',
-    element: <Profile />
+    element: <Profile user={mockUser} />
   },
   {
     path: '/profile/shop',
@@ -33,7 +48,7 @@ const router = createBrowserRouter([
     element: <LevelTree />
   },
   {
-    path: '/profile/achivements',
+    path: '/profile/Achievements ',
     element: <Achievements />
   },
   {
