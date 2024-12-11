@@ -10,6 +10,13 @@ export interface User{
     last_login_at: string;
 }
 
+export interface UserToken{
+    userName: string;
+    email: string;
+    token: string;
+  };
+  
+
 export interface Achievement {
     title : string;
     description : string;

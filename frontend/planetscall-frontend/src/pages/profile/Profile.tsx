@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect} from 'react'
 import Footer from '../../components/Footer/Footer';
 import { Link } from 'react-router-dom';
 import HeaderProfile from '../../components/Header/Profile/HeaderProfile';
 import {User} from './types';
+
+import { getPublicContent } from "../../services/userService";
 
 interface ProfileProps{
   user: User;
