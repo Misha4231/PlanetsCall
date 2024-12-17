@@ -1,37 +1,44 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:8080/api/auth/";
-
-export const register = (username: string, email: string, password: string) => {
-  return axios.post(API_URL + "signup", {
-    username,
-    email,
-    password,
+export const login = async (email: string, password: string) => {
+  const response = await fetch('https://api.aplikacja.com/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
   });
-};
 
-export const login = (username: string, password: string) => {
-  return axios
-    .post(API_URL + "signin", {
-      username,
-      password,
-    })
-    .then((response) => {
-      if (response.data.accessToken) {
-        localStorage.setItem("user", JSON.stringify(response.data));
-      }
+  if (!response.ok) {
+    throw new Error('Błąd logowania');
+  }
 
-      return response.data;
-    });
+  const data = await response.json();
+  localStorage.setItem('authToken', data.token);  
+  return data;
 };
 
 export const logout = () => {
-  localStorage.removeItem("user");
+  localStorage.removeItem('authToken');  
 };
 
-export const getCurrentUser = () => {
-  const userStr = localStorage.getItem("user");
-  if (userStr) return JSON.parse(userStr);
+export const getUser = async () => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    return null; 
+  }
 
-  return null;
+  const response = await fetch('https://api.twoja-aplikacja.com/auth/me', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Nie udało się pobrać danych użytkownika');
+  }
+
+  return await response.json();
+};
+
+export const isAuthenticated = () => {
+  return !!localStorage.getItem('authToken');
 };

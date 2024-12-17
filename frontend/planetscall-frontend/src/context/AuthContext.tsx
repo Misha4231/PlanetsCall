@@ -1,37 +1,51 @@
-import React, { createContext, useState, ReactNode } from "react";
+// src/context/AuthContext.tsx
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { getUser, isAuthenticated } from '../services/authService';
 
-
-interface userData {
-  user : string;
-  isAdmin : boolean;
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  isAdmin: boolean;
   money : number;
   level: number;
   achievements: string[];
   badges: string[];
 }
 
-
 interface AuthContextType {
-  user: string | null;
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  login: (username: string) => void;
 }
 
-const api = "http"
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<string | null>(null);
+  useEffect(() => {
+    if (isAuthenticated()) {
+      getUser().then(setUser).catch(() => setUser(null));
+    }
+  }, []);
 
-  const login = (username: string) => setUser(username);
-  const logout = () => setUser(null);
+  const login = async (email: string, password: string) => {
+    const userData = await getUser(); 
+    setUser(userData);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export default AuthContext;
+export { AuthProvider, AuthContext };

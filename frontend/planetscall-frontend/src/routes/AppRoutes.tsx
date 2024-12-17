@@ -1,12 +1,15 @@
 import React from 'react';
 import Home from '../pages/home/Home';
 
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom';
 
 import App from '../App';
-import NotFound from '../pages/NotFound/NotFound';
+//import NotFound from '../pages/NotFound/NotFound';
 
 //PROFILE LINKS
+import { AuthProvider } from '../context/AuthContext';
+import NotFound from '../pages/NotFound/NotFound';
+import SignIn from '../pages/auth/SignIn';
 import Profile from '../pages/profile/Profile';
 import UserProfile from '../pages/profile/UsersProfile';
 import Statistics from '../pages/profile/Statistics';
@@ -14,6 +17,7 @@ import Achievements from '../pages/profile/Achievements';
 import LevelTree from '../pages/profile/LevelTree';
 import Shop from '../pages/profile/Shop';
 import { User } from "../pages/profile/types";
+import useAuth from '../hooks/useAuth';
 
 
 const mockUser: User = {
@@ -33,7 +37,11 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    errorElement: <NotFound/>
+    /*errorElement: <NotFound/>*/
+  },
+  {
+    path: '/auth/sign-in',
+    element: <SignIn />,
   },
   {
     path: '/profile',
@@ -61,12 +69,25 @@ const router = createBrowserRouter([
   },
 ]);
 
+
+
+const PrivateRoute: React.FC<{ component: JSX.Element }> = ({ component }) => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate(); 
+  if (!isAuthenticated) {
+    navigate('/auth/sign-in');  
+    return null;  
+  }
+  return component;
+};
+
 const AppRoutes: React.FC = () => {
   return (
-    <div className="container">
-      <RouterProvider router={router}/>
-    </div>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 };
+
 
 export default AppRoutes;

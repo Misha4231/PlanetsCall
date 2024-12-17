@@ -1,12 +1,9 @@
 import React from 'react'
-import Header from '../../components/Header/Profile/HeaderProfile'
 import Footer from '../../components/Footer/Footer'
-import HeaderProfile from '../../components/Header/Profile/HeaderProfile'
 
 const Shop = () => {
   return (
     <div>
-      <HeaderProfile/>
       
 
     <header>

@@ -3,7 +3,7 @@ export interface User{
     email:string;
     username:string;
     profile_image:string;
-    points?: number | null;
+    points: number;
     description: string;
     theme_preference: number;
     created_at: string;

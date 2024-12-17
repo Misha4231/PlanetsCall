@@ -1,10 +1,10 @@
 import React, { useState, useEffect} from 'react'
 import Footer from '../../components/Footer/Footer';
 import { Link } from 'react-router-dom';
-import HeaderProfile from '../../components/Header/Profile/HeaderProfile';
 import {User} from './types';
 
 import { getPublicContent } from "../../services/userService";
+import Header from '../../components/shared/Header';
 
 interface ProfileProps{
   user: User;
@@ -16,8 +16,8 @@ const Profile :React.FC<ProfileProps> = ({user}) => {
 
   return (
     <div className="profile">
-      <HeaderProfile/>
     
+      <Header/>
       <main>
         <div className="profileImg">
           <img className="profileImg" src={user.profile_image} alt={user.profile_image} />

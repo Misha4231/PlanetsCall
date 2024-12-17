@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.119",
@@ -13,7 +11,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-toastify": "^10.0.6",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
@@ -43,6 +41,11 @@
     ]
   },
   "devDependencies": {
-    "@types/axios": "^0.14.4"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/axios": "^0.14.4",
+    "jest": "^27.5.1"
   }
 }
