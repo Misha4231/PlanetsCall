@@ -1,18 +1,45 @@
+using System.Text;
+using Core.User;
 using Data;
+using Data.Repository.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using PlanetsCall.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers();
+
+
+builder.Services.RegisterDataServices(builder.Configuration);
+
+builder.Services.AddScoped<HashManager>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<EmailSender>();
+builder.Services.AddScoped<JwtTokenManager>();
+
+var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
+var jwtAudience = builder.Configuration.GetSection("Jwt:Audience").Get<string>();
+var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllersWithViews();
-builder.Services.RegisterDataServices(builder.Configuration);
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -21,20 +48,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-/*
-using (var scope = app.Services.CreateScope())
-{
-    var worldContext = scope.ServiceProvider.GetRequiredService<WorldDbContext>();
-    var city = worldContext.Cities.SingleOrDefault(c => c.Id == 1);
-    if (city != null)
-    {
-        Console.WriteLine(city.Name);
-    }
-    else
-    {
-        Console.WriteLine("City with Id 1 was not found.");
-    }
-}
-*/
+app.UseAuthentication();
+app.UseAuthorization();
+
+
+app.MapControllers();
 
 app.Run();
