@@ -9,16 +9,20 @@ import App from '../App';
 //PROFILE LINKS
 import { AuthProvider } from '../context/AuthContext';
 import NotFound from '../pages/NotFound/NotFound';
+import Shop from '../pages/profile/Shop';
+import { User } from "../pages/profile/types";
+import useAuth from '../hooks/useAuth';
+
+
+
 import SignIn from '../pages/auth/SignIn';
+import SignUp from '../pages/auth/SignUp';
+
 import Profile from '../pages/profile/Profile';
 import UserProfile from '../pages/profile/UsersProfile';
 import Statistics from '../pages/profile/Statistics';
 import Achievements from '../pages/profile/Achievements';
 import LevelTree from '../pages/profile/LevelTree';
-import Shop from '../pages/profile/Shop';
-import { User } from "../pages/profile/types";
-import useAuth from '../hooks/useAuth';
-
 
 const mockUser: User = {
   id: 1,
@@ -39,10 +43,25 @@ const router = createBrowserRouter([
     element: <App />,
     /*errorElement: <NotFound/>*/
   },
+
+  //LOGIN
   {
     path: '/auth/sign-in',
     element: <SignIn />,
   },
+  {
+    path: '/auth/sign-up',
+    element: <SignUp />,
+  },
+  {
+    path: '/auth/sign-in',
+    element: <SignIn />,
+  },
+
+
+
+
+
   {
     path: '/profile',
     element: <Profile user={mockUser} />
