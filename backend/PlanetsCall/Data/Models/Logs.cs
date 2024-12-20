@@ -12,9 +12,11 @@ public class Logs
     public required string Type { get; set; }
     
     public required int UserId { get; set; }
-    public required Users User { get; set; }
+    public Users? User { get; set; }
     
     [Required]
     [MaxLength(3000)]
     public required string Data { get; set; }
+    
+    public DateTime CreatedAt { get; set; }
 }

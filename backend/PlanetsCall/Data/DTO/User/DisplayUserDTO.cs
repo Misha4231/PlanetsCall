@@ -1,18 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Data.DTO.World;
+﻿using Data.DTO.World;
 using Data.Models;
 
 namespace Data.DTO.User;
 
-public class FullUserDto
+public class DisplayUserDto
 {
-    public FullUserDto(Users user)
+        public DisplayUserDto(Users user)
     {
         Id = user.Id;
             Email = user.Email;
             Username = user.Username;
             AccountType = user.AccountType;
-            IsActivated = user.IsActivated;
             IsBlocked = user.IsBlocked;
             FirstName = user.FirstName;
             LastName = user.LastName;
@@ -21,11 +19,8 @@ public class FullUserDto
             Progress = user.Progress;
             ProfileImage = user.ProfileImage;
             CreatedAt = user.CreatedAt;
-            UpdatedAt = user.UpdatedAt;
-            LastLogin = user.LastLogin;
             IsAdmin = user.IsAdmin;
             PreferredLanguage = user.PreferredLanguage;
-            IsNotifiable = user.IsNotifiable;
             IsVisible = user.IsVisible;
             Description = user.Description;
             Status = user.Status;
@@ -38,15 +33,12 @@ public class FullUserDto
             CountryId = user.CountryId;
             if (user.Country != null)
                 Country = new CountryDto() { Id = user.Country.Id, Name = user.Country.Name };
-            MailsSubscribed = user.MailsSubscribed;
-            ThemePreference = user.ThemePreference;
 
     }
     public int Id { get; set; }
     public string Email { get; set; }
     public string Username { get; set; }
     public int AccountType { get; set; }
-    public bool IsActivated { get; set; }
     public bool IsBlocked { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
@@ -55,11 +47,8 @@ public class FullUserDto
     public uint Progress { get; set; }
     public string? ProfileImage { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public DateTime LastLogin { get; set; }
     public bool IsAdmin { get; set; }
     public string PreferredLanguage { get; set; }
-    public bool IsNotifiable { get; set; }
     public bool IsVisible { get; set; }
     public string? Description { get; set; }
     public string Status { get; set; }
@@ -70,6 +59,4 @@ public class FullUserDto
     public CityDto? City { get; set; }
     public long? CountryId { get; set; }
     public CountryDto? Country { get; set; }
-    public bool MailsSubscribed { get; set; }
-    public int ThemePreference { get; set; }
 }

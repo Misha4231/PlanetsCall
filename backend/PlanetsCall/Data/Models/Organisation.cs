@@ -36,4 +36,5 @@ public class Organisations
     public ICollection<OrganizationUserRoles>? UserRolesCollection { get; set; }
     
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }
+    public ICollection<Users> Requests { get; set; }
 }

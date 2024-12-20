@@ -1,5 +1,11 @@
 # Planets Call
 
+## Linki dla Pana Kleina
+- **Opis projektu**: [google dysk](https://drive.google.com/drive/folders/1WGLecc5QaRtHFz-dAEhdEfy6voCcCo1-?usp=sharing)
+- **Design strony**: [Figma](https://www.figma.com/design/IfSCTVFqL1G8eWHvPDkjxc/Planet's-call?node-id=0-1&t=3FIRcBGiThk3vFtZ-1)
+
+> Ania pracuje głównie na branchu `frontend_develop`, Ja (Mykhailo) robię dla różnych controllerów osobny branch
+
 ## Kroki do uruchomienia backendu projektu
 
 ### Krok 1: Zainstaluj PostgreSQL
@@ -29,11 +35,11 @@ dotnet ef database update -p Data -s PlanetsCall
 ```
 Ta komenda utworzy wszystkie tabele w bazie danych.
 
-### Krok 5: Zaimportuj dane z pliku `world.sql`
+### Krok 5: Zaimportuj dane z pliku [world.sql](https://github.com/dr5hn/countries-states-cities-database/blob/master/psql/world.sql)
 1. Po dodaniu folderu bin PostgreSQL do zmiennych środowiskowych, przejdź do katalogu, w którym znajduje się plik `world.sql`.
 2. Wykonaj poniższą komendę:
    ```bash
-   psql -U postgres -d planets_call -f world.sql
+   psql -U <nazwa użytkownika> -d planets_call -f world.sql
    ```
 
 ### Krok 6: Otwórz backend/PlanetsCall/PlanetsCall.sln za pomocą Visual Studio lub innego IDE

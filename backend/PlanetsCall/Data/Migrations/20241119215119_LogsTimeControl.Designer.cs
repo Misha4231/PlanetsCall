@@ -3,6 +3,7 @@ using System;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20241119215119_LogsTimeControl")]
+    partial class LogsTimeControl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -267,9 +270,6 @@ namespace Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
@@ -286,41 +286,14 @@ namespace Data.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Items");
-                });
-
-            modelBuilder.Entity("Data.Models.ItemsCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Image")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ItemsCategories");
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("Data.Models.Logs", b =>
@@ -996,21 +969,6 @@ namespace Data.Migrations
                     b.ToTable("UserItems", (string)null);
                 });
 
-            modelBuilder.Entity("OrganisationsUsers", b =>
-                {
-                    b.Property<int>("RequestedOrganizationsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RequestsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("RequestedOrganizationsId", "RequestsId");
-
-                    b.HasIndex("RequestsId");
-
-                    b.ToTable("OrganizationRequests", (string)null);
-                });
-
             modelBuilder.Entity("TopicCommentsUsers", b =>
                 {
                     b.Property<int>("LikedCommentsCollectionId")
@@ -1096,16 +1054,6 @@ namespace Data.Migrations
                     b.Navigation("Region");
 
                     b.Navigation("Subregion");
-                });
-
-            modelBuilder.Entity("Data.Models.Items", b =>
-                {
-                    b.HasOne("Data.Models.ItemsCategory", "Category")
-                        .WithMany("AttachedItems")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Data.Models.Logs", b =>
@@ -1317,21 +1265,6 @@ namespace Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OrganisationsUsers", b =>
-                {
-                    b.HasOne("Data.Models.Organisations", null)
-                        .WithMany()
-                        .HasForeignKey("RequestedOrganizationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.Users", null)
-                        .WithMany()
-                        .HasForeignKey("RequestsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("TopicCommentsUsers", b =>
                 {
                     b.HasOne("Data.Models.TopicComments", null)
@@ -1394,11 +1327,6 @@ namespace Data.Migrations
                     b.Navigation("StatesCollection");
 
                     b.Navigation("UsersCollection");
-                });
-
-            modelBuilder.Entity("Data.Models.ItemsCategory", b =>
-                {
-                    b.Navigation("AttachedItems");
                 });
 
             modelBuilder.Entity("Data.Models.Organisations", b =>

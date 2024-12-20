@@ -3,6 +3,7 @@ using System;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20241205215204_AddTitleColumn")]
+    partial class AddTitleColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -996,21 +999,6 @@ namespace Data.Migrations
                     b.ToTable("UserItems", (string)null);
                 });
 
-            modelBuilder.Entity("OrganisationsUsers", b =>
-                {
-                    b.Property<int>("RequestedOrganizationsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RequestsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("RequestedOrganizationsId", "RequestsId");
-
-                    b.HasIndex("RequestsId");
-
-                    b.ToTable("OrganizationRequests", (string)null);
-                });
-
             modelBuilder.Entity("TopicCommentsUsers", b =>
                 {
                     b.Property<int>("LikedCommentsCollectionId")
@@ -1313,21 +1301,6 @@ namespace Data.Migrations
                     b.HasOne("Data.Models.Users", null)
                         .WithMany()
                         .HasForeignKey("OwnersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("OrganisationsUsers", b =>
-                {
-                    b.HasOne("Data.Models.Organisations", null)
-                        .WithMany()
-                        .HasForeignKey("RequestedOrganizationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.Users", null)
-                        .WithMany()
-                        .HasForeignKey("RequestsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

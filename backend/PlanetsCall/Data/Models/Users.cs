@@ -38,7 +38,7 @@ public class Users
     [MaxLength(300)]
     public string? Description { get; set; }
     [MaxLength(50)]
-    public required string Status { get; set; }
+    public required string Status { get; set; } //active, offline 
     [MaxLength(100)]
     public string? InstagramLink { get; set; }
     [MaxLength(100)]
@@ -57,7 +57,7 @@ public class Users
     public int GroupTasksCompleted { get; set; }
     
     public ICollection<Users>? Friends { get; set; }
-    public ICollection<Users>? FriendsOf { get; set; }
+    public ICollection<Users> FriendsOf { get; set; }
     
     public ICollection<Organisations>? OwnedOrganizations { get; set; }
     public ICollection<OrganizationUserRoles>? OrganizationRoles { get; set; }
@@ -77,4 +77,5 @@ public class Users
     public ICollection<Items>? ItemsCollection { get; set; }
     
     public ICollection<Logs>? Actions { get; set; }
+    public ICollection<Organisations> RequestedOrganizations { get; set; }
 }

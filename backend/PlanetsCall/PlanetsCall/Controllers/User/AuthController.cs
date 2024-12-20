@@ -19,17 +19,13 @@ namespace PlanetsCall.Controllers.User
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly PlatensCallContext _context;
         private readonly IUsersRepository _usersRepository;
-        private readonly IConfiguration _configuration;
         private readonly EmailSender _emailSender;
         private readonly HashManager _hashManager;
         private readonly JwtTokenManager _jwtTokenManager;
-        public AuthController(PlatensCallContext context, IConfiguration configuration, IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager)
+        public AuthController(IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager)
         {
-            _context = context;
             _usersRepository = usersRepository;
-            _configuration = configuration;
             _emailSender = emailSender;
             _hashManager = hashManager;
             _jwtTokenManager = jwtTokenManager;
@@ -76,7 +72,7 @@ namespace PlanetsCall.Controllers.User
 
             codeValidationResponse.FoundUser!.IsActivated = true;
             codeValidationResponse.FoundUser!.IsVisible = true;
-            _usersRepository.UpdateUser(codeValidationResponse.FoundUser!);
+            _usersRepository.UpdateUser(codeValidationResponse.FoundUser!, "activation");
 
             var token = _jwtTokenManager.GenerateToken(codeValidationResponse.FoundUser);
             return Ok(new AccessTokenDto() { AccessToken = token });
@@ -108,7 +104,7 @@ namespace PlanetsCall.Controllers.User
             #nullable disable
 
             foundUser.LastLogin = DateTime.Now;
-            _usersRepository.UpdateUser(foundUser);
+            _usersRepository.UpdateUser(foundUser, "sign in");
             
             var token = _jwtTokenManager.GenerateToken(foundUser);
             return Ok(new AccessTokenDto() { AccessToken = token });
@@ -150,7 +146,7 @@ namespace PlanetsCall.Controllers.User
             if (passwordMistakes.Count() != 0) return BadRequest(new ErrorResponse(passwordMistakes, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
 
             codeValidationResponse.FoundUser!.Password = _hashManager.Encrypt(forgotPasswordDto.Passwords.Password!);
-            _usersRepository.UpdateUser(codeValidationResponse.FoundUser);
+            _usersRepository.UpdateUser(codeValidationResponse.FoundUser, "change password");
             
             return Ok();
         }
@@ -163,7 +159,7 @@ namespace PlanetsCall.Controllers.User
         public IActionResult GetMeFull()
         {
             Users user = HttpContext.GetRouteValue("requestUser") as Users;
-            return Ok(new FullUserDto(user!));
+            return Ok(new FullUserDto(_usersRepository.GetFullUserById(user!.Id)!));
         }
         
         [HttpGet]
