@@ -3,7 +3,6 @@ using System;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,11 +11,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-    [Migration("20241205212033_RemoveRequiredAttribute")]
-    partial class RemoveRequiredAttribute
+    partial class PlatensCallContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,7 +267,7 @@ namespace Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
@@ -285,6 +282,11 @@ namespace Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Rarity")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
@@ -994,6 +996,21 @@ namespace Data.Migrations
                     b.ToTable("UserItems", (string)null);
                 });
 
+            modelBuilder.Entity("OrganisationsUsers", b =>
+                {
+                    b.Property<int>("RequestedOrganizationsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RequestsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("RequestedOrganizationsId", "RequestsId");
+
+                    b.HasIndex("RequestsId");
+
+                    b.ToTable("OrganizationRequests", (string)null);
+                });
+
             modelBuilder.Entity("TopicCommentsUsers", b =>
                 {
                     b.Property<int>("LikedCommentsCollectionId")
@@ -1086,8 +1103,7 @@ namespace Data.Migrations
                     b.HasOne("Data.Models.ItemsCategory", "Category")
                         .WithMany("AttachedItems")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Category");
                 });
@@ -1297,6 +1313,21 @@ namespace Data.Migrations
                     b.HasOne("Data.Models.Users", null)
                         .WithMany()
                         .HasForeignKey("OwnersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OrganisationsUsers", b =>
+                {
+                    b.HasOne("Data.Models.Organisations", null)
+                        .WithMany()
+                        .HasForeignKey("RequestedOrganizationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Models.Users", null)
+                        .WithMany()
+                        .HasForeignKey("RequestsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
