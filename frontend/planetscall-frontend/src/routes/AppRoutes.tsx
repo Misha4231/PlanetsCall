@@ -23,6 +23,10 @@ import UserProfile from '../pages/profile/UsersProfile';
 import Statistics from '../pages/profile/Statistics';
 import Achievements from '../pages/profile/Achievements';
 import LevelTree from '../pages/profile/LevelTree';
+import ChangePassword from '../pages/auth/ChangePassword';
+import ForgotPassword from '../pages/auth/ForgotPassword';
+import ActivateAccount from '../pages/auth/ActivateAccount';
+import Settings from '../pages/profile/Settings';
 
 const mockUser: User = {
   id: 1,
@@ -54,8 +58,20 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
   {
-    path: '/auth/sign-in',
-    element: <SignIn />,
+    path: '/auth/change-password',
+    element: <ChangePassword />,
+  },
+  {
+    path: '/auth/forgot-password',
+    element: <ForgotPassword />,
+  },
+  {
+    path: '/auth/activate-account',
+    element: <ActivateAccount />,
+  },
+  {
+    path: '/profile/settings',
+    element: <Settings />
   },
 
 

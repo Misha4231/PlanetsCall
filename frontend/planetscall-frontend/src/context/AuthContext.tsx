@@ -1,6 +1,7 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { getUser, isAuthenticated } from '../services/authService';
+import { getUser, login as loginService, logout as logoutService, isAuthenticated } from '../services/authService';
+
 
 interface User {
   id: number;
@@ -26,19 +27,26 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    if (isAuthenticated()) {
-      getUser().then(setUser).catch(() => setUser(null));
-    }
+    // if (isAuthenticated()) {
+    //   getUser()
+    //     .then(setUser)
+    //     .catch(() => setUser(null));
+    // }
   }, []);
 
   const login = async (email: string, password: string) => {
-    const userData = await getUser(); 
-    setUser(userData);
+    try {
+      await loginService(email, password);
+      //const userData = await getUser();
+      //setUser(userData);
+    } catch (error) {
+      throw new Error('Błąd logowania');
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
-    setUser(null);
+    logoutService();
+    //setUser(null);
   };
 
   return (

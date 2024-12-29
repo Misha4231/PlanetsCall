@@ -1,4 +1,3 @@
-// src/pages/auth/SignIn.tsx
 import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
@@ -8,19 +7,24 @@ import { login } from '../../services/authService';
 
 const SignIn = () => {
   const { login: loginUser } = useAuth();
-  const [email, setEmail] = useState('');
+  const [uniqueIdentifier, setUniqueIdentifier] = useState(''); 
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null); 
   const navigate = useNavigate();  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
 
     try {
-      await loginUser(email, password);  
-      setError('Logowanie');
-    } catch (err) {
-      setError('Błąd logowania. Sprawdź dane i spróbuj ponownie.');
+      const userData = await login(uniqueIdentifier, password);
+      
+      await loginUser(uniqueIdentifier, password); 
+      navigate('/'); 
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Błąd logowania. Sprawdź dane i spróbuj ponownie.');
     }
   };
 
@@ -30,11 +34,12 @@ const SignIn = () => {
       <form onSubmit={handleSubmit}>
         <h1>Zaloguj się</h1>
         <div>
-          <label>Email:</label>
+          <label>Email lub Nazwa użytkownika:</label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={uniqueIdentifier}  
+            onChange={(e) => setUniqueIdentifier(e.target.value)}
+            placeholder="Podaj email lub nazwę użytkownika"
             required
           />
         </div>
@@ -44,18 +49,24 @@ const SignIn = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="Podaj hasło"
             required
           />
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}  {/* Wyświetlanie błędu */}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit">Zaloguj się</button>
       </form>
-      
-              <ul>
-                <li><Link to="/auth/sign-up">Zajerestruj się</Link></li>
-                <li><Link to="/">Nie pamiętam hasła</Link></li>
-                <li><Link to="/">Strona Główna</Link></li>
-              </ul>
+      <ul>
+        <li>
+          <Link to="/auth/sign-up">Zarejestruj się</Link>
+        </li>
+        <li>
+          <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
+        </li>
+        <li>
+          <Link to="/">Strona Główna</Link>
+        </li>
+      </ul>
       <Footer />
     </div>
   );

@@ -1,18 +1,22 @@
-export const login = async (email: string, password: string) => {
-  const response = await fetch('https://api.aplikacja.com/auth/login', {
+export const login = async (uniqueIdentifier: string, password: string) => {
+  const response = await fetch('https://localhost:7000/api/Auth/sign-in', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({
+      uniqueIdentifier, 
+      password,
+    }),
   });
 
   if (!response.ok) {
-    throw new Error('Błąd logowania');
+    const errorData = await response.json();  
+    throw new Error(errorData.message || 'Błąd logowania');
   }
 
   const data = await response.json();
-  localStorage.setItem('authToken', data.token);  
+  console.log(data);
   return data;
 };
 
@@ -23,15 +27,18 @@ export const logout = () => {
 export const getUser = async () => {
   const token = localStorage.getItem('authToken');
   if (!token) {
-    return null; 
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch('https://api.twoja-aplikacja.com/auth/me', {
+  const response = await fetch('https://localhost:7000/api/Auth/me/min', {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
   });
 
+  if (response.status === 401) {
+    throw new Error('Brak autoryzacji. Proszę się zalogować.');
+  }
   if (!response.ok) {
     throw new Error('Nie udało się pobrać danych użytkownika');
   }
