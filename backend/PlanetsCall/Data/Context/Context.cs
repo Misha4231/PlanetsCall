@@ -7,8 +7,7 @@ public sealed class PlatensCallContext : DbContext
 {
     public DbSet<Users> Users { get; set; }
     public DbSet<Organisations> Organizations { get; set; }
-    public DbSet<OrganizationRoles> OrganizationRoles { get; set; }
-    public DbSet<OrganizationUserRoles> OrganizationUserRoles { get; set; }
+    public DbSet<OrganisationRoles> OrganizationRoles { get; set; }
     public DbSet<Achievements> Achievements { get; set; }
     public DbSet<UserAchievements> UserAchievement { get; set; }
     public DbSet<Tasks> Tasks { get; set; }
@@ -47,22 +46,22 @@ public sealed class PlatensCallContext : DbContext
             .UsingEntity(j => j.ToTable("Friends"));
 
         // Uprawnienia w zespołach
-        modelBuilder.Entity<OrganizationUserRoles>()
-            .HasOne<Users>(o => o.User)
-            .WithMany(u => u.OrganizationRoles)
-            .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<OrganizationUserRoles>()
+        modelBuilder.Entity<OrganisationRoles>()
             .HasOne<Organisations>(o => o.Organisation)
-            .WithMany(o => o.UserRolesCollection)
+            .WithMany(o => o.Roles)
             .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<OrganizationUserRoles>()
-            .HasOne<OrganizationRoles>(o => o.OrganizationRole)
-            .WithMany(o => o.UserRolesCollection)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<OrganisationRoles>()
+            .HasMany<Users>(o => o.UsersWithRole)
+            .WithMany(o => o.OrganizationRoles)
+            .UsingEntity(t => t.ToTable("OrganizationUserRoles"));
         modelBuilder.Entity<Organisations>()
             .HasMany<Users>(o => o.Requests)
             .WithMany(u => u.RequestedOrganizations)
             .UsingEntity(t => t.ToTable("OrganizationRequests"));
+        modelBuilder.Entity<Organisations>()
+            .HasMany<Users>(o => o.Members)
+            .WithMany(u => u.MyOrganisation)
+            .UsingEntity(t => t.ToTable("OrganizationUsers"));
         
         // Osiągnięcia
         modelBuilder.Entity<UserAchievements>()

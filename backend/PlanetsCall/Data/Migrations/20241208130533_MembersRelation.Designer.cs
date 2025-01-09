@@ -3,6 +3,7 @@ using System;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20241208130533_MembersRelation")]
+    partial class MembersRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -396,6 +399,9 @@ namespace Data.Migrations
                     b.Property<int>("OrganisationId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("OrganisationsId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -403,7 +409,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganisationId");
+                    b.HasIndex("OrganisationsId");
 
                     b.ToTable("OrganizationRoles");
                 });
@@ -1125,13 +1131,13 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.OrganisationRoles", b =>
                 {
-                    b.HasOne("Data.Models.Organisations", "Organisation")
+                    b.HasOne("Data.Models.Organisations", "Organisations")
                         .WithMany("Roles")
-                        .HasForeignKey("OrganisationId")
+                        .HasForeignKey("OrganisationsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Organisation");
+                    b.Navigation("Organisations");
                 });
 
             modelBuilder.Entity("Data.Models.Organisations", b =>
