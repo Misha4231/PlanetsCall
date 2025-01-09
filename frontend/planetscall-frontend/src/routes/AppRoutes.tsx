@@ -80,7 +80,7 @@ const router = createBrowserRouter([
 
   {
     path: '/profile',
-    element: <Profile user={mockUser} />
+    element: <Profile/>
   },
   {
     path: '/profile/shop',

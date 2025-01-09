@@ -3,7 +3,7 @@ import Footer from '../../components/Footer/Footer';
 import { Link } from 'react-router-dom';
 import {User} from './types';
 
-import { getPublicContent } from "../../services/userService";
+import { getUserBoard } from "../../services/userService";
 import Header from '../../components/shared/Header';
 
 interface ProfileProps{
@@ -12,7 +12,30 @@ interface ProfileProps{
 
 
 
-const Profile :React.FC<ProfileProps> = ({user}) => {
+const Profile :React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getUserBoard();
+        setUser(response.data); 
+      } catch (err: any) {
+        setError(err.message || 'Nie udało się pobrać danych użytkownika.');
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  if (error) {
+    return <p style={{ color: 'red' }}>Błąd: {error}</p>;
+  }
+
+  if (!user) {
+    return <p>Ładowanie danych użytkownika...</p>;
+  }
 
   return (
     <div className="profile">
