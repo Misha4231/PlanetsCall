@@ -1,30 +1,29 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Core.User;
 using Microsoft.AspNetCore.Mvc;
-using Data.Context;
 using Data.DTO.User;
 using Data.Models;
 using Data.Repository.User;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
 using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 using PlanetsCall.Helper;
 
+
 namespace PlanetsCall.Controllers.User
-{
+{ /*
+ * Auth Controller gives us all the necessary methods for authentication and authorization
+ * also it provides the most important functionality for working with profiles (password changing, getting profile data)
+ */
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUsersRepository _usersRepository;
-        private readonly EmailSender _emailSender;
-        private readonly HashManager _hashManager;
-        private readonly JwtTokenManager _jwtTokenManager;
-        public AuthController(IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager)
+        private readonly IUsersRepository _usersRepository; // used everywhere through class for CRUD operations in database and partly for data validation
+        private readonly EmailSender _emailSender; // helper service to easily send confirmation emails
+        private readonly HashManager _hashManager; // mainly used for hashing password
+        private readonly JwtTokenManager _jwtTokenManager; // generates tokens to later put them in Authorization header
+        public AuthController(IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager) // Dependency Injection
         {
+            // constructor assigns all helper services
             _usersRepository = usersRepository;
             _emailSender = emailSender;
             _hashManager = hashManager;
@@ -37,7 +36,8 @@ namespace PlanetsCall.Controllers.User
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult SignUp([FromBody] RegisterUserDto user)
         {
-            var errorMessages = user.IsValid();
+            // when lots of sensitive data provided, exceptions could contain many messages, so List is being used
+            List<string> errorMessages = user.IsValid();
             if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
 
             Users newUser = new Users
