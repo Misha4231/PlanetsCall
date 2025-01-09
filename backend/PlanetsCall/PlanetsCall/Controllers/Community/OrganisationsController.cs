@@ -24,7 +24,7 @@ public class OrganisationsController : ControllerBase
     public IActionResult MyOrganisations([FromQuery] int page = 1)
     {
         Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
-        PaginatedList<Organisations> o = _organisationsRepository.GetUserOrganisations(requestUser!, page);
+        PaginatedList<MinOrganisationDto> o = _organisationsRepository.GetUserOrganisations(requestUser!, page);
         
         return Ok(o);
     }
@@ -51,13 +51,13 @@ public class OrganisationsController : ControllerBase
     [HttpPost]
     [Route("")]
     [TokenAuthorizeFilter]
-    public IActionResult CreateOrganisation([FromBody] MinOrganisationDto organisationDto)
+    public IActionResult CreateOrganisation([FromBody] OrganisationFormDto organisationDto)
     {
         Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
 
         try
         {
-            Organisations newOrganisation = _organisationsRepository.CreateOrganisation(requestUser!, organisationDto);
+            FullOrganisationDto newOrganisation = _organisationsRepository.CreateOrganisation(requestUser!, organisationDto);
             return Ok(newOrganisation);
         } catch (Exception e)
         {
@@ -163,16 +163,36 @@ public class OrganisationsController : ControllerBase
             return BadRequest(new ErrorResponse(new List<string>() { e.Message }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
         }
     }
-    /*[HttpPut]
+    [HttpPut]
     [Route("settings/{organisationUniqueName}/")]
-    public IActionResult UpdateSettings(Organisations newOrganisationData)
+    [TokenAuthorizeFilter]
+    public IActionResult UpdateSettings(OrganisationUpdateFormDto newOrganisationData)
     {
+        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        
         try
         {
-            return Ok(_organisationsRepository.UpdateOrganisation(newOrganisationData));
+            return Ok(_organisationsRepository.UpdateOrganisation(newOrganisationData, requestUser));
         } catch (Exception e)
         {
             return BadRequest(new ErrorResponse(new List<string>() { e.Message }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
         }
-    }*/
+    }
+    
+    [HttpDelete]
+    [Route("{organisationUniqueName}/")]
+    [TokenAuthorizeFilter]
+    public IActionResult DeleteOrganisation(string organisationUniqueName)
+    {
+        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        
+        try
+        {
+            _organisationsRepository.RemoveOrganisation(organisationUniqueName, requestUser);
+            return Ok();
+        } catch (Exception e)
+        {
+            return BadRequest(new ErrorResponse(new List<string>() { e.Message }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+        }
+    }
 }

@@ -2,21 +2,27 @@ using System.Text;
 using Core;
 using Core.User;
 using Data;
+using Data.Context;
 using Data.Repository.Community;
 using Data.Repository.Item;
 using Data.Repository.Log;
 using Data.Repository.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using PlanetsCall.Filters;
 using PlanetsCall.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
+/* Configures CORS policy to allow the front end application communicate with server
+ Configuration["WebsiteDomain"] Specifies the domain where the front-end React app is hosted allowing controlled cross origin requests
+ Allows any HTTP method, any header, and credentials*/
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        // Specifies the allowed origins
+        policy.WithOrigins(builder.Configuration["WebsiteDomain"]!)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -30,6 +36,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.RegisterDataServices(builder.Configuration);
 
 builder.Services.AddScoped<HashManager>();
+builder.Services.AddScoped<PlatensCallContext>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<ILogsRepository, LogsRepository>();
 builder.Services.AddScoped<IItemsRepository, ItemsRepository>();
