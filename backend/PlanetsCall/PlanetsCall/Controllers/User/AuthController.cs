@@ -21,13 +21,15 @@ namespace PlanetsCall.Controllers.User
         private readonly EmailSender _emailSender; // helper service to easily send confirmation emails
         private readonly HashManager _hashManager; // mainly used for hashing password
         private readonly JwtTokenManager _jwtTokenManager; // generates tokens to later put them in Authorization header
-        public AuthController(IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager) // Dependency Injection
+        private readonly IWebHostEnvironment _webHostEnvironment; // used to make development only method
+        public AuthController(IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager, IWebHostEnvironment webHostEnvironment) // Dependency Injection
         {
             // constructor assigns all helper services
             _usersRepository = usersRepository;
             _emailSender = emailSender;
             _hashManager = hashManager;
             _jwtTokenManager = jwtTokenManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpPost]
@@ -60,6 +62,38 @@ namespace PlanetsCall.Controllers.User
             
             return Ok(new FullUserDto(createdUser));
         }
+        
+        #if DEBUG // restrict access to debug only
+        [HttpPost]
+        [Route("development-sign-up/")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult ImidiateSignUp([FromBody] RegisterUserDto user)
+        {
+            // when lots of sensitive data provided, exceptions could contain many messages, so List is being used
+            List<string> errorMessages = user.IsValid();
+            if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+
+            Users newUser = new Users
+            {
+                Email = user.Email,
+                Username = user.Username,
+                Password = user.Passwords?.Password,
+                IsActivated = true,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                PreferredLanguage = "en",
+                Status = "online"
+            };
+
+            errorMessages = _usersRepository.UniqueUserValidation(newUser);
+            if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+            
+            Users createdUser = _usersRepository.InsertUser(newUser);
+            var token = _jwtTokenManager.GenerateToken(createdUser);
+            return Ok(new AccessTokenDto() { AccessToken = token });
+        }
+#endif
 
         [HttpPost]
         [Route("activate/")]
