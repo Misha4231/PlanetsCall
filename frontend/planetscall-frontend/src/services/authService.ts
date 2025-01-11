@@ -1,3 +1,9 @@
+import { error } from "console";
+
+const token = {
+  value: "",
+};
+
 export const login = async (uniqueIdentifier: string, password: string) => {
   const response = await fetch('https://localhost:7000/api/Auth/sign-in', {
     method: 'POST',
@@ -16,23 +22,23 @@ export const login = async (uniqueIdentifier: string, password: string) => {
   }
 
   const data = await response.json();
-  console.log(data);
+  token.value = data.accessToken;
+  console.log(token.value);
   return data;
 };
 
 export const logout = () => {
-  localStorage.removeItem('authToken');  
+  token.value = "";  
 };
 
 export const getUser = async () => {
-  const token = localStorage.getItem('authToken');
-  if (!token) {
+  if (!token.value) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
   const response = await fetch('https://localhost:7000/api/Auth/me/min', {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${token.value}`,
     },
   });
 
@@ -47,5 +53,5 @@ export const getUser = async () => {
 };
 
 export const isAuthenticated = () => {
-  return !!localStorage.getItem('authToken');
+  return !!token.value;
 };

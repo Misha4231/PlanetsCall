@@ -27,18 +27,17 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // if (isAuthenticated()) {
-    //   getUser()
-    //     .then(setUser)
-    //     .catch(() => setUser(null));
-    // }
+    if (isAuthenticated()) {
+      getUser()
+        .then(setUser)
+        .catch(() => setUser(null));
+    }
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (uniqueIdentifier: string, password: string) => {
     try {
-      await loginService(email, password);
-      //const userData = await getUser();
-      //setUser(userData);
+      const { token, user: userData } = await loginService(uniqueIdentifier, password);
+      setUser(userData);
     } catch (error) {
       throw new Error('Błąd logowania');
     }
@@ -46,7 +45,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const logout = () => {
     logoutService();
-    //setUser(null);
+    setUser(null);
   };
 
   return (

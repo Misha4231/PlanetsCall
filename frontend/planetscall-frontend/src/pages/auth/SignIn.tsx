@@ -19,9 +19,10 @@ const SignIn = () => {
 
     try {
       const userData = await login(uniqueIdentifier, password);
-      
-      await loginUser(uniqueIdentifier, password); 
-      navigate('/'); 
+    
+      console.log("Zalogowano");
+      console.log(userData);
+      navigate('/profile'); 
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Błąd logowania. Sprawdź dane i spróbuj ponownie.');
