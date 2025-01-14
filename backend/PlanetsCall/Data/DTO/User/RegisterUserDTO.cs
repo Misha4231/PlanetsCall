@@ -15,7 +15,7 @@ public class RegisterUserDto
     public NewUserPasswordDto? Passwords { get; set; }
     public bool AgreedToTermsOfService { get; set; }
 
-    public List<string> IsValid()
+    public List<string> IsValid() // validates data provided in DTO
     {
         List<string> messages = new List<string>();
         
@@ -24,8 +24,8 @@ public class RegisterUserDto
             messages.Add("You must agree to Terms of service");
         }
 
-        List<string>? passwordMessages = Passwords?.IsValid();
-        if (passwordMessages is not null && passwordMessages.Count > 0)
+        List<string>? passwordMessages = Passwords?.IsValid(); // check everything important for password
+        if (passwordMessages is not null && passwordMessages.Count > 0) // in case mistakes found, add it to list
         {
             messages.AddRange(passwordMessages);
         }

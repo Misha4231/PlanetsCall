@@ -1,5 +1,6 @@
 ﻿namespace PlanetsCall.Controllers.Exceptions;
 
+// object representing an response error to match errors from ef core validation style
 public class ErrorResponse
 {
     public string Title { get; set; }

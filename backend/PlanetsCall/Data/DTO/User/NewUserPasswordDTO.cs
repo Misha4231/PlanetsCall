@@ -11,7 +11,7 @@ public class NewUserPasswordDto
     
     public List<string> IsValid()
     {
-        List<string> Messages = new List<string>();
+        List<string> Messages = new List<string>(); // error messages
         
         if (string.IsNullOrEmpty(this.Password))
         {

@@ -73,62 +73,25 @@ public class UsersRepository : IUsersRepository
         return _context.Users.FirstOrDefault(u => u.Email == email);
     }
 
-    public List<string> UniqueUserValidation(Users user)
+    public Users InsertUser(Users user) // Insert user to database
     {
-        List<string> errorMessages = new List<string>();
-        Users? existingUser = GetUserByUsername(user.Username);
-        if (existingUser != null)
+        if (!string.IsNullOrEmpty(user.Password)) // check in case user uses another way of authorization
         {
-            errorMessages.Add("User with the same username already exists");
-        }
-        existingUser = GetUserByEmail(user.Email);
-        if (existingUser != null)
-        {
-            errorMessages.Add("User with the same email already exists");
-        }
-
-        return errorMessages;
-    }
-
-    public Users InsertUser(Users user)
-    {
-        if (!string.IsNullOrEmpty(user.Password))
-        {
-            user.Password = this._hashManager.Encrypt(user.Password);
+            user.Password = this._hashManager.Encrypt(user.Password); // passwords are stored in encrypted way
         }
         
-        _context.Users.Add(user);
-        Save();
+        _context.Users.Add(user); // add to table
+        _context.SaveChanges(); // save changes
 
-        var log = new Logs
-        {
-            Type = "Create account",
-            UserId = user.Id,
-            Data = "{}",
-            CreatedAt = DateTime.Now
-        };
-        _context.Logs.Add(log);
-        Save();
-        
         return user;
     }
 
-    public Users UpdateUser(Users user, string additionalInfo = "")
+    public Users UpdateUser(Users user) // updates user
     {
         user.UpdatedAt = DateTime.Now;
         _context.Users.Update(user);
-        Save();
-        
-        var log = new Logs
-        {
-            Type = "Update user data",
-            UserId = user.Id,
-            Data = $"{{additionalInfo: \"{additionalInfo}\"}}",
-            CreatedAt = DateTime.Now
-        };
-        _context.Logs.Add(log);
-        Save();
-        
+        _context.SaveChanges();
+
         return user;
     }
 
@@ -167,7 +130,7 @@ public class UsersRepository : IUsersRepository
             userToUpdate.Password = this._hashManager.Encrypt(user.Passwords.Password!);
         }
 
-        UpdateUser(userToUpdate, "update settings");
+        UpdateUser(userToUpdate);
         return userToUpdate;
     }
 
@@ -193,11 +156,6 @@ public class UsersRepository : IUsersRepository
         var logs = _context.Logs.Where(log => log.UserId == user.Id).ToList();
         _context.RemoveRange(logs);
         
-        Save();
-    }
-    
-    public void Save()
-    {
         _context.SaveChanges();
     }
 }
