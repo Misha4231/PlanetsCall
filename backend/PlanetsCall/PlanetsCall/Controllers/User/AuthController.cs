@@ -40,7 +40,7 @@ namespace PlanetsCall.Controllers.User
         public IActionResult SignUp([FromBody] RegisterUserDto user)
         {
             List<string> errorMessages = new List<string>();
-            Users? createdUser = ValidateAndPrepareUser(user, true, errorMessages); // validate user
+            Users? createdUser = ValidateAndPrepareUser(user, false, errorMessages); // validate user
             if (createdUser is null) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier)); // is mistakes are found return code 400
             
             this._emailSender.SendUserConfirmationMail(createdUser); // send mail with link to activate account
@@ -81,7 +81,7 @@ namespace PlanetsCall.Controllers.User
                 Email = user.Email,
                 Username = user.Username,
                 Password = user.Passwords?.Password,
-                IsActivated = true,
+                IsActivated = isActivated,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 PreferredLanguage = "en",

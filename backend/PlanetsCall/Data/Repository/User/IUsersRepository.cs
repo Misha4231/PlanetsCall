@@ -1,6 +1,7 @@
 ﻿using Data.DTO.Global;
 using Data.DTO.User;
 using Data.Models;
+using PlanetsCall.Controllers.Exceptions;
 
 namespace Data.Repository.User;
 
@@ -14,8 +15,8 @@ public interface IUsersRepository
     Users? GetUserByEmail(string email);
     Users InsertUser(Users user);
     Users UpdateUser(Users user);
-    Users UpdateUser(UpdateUserDto user);
-    List<string> UpdateUserValidation(UpdateUserDto user);
+    Users UpdateUser(UpdateUserDto user, int userId);
+    ErrorResponse? UpdateUserValidation(UpdateUserDto user, int userId);
     void DeleteUser(Users user);
 
 }

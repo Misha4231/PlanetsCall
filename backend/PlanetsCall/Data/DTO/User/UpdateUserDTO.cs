@@ -5,8 +5,6 @@ namespace Data.DTO.User;
 
 public class UpdateUserDto
 {
-    [Key]
-    public int Id { get; set; }
     [Required]
     [EmailAddress]
     [MaxLength(250)]

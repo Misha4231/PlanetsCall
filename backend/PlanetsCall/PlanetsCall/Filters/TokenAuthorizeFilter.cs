@@ -31,7 +31,7 @@ public class TokenAuthorizeFilter : Attribute, IAuthorizationFilter
             
             // get user and check if it is activated
             Users? user = usersRepository.GetUserByEmail(userEmail!);
-            if (user is not null && user.IsActivated)
+            if (user is not null && !user.IsActivated)
             {
                 context.Result = new UnauthorizedObjectResult("user is not activated");
                 return;
