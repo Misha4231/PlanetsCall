@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
-import useAuth from '../../hooks/useAuth';  
 import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../../services/authService'; 
+import { useAuth } from '../../context/AuthContext';
 
 const SignIn = () => {
   const { login: loginUser } = useAuth();
@@ -18,10 +18,9 @@ const SignIn = () => {
 
 
     try {
-      const userData = await login(uniqueIdentifier, password);
+      await loginUser(uniqueIdentifier, password);
     
       console.log("Zalogowano");
-      console.log(userData);
       navigate('/profile'); 
     } catch (err: any) {
       console.error(err);
@@ -63,9 +62,6 @@ const SignIn = () => {
         </li>
         <li>
           <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
-        </li>
-        <li>
-          <Link to="/">Strona Główna</Link>
         </li>
       </ul>
       <Footer />

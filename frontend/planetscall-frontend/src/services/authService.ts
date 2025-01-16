@@ -1,8 +1,6 @@
 import { error } from "console";
 
-const token = {
-  value: "",
-};
+let token = "";
 
 export const login = async (uniqueIdentifier: string, password: string) => {
   const response = await fetch('https://localhost:7000/api/Auth/sign-in', {
@@ -22,23 +20,23 @@ export const login = async (uniqueIdentifier: string, password: string) => {
   }
 
   const data = await response.json();
-  token.value = data.accessToken;
-  console.log(token.value);
-  return data;
+  token = data.accessToken;
+  console.log(token);
+  return {token, user: data.user};
 };
 
 export const logout = () => {
-  token.value = "";  
+  token = "";  
 };
 
-export const getUser = async () => {
-  if (!token.value) {
+export const getUser = async (authToken: string) => {
+  if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
   const response = await fetch('https://localhost:7000/api/Auth/me/min', {
     headers: {
-      'Authorization': `Bearer ${token.value}`,
+      'Authorization': `Bearer ${authToken}`,
     },
   });
 
@@ -53,5 +51,27 @@ export const getUser = async () => {
 };
 
 export const isAuthenticated = () => {
-  return !!token.value;
+  return !!token;
+};
+
+
+export const getFullUser = async(authToken: string) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+
+  const response = await fetch('https://localhost:7000/api/Auth/me/full', {
+    headers: {
+      'Authorization': `Bearer ${authToken}`,
+    },
+  });
+
+  if (response.status === 401) {
+    throw new Error('Brak autoryzacji. Proszę się zalogować.');
+  }
+  if (!response.ok) {
+    throw new Error('Nie udało się pobrać danych użytkownika');
+  }
+
+  return await response.json();
 };

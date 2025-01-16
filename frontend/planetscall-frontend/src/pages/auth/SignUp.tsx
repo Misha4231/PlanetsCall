@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -92,6 +92,14 @@ const SignUp: React.FC = () => {
         {success && <p style={{ color: 'green' }}>{success}</p>}
         <button type="submit">Zarejestruj się</button>
       </form>
+          <ul>
+            <li>
+              <Link to="/auth/sign-in">Zaloguj się</Link>
+            </li>
+            <li>
+              <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
+            </li>
+          </ul>
       <Footer />
     </div>
   );
