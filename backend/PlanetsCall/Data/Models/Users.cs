@@ -75,7 +75,7 @@ public class Users
     public ICollection<TopicComments>? TopicCommentsCollection { get; set; }
     public ICollection<TopicComments>? LikedCommentsCollection { get; set; }
     
-    public ICollection<Items>? ItemsCollection { get; set; }
+    public ICollection<Items> ItemsCollection { get; set; }
     
     public ICollection<Logs>? Actions { get; set; }
     public ICollection<Organisations> RequestedOrganizations { get; set; }

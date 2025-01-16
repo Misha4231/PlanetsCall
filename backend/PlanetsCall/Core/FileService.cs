@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using PlanetsCall.Controllers.Exceptions;
 
 namespace Core;
 
@@ -26,14 +28,14 @@ public class FileService
         byte[] image = Convert.FromBase64String(b64File); // from base64 to bytes
         if (image.Length > (maxWeight * 1024 * 1024)) // validate file size
         {
-            throw new InvalidOperationException("File size exceeds the maximum allowed size");
+            throw new CodeException("File size exceeds the maximum allowed size", StatusCodes.Status415UnsupportedMediaType);
         }
 
         using var ms = new MemoryStream(image);
         Image img = Image.FromStream(ms); // create image object
         if (!allowedExtensions.Contains(img.RawFormat)) // validate extentions
         {
-            throw new InvalidOperationException("File type not allowed");
+            throw new CodeException("File type not allowed", StatusCodes.Status415UnsupportedMediaType);
         }
 
         string? extension = new ImageFormatConverter().ConvertToString(img.RawFormat);
@@ -60,6 +62,6 @@ public class FileService
         if (!string.IsNullOrEmpty(from)) DeleteFile(from); // if the old file provided - delete
         if (!string.IsNullOrEmpty(to)) return SaveFile(to, directory, allowedExtensions, maxWeight); // if the new file provided - save
 
-        return from;
+        return to;
     }
 }
