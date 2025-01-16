@@ -7,12 +7,10 @@ import App from '../App';
 //import NotFound from '../pages/NotFound/NotFound';
 
 //PROFILE LINKS
-import { AuthProvider } from '../context/AuthContext';
+import { AuthProvider, useAuth } from '../context/AuthContext';
 import NotFound from '../pages/NotFound/NotFound';
 import Shop from '../pages/profile/Shop';
 import { User } from "../pages/profile/types";
-import useAuth from '../hooks/useAuth';
-
 
 
 import SignIn from '../pages/auth/SignIn';

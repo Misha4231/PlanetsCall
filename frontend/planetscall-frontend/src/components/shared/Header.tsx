@@ -1,7 +1,7 @@
 // src/components/shared/Header.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
+import { useAuth } from '../../context/AuthContext';
 
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();

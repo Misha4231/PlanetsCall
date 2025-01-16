@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
+import { Link } from 'react-router-dom';
 
 const ForgotPassword: React.FC = () => {
   const [uniqueIdentifier, setUniqueIdentifier] = useState('');
@@ -124,6 +125,14 @@ const ForgotPassword: React.FC = () => {
         </form>
       ) 
       }
+      <ul>
+        <li>
+          <Link to="/auth/sign-up">Zarejestruj się</Link>
+        </li>
+        <li>
+          <Link to="/auth/sign-in">Zaloguj się</Link>
+        </li>
+      </ul>
     </div>
   );
 };
