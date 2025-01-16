@@ -27,8 +27,8 @@ public class OrganisationRolesController : ControllerBase
     [TokenAuthorizeFilter]
     public IActionResult GetRoles()
     {
-        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
-        Organisations organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
+        Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        Organisations? organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
         if (organisation!.IsPrivate && !organisation.Members.Contains(requestUser))
         {
             return BadRequest(new ErrorResponse(new List<string>() { "Access denied" }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
@@ -42,8 +42,8 @@ public class OrganisationRolesController : ControllerBase
     [TokenAuthorizeFilter]
     public IActionResult CreateRole(RolesFormDto role)
     {
-        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
-        Organisations organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
+        Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        Organisations? organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
         
         try
         {
@@ -52,9 +52,9 @@ public class OrganisationRolesController : ControllerBase
 
             return Ok(newRole);
         }
-        catch (Exception e)
+        catch (CodeException e)
         {
-            return BadRequest(new ErrorResponse(new List<string>() { e.Message }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
     }
 
@@ -63,8 +63,8 @@ public class OrganisationRolesController : ControllerBase
     [TokenAuthorizeFilter]
     public IActionResult UpdateRole(RolesFormDto role, int roleId)
     {
-        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
-        Organisations organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
+        Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        Organisations? organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
 
         try
         {
@@ -74,10 +74,9 @@ public class OrganisationRolesController : ControllerBase
 
             return Ok(newRoleData);
         }
-        catch (Exception e)
+        catch (CodeException e)
         {
-            return BadRequest(new ErrorResponse(new List<string>() { e.Message }, StatusCodes.Status400BadRequest,
-                HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
     }
     [HttpDelete]
@@ -85,8 +84,8 @@ public class OrganisationRolesController : ControllerBase
     [TokenAuthorizeFilter]
     public IActionResult DeleteRole(int roleId)
     {
-        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
-        Organisations organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
+        Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        Organisations? organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
 
         try
         {
@@ -96,10 +95,9 @@ public class OrganisationRolesController : ControllerBase
 
             return NoContent();
         }
-        catch (Exception e)
+        catch (CodeException e)
         {
-            return BadRequest(new ErrorResponse(new List<string>() { e.Message }, StatusCodes.Status400BadRequest,
-                HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
     }
     [HttpPost]
@@ -107,8 +105,8 @@ public class OrganisationRolesController : ControllerBase
     [TokenAuthorizeFilter]
     public IActionResult GrantUserRole(int roleId, int userId)
     {
-        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
-        Organisations organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
+        Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        Organisations? organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
 
         try
         {
@@ -121,10 +119,9 @@ public class OrganisationRolesController : ControllerBase
 
             return NoContent();
         }
-        catch (Exception e)
+        catch (CodeException e)
         {
-            return BadRequest(new ErrorResponse(new List<string>() { e.Message }, StatusCodes.Status400BadRequest,
-                HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
     }
     
@@ -133,8 +130,8 @@ public class OrganisationRolesController : ControllerBase
     [TokenAuthorizeFilter]
     public IActionResult RevokeUserRole(int roleId, int userId)
     {
-        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
-        Organisations organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
+        Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        Organisations? organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
 
         try
         {
@@ -147,10 +144,9 @@ public class OrganisationRolesController : ControllerBase
 
             return NoContent();
         }
-        catch (Exception e)
+        catch (CodeException e)
         {
-            return BadRequest(new ErrorResponse(new List<string>() { e.Message }, StatusCodes.Status400BadRequest,
-                HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
     }
 }

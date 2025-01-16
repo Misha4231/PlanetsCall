@@ -17,7 +17,7 @@ public interface IOrganisationsRepository
     void RemoveMember(Users user, string organisationUniqueName, int removeUserId);
     PaginatedList<MinOrganisationDto> SearchOrganization(string searchString, int page);
     FullOrganisationDto GetOrganisation(string organisationUniqueName);
-    Organisations? GetObjOrganisation(string organisationUniqueName);
+    Organisations GetObjOrganisation(string organisationUniqueName);
     FullOrganisationDto UpdateOrganisation(OrganisationUpdateFormDto organisation, Users user);
     void RemoveOrganisation(string organisationUniqueName, Users user);
     void EnsureUserHasPermission(Users user, string organisationUniqueName, Func<OrganisationRoles, bool> permissionCheck);
