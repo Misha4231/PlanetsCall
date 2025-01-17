@@ -17,6 +17,17 @@ interface User {
   points: number;
   theme_preference: number;
   last_login_at: string;
+  firstName: string;
+  lastName: string;
+  preferredLanguage: string;
+  isNotifiable: boolean;
+  isVisible: boolean;
+  instagramLink: string;
+  linkedinLink: string;
+  youtubeLink: string;
+  cityId: number;
+  countryId: number;
+  mailsSubscribed: boolean;
 }
 
 interface AuthContextType {

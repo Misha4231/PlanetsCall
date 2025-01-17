@@ -75,3 +75,25 @@ export const getFullUser = async(authToken: string) => {
 
   return await response.json();
 };
+
+export const updateUserSettings = async (authToken: string, formData: any) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+
+  const response = await fetch('https://localhost:7000/api/Profiles/set-settings', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authToken}`,
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Błąd aktualizacji profilu');
+  }
+
+  return await response.json();
+};

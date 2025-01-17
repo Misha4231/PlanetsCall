@@ -20,7 +20,6 @@ const Profile :React.FC = () => {
 
 
   if (!isAuthenticated) {
-    navigate('/'); 
     return (<div>
       <Header/>
       <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>

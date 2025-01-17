@@ -89,7 +89,7 @@ const router = createBrowserRouter([
     element: <LevelTree />
   },
   {
-    path: '/profile/Achievements ',
+    path: '/profile/achievements ',
     element: <Achievements />
   },
   {
