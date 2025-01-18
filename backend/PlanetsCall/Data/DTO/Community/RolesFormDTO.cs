@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Data.Models;
+namespace Data.DTO.Community;
 
-public class OrganizationRoles
+public class RolesFormDto
 {
-    [Key]
-    public int Id { get; set; }
     [MaxLength(250)]
     [Required]
     public required string Title { get; set; }
@@ -20,6 +18,4 @@ public class OrganizationRoles
     public bool CanDeleteTasks { get; set; }
     [MaxLength(300)]
     public string? Image { get; set; }
-    
-    public ICollection<OrganizationUserRoles>? UserRolesCollection { get; set; }
 }

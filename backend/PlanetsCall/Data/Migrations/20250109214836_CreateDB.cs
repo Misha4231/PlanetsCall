@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class CreateDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -41,29 +41,6 @@ namespace Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ItemsCategories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OrganizationRoles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    CanDeleteOrganization = table.Column<bool>(type: "boolean", nullable: false),
-                    CanRemoveUsers = table.Column<bool>(type: "boolean", nullable: false),
-                    CanAcceptUsers = table.Column<bool>(type: "boolean", nullable: false),
-                    CanConfigureOrganization = table.Column<bool>(type: "boolean", nullable: false),
-                    CanAddTask = table.Column<bool>(type: "boolean", nullable: false),
-                    CanConfigureRoles = table.Column<bool>(type: "boolean", nullable: false),
-                    CanGivePermissions = table.Column<bool>(type: "boolean", nullable: false),
-                    CanUpdateTasks = table.Column<bool>(type: "boolean", nullable: false),
-                    CanDeleteTasks = table.Column<bool>(type: "boolean", nullable: false),
-                    Image = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrganizationRoles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -449,34 +426,54 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrganizationUserRoles",
+                name: "OrganizationRoles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    OrganizationId = table.Column<int>(type: "integer", nullable: false),
-                    OrganisationId = table.Column<int>(type: "integer", nullable: false),
-                    OrganizationRoleId = table.Column<int>(type: "integer", nullable: false)
+                    Title = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    CanDeleteOrganization = table.Column<bool>(type: "boolean", nullable: false),
+                    CanRemoveUsers = table.Column<bool>(type: "boolean", nullable: false),
+                    CanAcceptUsers = table.Column<bool>(type: "boolean", nullable: false),
+                    CanConfigureOrganization = table.Column<bool>(type: "boolean", nullable: false),
+                    CanAddTask = table.Column<bool>(type: "boolean", nullable: false),
+                    CanConfigureRoles = table.Column<bool>(type: "boolean", nullable: false),
+                    CanGivePermissions = table.Column<bool>(type: "boolean", nullable: false),
+                    CanUpdateTasks = table.Column<bool>(type: "boolean", nullable: false),
+                    CanDeleteTasks = table.Column<bool>(type: "boolean", nullable: false),
+                    Image = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    OrganisationId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrganizationUserRoles", x => x.Id);
+                    table.PrimaryKey("PK_OrganizationRoles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrganizationUserRoles_OrganizationRoles_OrganizationRoleId",
-                        column: x => x.OrganizationRoleId,
-                        principalTable: "OrganizationRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrganizationUserRoles_Organizations_OrganisationId",
+                        name: "FK_OrganizationRoles_Organizations_OrganisationId",
                         column: x => x.OrganisationId,
                         principalTable: "Organizations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrganizationUsers",
+                columns: table => new
+                {
+                    MembersId = table.Column<int>(type: "integer", nullable: false),
+                    MyOrganisationId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrganizationUsers", x => new { x.MembersId, x.MyOrganisationId });
                     table.ForeignKey(
-                        name: "FK_OrganizationUserRoles_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_OrganizationUsers_Organizations_MyOrganisationId",
+                        column: x => x.MyOrganisationId,
+                        principalTable: "Organizations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrganizationUsers_Users_MembersId",
+                        column: x => x.MembersId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -542,6 +539,30 @@ namespace Data.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrganizationUserRoles",
+                columns: table => new
+                {
+                    OrganizationRolesId = table.Column<int>(type: "integer", nullable: false),
+                    UsersWithRoleId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrganizationUserRoles", x => new { x.OrganizationRolesId, x.UsersWithRoleId });
+                    table.ForeignKey(
+                        name: "FK_OrganizationUserRoles_OrganizationRoles_OrganizationRolesId",
+                        column: x => x.OrganizationRolesId,
+                        principalTable: "OrganizationRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrganizationUserRoles_Users_UsersWithRoleId",
+                        column: x => x.UsersWithRoleId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -708,6 +729,11 @@ namespace Data.Migrations
                 column: "RequestsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrganizationRoles_OrganisationId",
+                table: "OrganizationRoles",
+                column: "OrganisationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Organizations_CreatorId",
                 table: "Organizations",
                 column: "CreatorId");
@@ -719,19 +745,14 @@ namespace Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrganizationUserRoles_OrganisationId",
+                name: "IX_OrganizationUserRoles_UsersWithRoleId",
                 table: "OrganizationUserRoles",
-                column: "OrganisationId");
+                column: "UsersWithRoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrganizationUserRoles_OrganizationRoleId",
-                table: "OrganizationUserRoles",
-                column: "OrganizationRoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrganizationUserRoles_UserId",
-                table: "OrganizationUserRoles",
-                column: "UserId");
+                name: "IX_OrganizationUsers_MyOrganisationId",
+                table: "OrganizationUsers",
+                column: "MyOrganisationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_states_country_id",
@@ -843,6 +864,9 @@ namespace Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrganizationUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "OrganizationUsers");
 
             migrationBuilder.DropTable(
                 name: "TasksVerification");

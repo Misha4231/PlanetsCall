@@ -5,24 +5,27 @@ using System.Net.Mail;
 
 namespace PlanetsCall.Helper;
 
+/*
+ * Helper service for mails sending
+ * SendForgottenPasswordMail, SendUserConfirmationMail - public methods called inside controllers
+ * GenerateLink, SendMail - private helper methods
+ */
 public class EmailSender
 {
-    private readonly HashManager _hashManager;
-    private readonly IConfiguration _configuration;
+    private readonly HashManager _hashManager; // used for hashing used and making code expiring
+    private readonly IConfiguration _configuration; // data for constructing mails
     public EmailSender(HashManager hashManager, IConfiguration configuration)
     {
         this._hashManager = hashManager;
         this._configuration = configuration;
     }
 
-    public void SendForgottenPasswordMail(Users user)
-    {
-        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var userHash = _hashManager.Encrypt($"{user.Username}:{timestamp}");
-        var activationLink = _configuration["WebsiteDomain"] + "/change-forgotten-password/?code=" + userHash;
-        var receiver = user.Email;
-
-        SendMail(receiver, "Planet's Call - Password Reset Request for Your Account", 
+    public void SendForgottenPasswordMail(Users user) // sends email when user forgot password and wants to reset it
+    { 
+        var activationLink = GenerateLink(user, "/change-forgotten-password/?code="); // calling helper method to generate expiring link
+        
+        // calling helper method to send mail
+        SendMail(user.Email, "Planet's Call - Password Reset Request for Your Account", 
             $"Hello {user.Username}!<br><br>" +
             "We received a request to reset the password for your account. If you made this request, " +
             $"please click the link below to set a new password:<br><br>" +
@@ -33,14 +36,12 @@ public class EmailSender
             isHtml: true);
     }
 
-    public void SendUserConfirmationMail(Users user)
+    public void SendUserConfirmationMail(Users user) // sends email when user wants to register, hence should confirm his mail address
     {
-        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var userHash = _hashManager.Encrypt($"{user.Username}:{timestamp}");
-        var activationLink = _configuration["WebsiteDomain"] + "/activation/?code=" + userHash;
-        var receiver = user.Email;
+        var activationLink = GenerateLink(user, "/activation/?code=");  // calling helper method to generate expiring link
 
-        SendMail(receiver, "Planet's Call - Confirm Your Account Activation", 
+        // calling helper method to send mail
+        SendMail(user.Email, "Planet's Call - Confirm Your Account Activation", 
             $"Hello {user.Username}!<br><br>" +
             "Thank you for registering! To complete your registration, please confirm your email address " +
             "by clicking the link below:<br><br>" +
@@ -48,21 +49,34 @@ public class EmailSender
             "Best regards,<br>Planet's Call", 
             isHtml: true);
     }
+    
+    
+    private string GenerateLink(Users user, string endpoint)
+    {
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // current timestamp to put it inside code and expire when needed
+        var userHash = _hashManager.Encrypt($"{user.Username}:{timestamp}");
+        var link = _configuration["WebsiteDomain"] + endpoint + userHash; // constructing link
 
+        return link;
+    }
+    
+    // most important helper method to actually send mails with SMTP server
     private void SendMail(string receiver, string subject, string content, bool isHtml = false)
     {
         var sender = _configuration.GetSection("SMTP:Username").Get<string>();
         var senderPassword = _configuration.GetSection("SMTP:Password").Get<string>();
         var Hostname = _configuration.GetSection("SMTP:Hostname").Get<string>();
         var Port = _configuration.GetSection("SMTP:Port").Get<int>();
-
+        
+        // Constructing mail body
         MailMessage mailMessage = new MailMessage();
         mailMessage.From = new MailAddress(sender);
         mailMessage.To.Add(receiver);
         mailMessage.Subject = subject;
         mailMessage.Body = content;
         mailMessage.IsBodyHtml = isHtml;
-
+        
+        // Configuring SMTP client
         SmtpClient smtpClient = new SmtpClient();
         smtpClient.Host = Hostname;
         smtpClient.Port = Port;
@@ -72,7 +86,7 @@ public class EmailSender
 
         try
         {
-            smtpClient.Send(mailMessage);
+            smtpClient.Send(mailMessage); // sending mail
         }
         catch (Exception ex)
         {

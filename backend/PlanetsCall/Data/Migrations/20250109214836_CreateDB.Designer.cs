@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-    [Migration("20241227092116_Init")]
-    partial class Init
+    [Migration("20250109214836_CreateDB")]
+    partial class CreateDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -357,6 +357,60 @@ namespace Data.Migrations
                     b.ToTable("Logs");
                 });
 
+            modelBuilder.Entity("Data.Models.OrganisationRoles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("CanAcceptUsers")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanAddTask")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanConfigureOrganization")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanConfigureRoles")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanDeleteOrganization")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanDeleteTasks")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanGivePermissions")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanRemoveUsers")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanUpdateTasks")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Image")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<int>("OrganisationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganisationId");
+
+                    b.ToTable("OrganizationRoles");
+                });
+
             modelBuilder.Entity("Data.Models.Organisations", b =>
                 {
                     b.Property<int>("Id")
@@ -420,86 +474,6 @@ namespace Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Organizations");
-                });
-
-            modelBuilder.Entity("Data.Models.OrganizationRoles", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("CanAcceptUsers")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("CanAddTask")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("CanConfigureOrganization")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("CanConfigureRoles")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("CanDeleteOrganization")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("CanDeleteTasks")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("CanGivePermissions")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("CanRemoveUsers")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("CanUpdateTasks")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Image")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OrganizationRoles");
-                });
-
-            modelBuilder.Entity("Data.Models.OrganizationUserRoles", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("OrganisationId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("OrganizationId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("OrganizationRoleId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganisationId");
-
-                    b.HasIndex("OrganizationRoleId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("OrganizationUserRoles");
                 });
 
             modelBuilder.Entity("Data.Models.Regions", b =>
@@ -999,6 +973,21 @@ namespace Data.Migrations
                     b.ToTable("UserItems", (string)null);
                 });
 
+            modelBuilder.Entity("OrganisationRolesUsers", b =>
+                {
+                    b.Property<int>("OrganizationRolesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UsersWithRoleId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrganizationRolesId", "UsersWithRoleId");
+
+                    b.HasIndex("UsersWithRoleId");
+
+                    b.ToTable("OrganizationUserRoles", (string)null);
+                });
+
             modelBuilder.Entity("OrganisationsUsers", b =>
                 {
                     b.Property<int>("RequestedOrganizationsId")
@@ -1012,6 +1001,21 @@ namespace Data.Migrations
                     b.HasIndex("RequestsId");
 
                     b.ToTable("OrganizationRequests", (string)null);
+                });
+
+            modelBuilder.Entity("OrganisationsUsers1", b =>
+                {
+                    b.Property<int>("MembersId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MyOrganisationId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MembersId", "MyOrganisationId");
+
+                    b.HasIndex("MyOrganisationId");
+
+                    b.ToTable("OrganizationUsers", (string)null);
                 });
 
             modelBuilder.Entity("TopicCommentsUsers", b =>
@@ -1122,6 +1126,17 @@ namespace Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Data.Models.OrganisationRoles", b =>
+                {
+                    b.HasOne("Data.Models.Organisations", "Organisation")
+                        .WithMany("Roles")
+                        .HasForeignKey("OrganisationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organisation");
+                });
+
             modelBuilder.Entity("Data.Models.Organisations", b =>
                 {
                     b.HasOne("Data.Models.Users", "Creator")
@@ -1131,33 +1146,6 @@ namespace Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Data.Models.OrganizationUserRoles", b =>
-                {
-                    b.HasOne("Data.Models.Organisations", "Organisation")
-                        .WithMany("UserRolesCollection")
-                        .HasForeignKey("OrganisationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.OrganizationRoles", "OrganizationRole")
-                        .WithMany("UserRolesCollection")
-                        .HasForeignKey("OrganizationRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.Users", "User")
-                        .WithMany("OrganizationRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organisation");
-
-                    b.Navigation("OrganizationRole");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Data.Models.States", b =>
@@ -1320,6 +1308,21 @@ namespace Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OrganisationRolesUsers", b =>
+                {
+                    b.HasOne("Data.Models.OrganisationRoles", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizationRolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Models.Users", null)
+                        .WithMany()
+                        .HasForeignKey("UsersWithRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("OrganisationsUsers", b =>
                 {
                     b.HasOne("Data.Models.Organisations", null)
@@ -1331,6 +1334,21 @@ namespace Data.Migrations
                     b.HasOne("Data.Models.Users", null)
                         .WithMany()
                         .HasForeignKey("RequestsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OrganisationsUsers1", b =>
+                {
+                    b.HasOne("Data.Models.Users", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Models.Organisations", null)
+                        .WithMany()
+                        .HasForeignKey("MyOrganisationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1406,14 +1424,9 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.Organisations", b =>
                 {
+                    b.Navigation("Roles");
+
                     b.Navigation("TasksCreatedCollection");
-
-                    b.Navigation("UserRolesCollection");
-                });
-
-            modelBuilder.Entity("Data.Models.OrganizationRoles", b =>
-                {
-                    b.Navigation("UserRolesCollection");
                 });
 
             modelBuilder.Entity("Data.Models.Regions", b =>
@@ -1455,8 +1468,6 @@ namespace Data.Migrations
                     b.Navigation("Actions");
 
                     b.Navigation("CreatedTopics");
-
-                    b.Navigation("OrganizationRoles");
 
                     b.Navigation("OwnedOrganizations");
 

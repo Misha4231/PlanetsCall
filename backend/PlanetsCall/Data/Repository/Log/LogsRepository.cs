@@ -11,7 +11,7 @@ public class LogsRepository : ILogsRepository
         this._context = context;
     }
 
-    public List<Logs> GetAttendance(Users user)
+    public List<Logs> GetAttendance(Users user) // get when user used service (used for statistics)
     {
         List<Logs> attendance = _context.Logs.Where(log => log.UserId == user.Id && log.Type == "attendance").Select(log => new Logs
         {
@@ -25,10 +25,10 @@ public class LogsRepository : ILogsRepository
         return attendance;
     }
 
-    public void AddAttendance(Users user)
+    public void AddAttendance(Users user) // add attendance today (used for statistics)
     {
         if (!_context.Logs.Any(log =>
-                log.UserId == user.Id && log.Type == "attendance" && log.CreatedAt.Date == DateTime.Today))
+                log.UserId == user.Id && log.Type == "attendance" && log.CreatedAt.Date == DateTime.Today)) // check if today's attendance is already marked
         {
             _context.Logs.Add(new Logs()
             {
@@ -36,7 +36,7 @@ public class LogsRepository : ILogsRepository
                 UserId = user.Id,
                 Data = "{}",
                 CreatedAt = DateTime.Now
-            });
+            }); // add log
 
             _context.SaveChanges();
         }

@@ -4,7 +4,6 @@ using Data.Models;
 using Data.Repository.Item;
 using Data.Repository.Log;
 using Data.Repository.User;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
@@ -28,9 +27,10 @@ public class ItemsController : ControllerBase
 
     [HttpGet]
     [Route("{categoryId}/")]
-    public IActionResult GetItemsBatch([FromRoute] int categoryId, [FromQuery] int page = 1)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetItemsBatch([FromRoute] int categoryId, [FromQuery] int page = 1) // Fetches a batch of items by category and paginates them
     {
-        PaginatedList<Items> pageItems = _itemsRepository.GetItemsPartition(categoryId, page);
+        PaginatedList<MinItemDto> pageItems = _itemsRepository.GetItemsPartition(categoryId, page); // Retrieves a paginates list of items for given category
 
         return Ok(pageItems);
     }
@@ -40,17 +40,18 @@ public class ItemsController : ControllerBase
     [TokenAuthorizeFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult BuyItem(int itemId)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult BuyItem(int itemId) // but item from shop
     {
-        Users requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
 
         try
         {
-            _itemsRepository.GiveItem(requestUser!, itemId);
+            _itemsRepository.GiveItem(requestUser!, itemId); // call repository method to validate everything and give item
         }
-        catch (Exception e)
-        {
-            return BadRequest(new ErrorResponse(new List<string>() { e.Message }, 400, HttpContext.TraceIdentifier));
+        catch (CodeException e)
+        { // some mistake has been found
+            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
 
         return Ok();
@@ -58,7 +59,8 @@ public class ItemsController : ControllerBase
 
     [HttpGet]
     [Route("categories/")]
-    public IActionResult GetCategories()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetCategories() // gets all categories (without pagination because there won't be many of it)
     {
         return Ok(_itemsRepository.GetCategories());
     }
@@ -66,49 +68,83 @@ public class ItemsController : ControllerBase
     [HttpPost]
     [AdminOnlyFilter]
     [Route("")]
-    public IActionResult AddItem([FromBody] MinItemDTO item)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+    public IActionResult AddItem([FromBody] MinItemDto item) // adds item, so uses can buy it later
     {
-        #nullable enable
-        Items? newItem = _itemsRepository.AddItem(item);
-        if (newItem is null)
+        try
         {
-            return BadRequest(new ErrorResponse(new List<string>() { "Error occured while adding item" }, 400, HttpContext.TraceIdentifier));
+            Items newItem = _itemsRepository.AddItem(item); // add to database
+            return Ok(newItem);
         }
-        
-        #nullable disable
-        return Ok(newItem);
+        catch(CodeException e)
+        {
+            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+        }
     }
     
     [HttpPost]
     [AdminOnlyFilter]
     [Route("categories/")]
-    public IActionResult AddCategory([FromBody] MinCategoryDTO category)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+    public IActionResult AddCategory([FromBody] MinCategoryDto category) // adds category, so later it can be adjusted to item
     {
-        ItemsCategory newCategory = _itemsRepository.AddCategory(category);
-        return Ok(newCategory);
+        try
+        {
+            ItemsCategory newCategory = _itemsRepository.AddCategory(category); // add to database
+            return Ok(newCategory);
+        }
+        catch (CodeException e)
+        {
+            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+        }
     }
     
     [HttpPut]
     [AdminOnlyFilter]
-    [Route("")]
-    public IActionResult UpdateItem([FromBody] UpdateItemDTO item)
+    [Route("{itemId}/")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+    public IActionResult UpdateItem([FromBody] MinItemDto item, int itemId) // updates item data
     {
-        bool isSuccess = _itemsRepository.UpdateItem(item);
-        return (isSuccess ? Ok() : BadRequest());
+        try
+        {
+            _itemsRepository.UpdateItem(item, itemId); // update item in database
+            return Ok();
+        }
+        catch (CodeException e)
+        {
+            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+        }
     }
     [HttpPut]
     [AdminOnlyFilter]
-    [Route("categories/")]
-    public IActionResult UpdateCategory([FromBody] UpdateCategoryDto category)
+    [Route("categories/{categoryId}/")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+    public IActionResult UpdateCategory([FromBody] MinCategoryDto category, int categoryId) // updates category data
     {
-        bool isSuccess = _itemsRepository.UpdateCategory(category);
-        return (isSuccess ? Ok() : BadRequest());
+        try
+        {
+            _itemsRepository.UpdateCategory(category, categoryId); // update category in database
+            return Ok();
+        }
+        catch (CodeException e)
+        {
+            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+        }
     }
     
     [HttpDelete]
     [AdminOnlyFilter]
     [Route("")]
-    public IActionResult DeleteItem([FromBody] int itemId)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult DeleteItem([FromBody] int itemId) // deletes item
     {
         bool isSuccess = _itemsRepository.DeleteItem(itemId);
         return (isSuccess ? Ok() : BadRequest());
@@ -116,7 +152,9 @@ public class ItemsController : ControllerBase
     [HttpDelete]
     [AdminOnlyFilter]
     [Route("categories/")]
-    public IActionResult DeleteCategory([FromBody] int categoryId)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult DeleteCategory([FromBody] int categoryId) // deletes category
     {
         bool isSuccess = _itemsRepository.DeleteCategory(categoryId);
         return (isSuccess ? Ok() : BadRequest());

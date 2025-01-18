@@ -1,79 +1,114 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Core.User;
 using Microsoft.AspNetCore.Mvc;
-using Data.Context;
 using Data.DTO.User;
 using Data.Models;
 using Data.Repository.User;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
 using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 using PlanetsCall.Helper;
 
+
 namespace PlanetsCall.Controllers.User
-{
+{ /*
+ * Auth Controller gives us all the necessary methods for authentication and authorization
+ * also it provides the most important functionality for working with profiles (password changing, getting profile data)
+ */
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUsersRepository _usersRepository;
-        private readonly EmailSender _emailSender;
-        private readonly HashManager _hashManager;
-        private readonly JwtTokenManager _jwtTokenManager;
-        public AuthController(IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager)
+        private readonly IUsersRepository _usersRepository; // used everywhere through class for CRUD operations in database and partly for data validation
+        private readonly EmailSender _emailSender; // helper service to easily send confirmation emails
+        private readonly HashManager _hashManager; // mainly used for hashing password
+        private readonly JwtTokenManager _jwtTokenManager; // generates tokens to later put them in Authorization header
+        private readonly IWebHostEnvironment _webHostEnvironment; // used to make development only method
+        public AuthController(IUsersRepository usersRepository, EmailSender emailSender, HashManager hashManager, JwtTokenManager jwtTokenManager, IWebHostEnvironment webHostEnvironment) // Dependency Injection
         {
+            // constructor assigns all helper services
             _usersRepository = usersRepository;
             _emailSender = emailSender;
             _hashManager = hashManager;
             _jwtTokenManager = jwtTokenManager;
+            _webHostEnvironment = webHostEnvironment;
         }
-
+        
+        
         [HttpPost]
         [Route("sign-up/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult SignUp([FromBody] RegisterUserDto user)
         {
-            var errorMessages = user.IsValid();
-            if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+            List<string> errorMessages = new List<string>();
+            Users? createdUser = ValidateAndPrepareUser(user, false, errorMessages); // validate user
+            if (createdUser is null) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier)); // is mistakes are found return code 400
+            
+            this._emailSender.SendUserConfirmationMail(createdUser); // send mail with link to activate account
+            
+            return Ok(new FullUserDto(createdUser)); // return full created user
+        }
+        
+    #if DEBUG // restrict access to debug only
+        [HttpPost]
+        [Route("development-sign-up/")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult ImmediateSignUp([FromBody] RegisterUserDto user) // register user for testing purposes without activation needed
+        {
+            List<string> errorMessages = new List<string>();
+            Users? createdUser = ValidateAndPrepareUser(user, true, errorMessages); // validate user
+            if (createdUser is null) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier)); // is mistakes are found return code 400
 
+            var token = _jwtTokenManager.GenerateToken(createdUser); // generate token to later add it to Authorization header
+            return Ok(new AccessTokenDto() { AccessToken = token }); // return token
+        }
+    #endif
+
+        // helper method to remove code repetition from SignUp and ImmediateSignUp methods
+        private Users? ValidateAndPrepareUser(RegisterUserDto user, bool isActivated, List<string> errorMessages /* when lots of sensitive data provided, exceptions could contain many messages, so List is being used*/)
+        {
+            errorMessages.AddRange(user.IsValid());
+            // checks if new user data is unique
+            if (_usersRepository.GetUserByEmail(user.Email) is not null) errorMessages.Add("User with the same email already exists");
+            if (_usersRepository.GetUserByUsername(user.Username) is not null) errorMessages.Add("User with the same username already exists");
+            
+            // if mistakes in data from user is found, return null
+            if (errorMessages.Count() != 0) return null; 
+
+            // only after user data validation construct one and add to database
             Users newUser = new Users
             {
                 Email = user.Email,
                 Username = user.Username,
                 Password = user.Passwords?.Password,
-                IsActivated = false,
+                IsActivated = isActivated,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 PreferredLanguage = "en",
-                Status = "online"
+                Status = ""
             };
-
-            errorMessages = _usersRepository.UniqueUserValidation(newUser);
-            if (errorMessages.Count() != 0) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
             
-            Users createdUser = _usersRepository.InsertUser(newUser);
-            this._emailSender.SendUserConfirmationMail(createdUser);
-            
-            return Ok(new FullUserDto(createdUser));
+            Users createdUser = _usersRepository.InsertUser(newUser); // add to database
+            return createdUser;
         }
 
+        
+        // activate user's profile
         [HttpPost]
         [Route("activate/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult ActivateProfile([FromBody] DisposableCodeDto activationCodeDto)
+        public IActionResult ActivateProfile([FromBody] DisposableCodeDto activationCodeDto) // input is code that user get inside link to mail when register
         {
-            ConfirmationCodeValidationResponse codeValidationResponse = ValidateConfirmationCode(activationCodeDto.Code);
+            ConfirmationCodeValidationResponse codeValidationResponse = ValidateConfirmationCode(activationCodeDto.Code); // validate code and get user
             if (codeValidationResponse.ErrorMessages.Count() != 0) return BadRequest(new ErrorResponse(codeValidationResponse.ErrorMessages, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
 
+            // update user to make it available to use
             codeValidationResponse.FoundUser!.IsActivated = true;
             codeValidationResponse.FoundUser!.IsVisible = true;
-            _usersRepository.UpdateUser(codeValidationResponse.FoundUser!, "activation");
+            _usersRepository.UpdateUser(codeValidationResponse.FoundUser!); // update user data in database
 
+            // return authorization token
             var token = _jwtTokenManager.GenerateToken(codeValidationResponse.FoundUser);
             return Ok(new AccessTokenDto() { AccessToken = token });
         }
@@ -82,13 +117,12 @@ namespace PlanetsCall.Controllers.User
         [Route("sign-in/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult SignIn([FromBody] SignInUserDto user)
+        public IActionResult SignIn([FromBody] SignInUserDto user) // sign in to profile
         {
-            #nullable enable
-            
-            Users? foundUser = null;
-            foundUser = _usersRepository.GetUserByUsername(user.UniqueIdentifier) ?? _usersRepository.GetUserByEmail(user.UniqueIdentifier);
-            
+            // get user by username or email (both allowed)
+            Users? foundUser = _usersRepository.GetUserByUsername(user.UniqueIdentifier) ?? _usersRepository.GetUserByEmail(user.UniqueIdentifier);
+
+            // validate user credentials
             if (foundUser is null)
             {
                 return Unauthorized(new ErrorResponse(new List<string>(){"Invalid email or username"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
@@ -101,11 +135,12 @@ namespace PlanetsCall.Controllers.User
             {
                 return Unauthorized(new ErrorResponse(new List<string>(){"Wrong password"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
             }
-            #nullable disable
 
+            // update when last signed in
             foundUser.LastLogin = DateTime.Now;
-            _usersRepository.UpdateUser(foundUser, "sign in");
+            _usersRepository.UpdateUser(foundUser);
             
+            // return authorization token
             var token = _jwtTokenManager.GenerateToken(foundUser);
             return Ok(new AccessTokenDto() { AccessToken = token });
         }
@@ -114,12 +149,11 @@ namespace PlanetsCall.Controllers.User
         [Route("forgot-password/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ForgotPassword([FromBody] UserIdentifierDto userIdentifier)
+        public IActionResult ForgotPassword([FromBody] UserIdentifierDto userIdentifier) // get mail to reset password
         {
-            #nullable enable
-            
-            Users? foundUser = null;
-            foundUser = _usersRepository.GetUserByUsername(userIdentifier.UniqueIdentifier) ?? _usersRepository.GetUserByEmail(userIdentifier.UniqueIdentifier);
+            // get user by username or email (both allowed)
+            Users? foundUser = _usersRepository.GetUserByUsername(userIdentifier.UniqueIdentifier) ?? _usersRepository.GetUserByEmail(userIdentifier.UniqueIdentifier);
+
             if (foundUser is null)
             {
                 return Unauthorized(new ErrorResponse(new List<string>(){"Invalid email or username"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
@@ -128,8 +162,8 @@ namespace PlanetsCall.Controllers.User
             {
                 return Unauthorized(new ErrorResponse(new List<string>(){"Your account was registered via google"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
             }
-            #nullable disable
-
+    
+            // send mail with link
             _emailSender.SendForgottenPasswordMail(foundUser);
             return Ok();
         }
@@ -138,15 +172,18 @@ namespace PlanetsCall.Controllers.User
         [Route("forgot-password/change")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ChangeForgottenPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+        public IActionResult ChangeForgottenPassword([FromBody] ForgotPasswordDto forgotPasswordDto) // actually change password with code
         {
+            // validate code provided
             ConfirmationCodeValidationResponse codeValidationResponse = ValidateConfirmationCode(forgotPasswordDto.Code);
             if (codeValidationResponse.ErrorMessages.Count() != 0) return BadRequest(new ErrorResponse(codeValidationResponse.ErrorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+            // checks if password is valid
             List<string> passwordMistakes = forgotPasswordDto.Passwords.IsValid();
             if (passwordMistakes.Count() != 0) return BadRequest(new ErrorResponse(passwordMistakes, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
 
+            // assign new encrypted password and update
             codeValidationResponse.FoundUser!.Password = _hashManager.Encrypt(forgotPasswordDto.Passwords.Password!);
-            _usersRepository.UpdateUser(codeValidationResponse.FoundUser, "change password");
+            _usersRepository.UpdateUser(codeValidationResponse.FoundUser);
             
             return Ok();
         }
@@ -156,9 +193,9 @@ namespace PlanetsCall.Controllers.User
         [TokenAuthorizeFilter]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetMeFull()
+        public IActionResult GetMeFull() // get full user data (for example to display profile)
         {
-            Users user = HttpContext.GetRouteValue("requestUser") as Users;
+            Users? user = HttpContext.GetRouteValue("requestUser") as Users;
             return Ok(new FullUserDto(_usersRepository.GetFullUserById(user!.Id)!));
         }
         
@@ -167,24 +204,25 @@ namespace PlanetsCall.Controllers.User
         [TokenAuthorizeFilter]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetMeMin()
+        public IActionResult GetMeMin() // get minimum user data
         {
-            Users user = HttpContext.GetRouteValue("requestUser") as Users;
+            Users? user = HttpContext.GetRouteValue("requestUser") as Users;
             return Ok(new MinUserDto(user!));
         }
 
-        private ConfirmationCodeValidationResponse ValidateConfirmationCode(string code)
+        private ConfirmationCodeValidationResponse ValidateConfirmationCode(string code) // validates activation/confirmation code user got on email
         {
             List<string> errorMessages = new List<string>();
-            var decodedCode = _hashManager.Decrypt(code);
+            var decodedCode = _hashManager.Decrypt(code); // code decrypted
             if (string.IsNullOrEmpty(decodedCode))
             {
                 errorMessages.Add("Not valid code");
                 return new ConfirmationCodeValidationResponse(errorMessages, null);
             }
             
-            var userData = decodedCode.Split(':');
+            var userData = decodedCode.Split(':'); // code stored like that  "{username}:{timestamp}"
             
+            // check if code hasn't expired
             if (!long.TryParse(userData[1], out var timestamp))
             {
                 errorMessages.Add("No timestamp in activation code");
@@ -196,20 +234,20 @@ namespace PlanetsCall.Controllers.User
                     errorMessages.Add("Activation code has expired");
                 }
             }
-
+            // get user
             var user = _usersRepository.GetUserByUsername(userData[0]);
             if (user is null)
             {
                 errorMessages.Add("Not existing user");
             }
-
+    
             return new ConfirmationCodeValidationResponse(errorMessages, user);
         }
     }
 
+    // class uses to represent answer from ValidateConfirmationCode and easily have access to both messages and user
     public class ConfirmationCodeValidationResponse
     {
-#nullable enable
         public ConfirmationCodeValidationResponse(List<string> errMsg, Users? user)
         {
             ErrorMessages = errMsg;
@@ -220,5 +258,4 @@ namespace PlanetsCall.Controllers.User
         public Users? FoundUser { get; set; }
        
     }
-#nullable disable
 }

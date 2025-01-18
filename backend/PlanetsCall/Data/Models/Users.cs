@@ -60,7 +60,8 @@ public class Users
     public ICollection<Users> FriendsOf { get; set; }
     
     public ICollection<Organisations>? OwnedOrganizations { get; set; }
-    public ICollection<OrganizationUserRoles>? OrganizationRoles { get; set; }
+    public ICollection<Organisations> MyOrganisation { get; set; }
+    public ICollection<OrganisationRoles> OrganizationRoles { get; set; }
     
     public ICollection<UserAchievements>? AchievementsCollection { get; set; }
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }
@@ -74,7 +75,7 @@ public class Users
     public ICollection<TopicComments>? TopicCommentsCollection { get; set; }
     public ICollection<TopicComments>? LikedCommentsCollection { get; set; }
     
-    public ICollection<Items>? ItemsCollection { get; set; }
+    public ICollection<Items> ItemsCollection { get; set; }
     
     public ICollection<Logs>? Actions { get; set; }
     public ICollection<Organisations> RequestedOrganizations { get; set; }
