@@ -30,8 +30,8 @@ public class Organisations
     public bool IsPrivate { get; set; }
     public int MinimumJoinLevel { get; set; }
 
-    public required int CreatorId { get; set; }
-    public required Users Creator { get; set; }
+    public int? CreatorId { get; set; }
+    public Users? Creator { get; set; }
     
     public ICollection<OrganisationRoles> Roles { get; set; }
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }

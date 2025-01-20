@@ -92,7 +92,7 @@ public class UsersRepository : IUsersRepository
 
     public Users UpdateUser(Users user) // updates user
     {
-        user.UpdatedAt = DateTime.Now;
+        user.UpdatedAt = DateTime.Now; // update the UpdatedAt time to now
         _context.Users.Update(user);
         _context.SaveChanges();
 
@@ -162,5 +162,43 @@ public class UsersRepository : IUsersRepository
         _context.RemoveRange(logs);
         
         _context.SaveChanges();
+    }
+
+    public void ResetUserData(Users user) // resets user data
+    {
+        Users fullUser = _context.Users // get user with all related data
+            .Include(u => u.Friends)
+            .Include(u => u.AchievementsCollection)
+            .Include(u => u.CreatedTopics)
+            .Include(u => u.ItemsCollection)
+            .Include(u => u.LikedTopics)
+            .Include(u => u.MyOrganisation)
+            .Include(u => u.OrganizationRoles)
+            .Include(u => u.OwnedOrganizations)
+            .Include(u => u.RequestedOrganizations)
+            .Include(u => u.TasksCompleted)
+            .Include(u => u.TasksVerified)
+            .Include(u => u.LikedCommentsCollection)
+            .Include(u => u.TopicCommentsCollection)
+            .First(u => u.Id == user.Id);
+
+        // reset everything
+        fullUser?.Friends?.Clear();
+        fullUser?.AchievementsCollection?.Clear();
+        fullUser?.CreatedTopics?.Clear();
+        fullUser?.ItemsCollection?.Clear();
+        fullUser?.LikedTopics?.Clear();
+        fullUser?.MyOrganisation?.Clear();
+        fullUser?.OrganizationRoles?.Clear();
+        fullUser?.OwnedOrganizations?.Clear();
+        fullUser?.RequestedOrganizations?.Clear();
+        fullUser?.TasksCompleted?.Clear();
+        fullUser?.TasksVerified?.Clear();
+        fullUser?.LikedCommentsCollection?.Clear();
+        fullUser?.TopicCommentsCollection?.Clear();
+        fullUser.Progress = 1;
+        fullUser.Points = 0;
+
+        UpdateUser(fullUser); // update data in database
     }
 }

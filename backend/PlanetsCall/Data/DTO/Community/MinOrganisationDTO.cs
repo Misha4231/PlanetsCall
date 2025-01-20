@@ -33,6 +33,6 @@ public class MinOrganisationDto
     public string? YoutubeLink { get; set; }
     public bool IsPrivate { get; set; }
     public int MinimumJoinLevel { get; set; }
-    public int CreatorId { get; set; }
+    public int? CreatorId { get; set; }
     public ICollection<MinUserDto> Members { get; set; }
 }

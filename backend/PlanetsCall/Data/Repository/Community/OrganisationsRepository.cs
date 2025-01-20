@@ -315,7 +315,7 @@ public class OrganisationsRepository : IOrganisationsRepository
         OrganisationRoles? userRole = organisation.Roles.FirstOrDefault(role => role.UsersWithRole?.Any(u => u.Id == user.Id) == true);
 
         // If neither condition is met, throw a forbidden exception.
-        if ((userRole is null || !permissionCheck(userRole)) && organisation.CreatorId != user.Id)
+        if ((userRole is null || !permissionCheck(userRole)) && organisation.CreatorId != user.Id && !user.IsAdmin)
         {
             throw new CodeException("Access denied", StatusCodes.Status403Forbidden);
         }
