@@ -29,11 +29,21 @@ public class TokenAuthorizeFilter : Attribute, IAuthorizationFilter
                 return;
             }
             
-            // get user and check if it is activated
+            // get user
             Users? user = usersRepository.GetUserByEmail(userEmail!);
-            if (user is not null && !user.IsActivated)
+            if (user is null) // check if user exists
+            {
+                context.Result = new UnauthorizedObjectResult("Not existing user");
+                return;
+            }
+            if (!user.IsActivated) // check if it is activated
             {
                 context.Result = new UnauthorizedObjectResult("user is not activated");
+                return;
+            }
+            if (user.IsBlocked) // check if user has been blocked
+            {
+                context.Result = new UnauthorizedObjectResult("user is blocked");
                 return;
             }
             

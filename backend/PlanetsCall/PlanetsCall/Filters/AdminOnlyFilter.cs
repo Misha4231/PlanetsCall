@@ -34,7 +34,12 @@ public class AdminOnlyFilter : Attribute, IAuthorizationFilter
             
             // get user and check if IsAdmin property is true
             Users? user = usersRepository.GetUserByEmail(userEmail!);
-            if (user is not null && !user.IsAdmin)
+            if (user is null) // check if user exists
+            {
+                context.Result = new UnauthorizedObjectResult("Not existing user");
+                return;
+            }
+            if (!user.IsAdmin)
             {
                 context.Result = new ForbidResult();
                 return;
