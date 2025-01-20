@@ -201,4 +201,20 @@ public class UsersRepository : IUsersRepository
 
         UpdateUser(fullUser); // update data in database
     }
+
+    public PaginatedList<MinUserDto> GetUsersPaginated(int page) // gets paginated list of users
+    {
+        int pageSize = _configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>();
+
+        List<MinUserDto> res = _context.Users
+            .Select(u => new MinUserDto(u))
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+        
+        var count = res.Count();
+        var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+        
+        return new PaginatedList<MinUserDto>(res, page, totalPages);
+    }
 }

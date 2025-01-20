@@ -19,7 +19,17 @@ public class UserManagementController : ControllerBase
     {
         _usersRepository = usersRepository;
     }
-    
+
+    [HttpGet]
+    [AdminOnlyFilter]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetAllUsers([FromQuery] int page = 1) // get paginated list of users
+    {
+        var u = _usersRepository.GetUsersPaginated(page);
+        
+        return Ok(u);
+    }
+
     [HttpGet("block/{username}/")]
     [AdminOnlyFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
