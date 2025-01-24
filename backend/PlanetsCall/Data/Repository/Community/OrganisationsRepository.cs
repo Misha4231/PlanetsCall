@@ -250,6 +250,7 @@ public class OrganisationsRepository : IOrganisationsRepository
             .Include(o => o.Creator)
             .Include(o => o.Members)
             .Include(o => o.Roles)
+            .Include(o => o.VerificationRequest)
             .FirstOrDefault(o => o.UniqueName == organisationUniqueName);
         // if organisation not exist throw 404
         if (org is null) throw new CodeException("Organisation does not exist", StatusCodes.Status404NotFound);
@@ -306,7 +307,7 @@ public class OrganisationsRepository : IOrganisationsRepository
     {
         // Retrieve the full details of the organization by its unique name.
         FullOrganisationDto organisation = GetOrganisation(organisationUniqueName);
-        if (organisation.Roles == null || !organisation.Roles.Any())  // Ensure that the organization has roles defined, otherwise, throw exception.
+        if (organisation.Roles == null || !organisation.Roles.Any() && (organisation.CreatorId != user.Id && !user.IsAdmin))  // Ensure that the organization has roles defined, otherwise, throw exception.
         {
             throw new CodeException("No roles associated with the organisation.", StatusCodes.Status404NotFound);
         }
@@ -389,6 +390,7 @@ public class OrganisationsRepository : IOrganisationsRepository
             .Include(o => o.UsersWithRole)
             .FirstOrDefault(r => r.Id == roleId);
         if (roleToUpdate is null) throw new CodeException("role is not exist", StatusCodes.Status404NotFound);
+        if (roleToUpdate.UsersWithRole.Contains(user)) throw new CodeException("user have that role", StatusCodes.Status400BadRequest);
         
         roleToUpdate.UsersWithRole.Add(user);
         _context.SaveChanges();
@@ -404,5 +406,26 @@ public class OrganisationsRepository : IOrganisationsRepository
         
         roleToUpdate.UsersWithRole.Remove(user);
         _context.SaveChanges();
+    }
+
+    public OrganizationVerificationRequests AddVerificationRequest(string organisationUniqueName, Users user, string description) // requests a verification of the organisation
+    { 
+        Organisations organisation = GetObjOrganisation(organisationUniqueName); // get organisation (with not null validation)
+        EnsureUserHasPermission(user, organisationUniqueName, o => o.CanConfigureOrganization); // ensure user making request have permission to do so
+
+        if (organisation.VerificationRequest is not null) // check if request wasn't sent already
+        {
+            throw new CodeException("Request was already sent", StatusCodes.Status400BadRequest);
+        }
+
+        EntityEntry<OrganizationVerificationRequests> newRequest = _context.OrganizationVerificationRequests.Add( // create new request
+            new OrganizationVerificationRequests()
+            {
+                OrganisationId = organisation.Id,
+                Description = description
+            });
+
+        _context.SaveChanges(); // save
+        return newRequest.Entity;
     }
 }
