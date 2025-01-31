@@ -13,7 +13,7 @@ public class OrganisationFilter : ActionFilterAttribute
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        IOrganisationsRepository organisationsRepository = context.HttpContext.RequestServices.GetService(typeof(IOrganisationsRepository)) as IOrganisationsRepository;
+        IOrganisationsRepository? organisationsRepository = context.HttpContext.RequestServices.GetService(typeof(IOrganisationsRepository)) as IOrganisationsRepository;
 
         var organisationName = context.RouteData.Values["organisationName"]?.ToString();
         if (string.IsNullOrEmpty(organisationName))

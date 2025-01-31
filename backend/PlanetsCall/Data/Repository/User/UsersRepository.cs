@@ -12,31 +12,28 @@ using PlanetsCall.Controllers.Exceptions;
 
 namespace Data.Repository.User;
 
-public class UsersRepository : IUsersRepository
+public class UsersRepository : RepositoryBase, IUsersRepository
 {
-    private readonly PlatensCallContext _context;
-    private readonly IConfiguration _configuration;
     private readonly HashManager _hashManager;
     private readonly FileService _fileService;
-    public UsersRepository(PlatensCallContext context, HashManager hashManager, FileService fileService, IConfiguration configuration)
+    public UsersRepository(PlatensCallContext context, HashManager hashManager, FileService fileService, IConfiguration configuration) 
+    : base(context, configuration)
     {
-        this._context = context;
         this._hashManager = hashManager;
         this._fileService = fileService;
-        this._configuration = configuration;
     }
 
     public IEnumerable<Users> GetUsers()
     {
-        return _context.Users.ToList();
+        return Context.Users.ToList();
     }
 
     public PaginatedList<MinUserDto> SearchUsers(string searchString, int page) // simple full text search with pagination
     {
-        int pageSize = _configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>(); // how many items per page are being fetched in pagination
+        int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>(); // how many items per page are being fetched in pagination
 
         // search by username, first name and last name, then wrap it to min user dto
-        var users = _context.Users
+        var users = Context.Users
             .OrderBy(u => u.Id) // sort
             .Where(u => u.Username.ToLower().Contains(searchString.ToLower()) ||
                         (u.FirstName != null && u.FirstName.ToLower().Contains(searchString.ToLower())) ||
@@ -56,12 +53,12 @@ public class UsersRepository : IUsersRepository
 
     public Users? GetUserById(int id)
     {
-        return _context.Users.Find(id);
+        return Context.Users.Find(id);
     }
     
     public Users? GetFullUserById(int id)
     {
-        return _context.Users
+        return Context.Users
                 .Include(u => u.City)
                 .Include(u => u.Country)
                 .FirstOrDefault(u => u.Id == id)!;
@@ -69,12 +66,12 @@ public class UsersRepository : IUsersRepository
 
     public Users? GetUserByUsername(string username)
     {
-        return _context.Users.FirstOrDefault(u => u.Username == username);
+        return Context.Users.FirstOrDefault(u => u.Username == username);
     }
 
     public Users? GetUserByEmail(string email)
     {
-        return _context.Users.FirstOrDefault(u => u.Email == email);
+        return Context.Users.FirstOrDefault(u => u.Email == email);
     }
 
     public Users InsertUser(Users user) // Insert user to database
@@ -84,8 +81,8 @@ public class UsersRepository : IUsersRepository
             user.Password = this._hashManager.Encrypt(user.Password); // passwords are stored in encrypted way
         }
         
-        _context.Users.Add(user); // add to table
-        _context.SaveChanges(); // save changes
+        Context.Users.Add(user); // add to table
+        Context.SaveChanges(); // save changes
 
         return user;
     }
@@ -93,8 +90,8 @@ public class UsersRepository : IUsersRepository
     public Users UpdateUser(Users user) // updates user
     {
         user.UpdatedAt = DateTime.Now; // update the UpdatedAt time to now
-        _context.Users.Update(user);
-        _context.SaveChanges();
+        Context.Users.Update(user);
+        Context.SaveChanges();
 
         return user;
     }
@@ -144,8 +141,8 @@ public class UsersRepository : IUsersRepository
         if (userToUpdate.Email != user.Email && GetUserByEmail(user.Email) != null) errorMessages.Add("User with given email is already exists");
         if (userToUpdate.Username != user.Username && GetUserByUsername(user.Username) != null) errorMessages.Add("User with given username is already exists");
         if (user.Passwords != null) errorMessages.AddRange(user.Passwords.IsValid());
-        if (user.CityId != null && !_context.Cities.Any(c => c.Id == user.CityId)) errorMessages.Add("Invalid CityId provided.");
-        if (user.CountryId != null && !_context.Countries.Any(c => c.Id == user.CountryId)) errorMessages.Add("Invalid CountryId provided.");
+        if (user.CityId != null && !Context.Cities.Any(c => c.Id == user.CityId)) errorMessages.Add("Invalid CityId provided.");
+        if (user.CountryId != null && !Context.Countries.Any(c => c.Id == user.CountryId)) errorMessages.Add("Invalid CountryId provided.");
         
         // in case some mistakes found, return null
         return errorMessages.Count() != 0 ? new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, "") : null;
@@ -157,16 +154,16 @@ public class UsersRepository : IUsersRepository
         if (user.ProfileImage != null) _fileService.DeleteFile(user.ProfileImage);
         
         // delete user and additional data related to it
-        _context.Users.Remove(user);
-        var logs = _context.Logs.Where(log => log.UserId == user.Id).ToList();
-        _context.RemoveRange(logs);
+        Context.Users.Remove(user);
+        var logs = Context.Logs.Where(log => log.UserId == user.Id).ToList();
+        Context.RemoveRange(logs);
         
-        _context.SaveChanges();
+        Context.SaveChanges();
     }
 
     public void ResetUserData(Users user) // resets user data
     {
-        Users fullUser = _context.Users // get user with all related data
+        Users fullUser = Context.Users // get user with all related data
             .Include(u => u.Friends)
             .Include(u => u.AchievementsCollection)
             .Include(u => u.CreatedTopics)
@@ -204,9 +201,9 @@ public class UsersRepository : IUsersRepository
 
     public PaginatedList<MinUserDto> GetUsersPaginated(int page) // gets paginated list of users
     {
-        int pageSize = _configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>();
+        int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>();
 
-        List<MinUserDto> res = _context.Users
+        List<MinUserDto> res = Context.Users
             .Select(u => new MinUserDto(u))
             .Skip((page - 1) * pageSize)
             .Take(pageSize)

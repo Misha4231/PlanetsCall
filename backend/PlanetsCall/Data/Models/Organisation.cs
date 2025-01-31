@@ -35,7 +35,7 @@ public class Organisations
     
     public ICollection<OrganisationRoles> Roles { get; set; }
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }
-    public ICollection<Users> Requests { get; set; }
-    public ICollection<Users> Members { get; set; }
+    public ICollection<Users>? Requests { get; set; }
+    public ICollection<Users>? Members { get; set; }
     public OrganizationVerificationRequests? VerificationRequest { get; set; }
 }

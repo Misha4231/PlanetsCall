@@ -20,7 +20,10 @@ public class MinOrganisationDto
         IsPrivate = org.IsPrivate;
         MinimumJoinLevel = org.MinimumJoinLevel;
         CreatorId = org.CreatorId;
-        Members = org.Members.Select(m => new MinUserDto(m)).ToList();
+        if (org.Members is not null)
+            Members = org.Members.Select(m => new MinUserDto(m)).ToList();
+        else
+            Members = new List<MinUserDto>();
     }
     public int Id { get; set; }
     public string Name { get; set; }
