@@ -10,23 +10,16 @@ using Microsoft.Extensions.Configuration;
 
 namespace Data.Repository.Community;
 
-public class FriendsRepository : IFriendsRepository
+public class FriendsRepository : RepositoryBase, IFriendsRepository
 {
-    private readonly PlatensCallContext _context;
-    private readonly IConfiguration _configuration;
-    
-    public FriendsRepository(PlatensCallContext context, IConfiguration configuration)
-    {
-        this._context = context;
-        this._configuration = configuration;
-    }
+    public FriendsRepository(PlatensCallContext context, IConfiguration configuration) : base(context, configuration) {}
 
     public PaginatedList<MinUserDto> GetFriends(Users user, int page, string? searchString = null) // get list friends of user
     {
-        int pageSize = _configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>();
+        int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>();
         
         // Base query for friends
-        var query = _context.Users
+        var query = Context.Users
             .Include(u => u.FriendsOf)
             .Where(u => u.FriendsOf.Contains(user));
         
@@ -44,7 +37,7 @@ public class FriendsRepository : IFriendsRepository
             .ToList();
         
         // Calculate total count and pages
-        var count = _context.Users.Count(u => u.FriendsOf.Contains(user));
+        var count = Context.Users.Count(u => u.FriendsOf.Contains(user));
         var totalPages = (int)Math.Ceiling(count / (double)pageSize);
         
         return new PaginatedList<MinUserDto>(friends, page, totalPages);
@@ -52,8 +45,8 @@ public class FriendsRepository : IFriendsRepository
 
     public int /*status code*/ AddFriend(Users user, string newFriendUsername)
     {
-        Users fullUser = _context.Users.Include(u => u.FriendsOf).First(u => u.Id == user.Id); // get user with friends list
-        Users? newFriend = _context.Users.Include(u => u.FriendsOf).FirstOrDefault(u => u.Username == newFriendUsername);
+        Users fullUser = Context.Users.Include(u => u.FriendsOf).First(u => u.Id == user.Id); // get user with friends list
+        Users? newFriend = Context.Users.Include(u => u.FriendsOf).FirstOrDefault(u => u.Username == newFriendUsername);
         if (newFriend is null)
         {
             return StatusCodes.Status404NotFound;
@@ -68,16 +61,16 @@ public class FriendsRepository : IFriendsRepository
         // add users to many-to-many relation
         fullUser.FriendsOf.Add(newFriend);
         newFriend.FriendsOf.Add(fullUser);
-        _context.Users.Update(fullUser);
-        _context.SaveChanges();
+        Context.Users.Update(fullUser);
+        Context.SaveChanges();
         
         return StatusCodes.Status200OK;
     }
 
     public int DeleteFriend(Users user, string friendUsername) 
     {
-        Users fullUser = _context.Users.Include(u => u.FriendsOf).First(u => u.Id == user.Id);
-        Users? friend = _context.Users.Include(u => u.FriendsOf).FirstOrDefault(u => u.Username == friendUsername);
+        Users fullUser = Context.Users.Include(u => u.FriendsOf).First(u => u.Id == user.Id);
+        Users? friend = Context.Users.Include(u => u.FriendsOf).FirstOrDefault(u => u.Username == friendUsername);
         if (friend is null)
         {
             return StatusCodes.Status404NotFound;
@@ -91,8 +84,8 @@ public class FriendsRepository : IFriendsRepository
         // remove users to many-to-many relation
         fullUser.FriendsOf.Remove(friend);
         friend.FriendsOf.Remove(fullUser);
-        _context.Users.Update(fullUser);
-        _context.SaveChanges();
+        Context.Users.Update(fullUser);
+        Context.SaveChanges();
         
         return StatusCodes.Status200OK;
     }

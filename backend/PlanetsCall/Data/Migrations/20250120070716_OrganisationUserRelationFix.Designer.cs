@@ -3,6 +3,7 @@ using System;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-    partial class PlatensCallContextModelSnapshot : ModelSnapshot
+    [Migration("20250120070716_OrganisationUserRelationFix")]
+    partial class OrganisationUserRelationFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -471,29 +474,6 @@ namespace Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Organizations");
-                });
-
-            modelBuilder.Entity("Data.Models.OrganizationVerificationRequests", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<int>("OrganisationId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganisationId");
-
-                    b.ToTable("OrganizationVerificationRequests");
                 });
 
             modelBuilder.Entity("Data.Models.Regions", b =>
@@ -1167,17 +1147,6 @@ namespace Data.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("Data.Models.OrganizationVerificationRequests", b =>
-                {
-                    b.HasOne("Data.Models.Organisations", "Organisation")
-                        .WithMany("VerificationRequests")
-                        .HasForeignKey("OrganisationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organisation");
-                });
-
             modelBuilder.Entity("Data.Models.States", b =>
                 {
                     b.HasOne("Data.Models.Countries", "Country")
@@ -1457,8 +1426,6 @@ namespace Data.Migrations
                     b.Navigation("Roles");
 
                     b.Navigation("TasksCreatedCollection");
-
-                    b.Navigation("VerificationRequests");
                 });
 
             modelBuilder.Entity("Data.Models.Regions", b =>

@@ -115,7 +115,7 @@ public class OrganisationRolesController : ControllerBase
             
             _organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
                 role => role.CanConfigureRoles);
-            _organisationsRepository.RevokeRole(organisation, user, roleId);
+            _organisationsRepository.GrantRole(organisation, user, roleId);
 
             return NoContent();
         }

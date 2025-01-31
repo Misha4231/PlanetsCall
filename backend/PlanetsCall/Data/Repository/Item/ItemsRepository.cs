@@ -13,21 +13,18 @@ using PlanetsCall.Controllers.Exceptions;
 
 namespace Data.Repository.Item;
 
-public class ItemsRepository : IItemsRepository
+public class ItemsRepository : RepositoryBase, IItemsRepository
 {
-    private readonly PlatensCallContext _context;
-    private readonly IConfiguration _configuration;
     private readonly FileService _fileService;
-    public ItemsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService)
+    public ItemsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService) 
+        : base(context, configuration)
     {
-        this._context = context;
-        this._configuration = configuration;
-        this._fileService = fileService;
+        _fileService = fileService;
     }
     
     public List<CategoriesListMember> GetCategories() // gets all categories
     {
-        var categoriesList = _context.ItemsCategories
+        var categoriesList = Context.ItemsCategories
             .Include(c => c.AttachedItems)
             .Select(category => new CategoriesListMember(category)).ToList();
 
@@ -37,9 +34,9 @@ public class ItemsRepository : IItemsRepository
     // Gets a batch of items by category and paginates them
     public PaginatedList<MinItemDto> GetItemsPartition(int categoryId, int page)
     {
-        int pageSize = _configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>(); // gets the number of items per batch from configuration
+        int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>(); // gets the number of items per batch from configuration
 
-        var items = _context.Items
+        var items = Context.Items
             .OrderBy(i => i.Id)
             .Where(i => i.CategoryId == categoryId)
             .Select(i => new MinItemDto(i))
@@ -47,7 +44,7 @@ public class ItemsRepository : IItemsRepository
             .Take(pageSize)
             .ToList();
         
-        var count = _context.Items.Count(i => i.CategoryId == categoryId);
+        var count = Context.Items.Count(i => i.CategoryId == categoryId);
         var totalPages = (int)Math.Ceiling(count / (double)pageSize);
         
         return new PaginatedList<MinItemDto>(items, page, totalPages);
@@ -56,7 +53,7 @@ public class ItemsRepository : IItemsRepository
     public Items AddItem(MinItemDto itemData) // adds item to database
     {
         // checks if category id is valid
-        if (_context.ItemsCategories.FirstOrDefault(ic => ic.Id == itemData.CategoryId) is null)
+        if (Context.ItemsCategories.FirstOrDefault(ic => ic.Id == itemData.CategoryId) is null)
         {
             throw new CodeException("No Category with provided id found", StatusCodes.Status404NotFound);
         }
@@ -65,7 +62,7 @@ public class ItemsRepository : IItemsRepository
         string imagePath = _fileService.SaveFile(itemData.Image, "items",
                 new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
 
-        EntityEntry<Items> newItem = _context.Items.Add(new Items() // creates an instance
+        EntityEntry<Items> newItem = Context.Items.Add(new Items() // creates an instance
         {
             CategoryId = itemData.CategoryId,
             Price = itemData.Price,
@@ -74,7 +71,7 @@ public class ItemsRepository : IItemsRepository
             Rarity = itemData.Rarity,
             Title = itemData.Title
         });
-        _context.SaveChanges();
+        Context.SaveChanges();
 
         return newItem.Entity; // return newly added object
     }
@@ -85,24 +82,24 @@ public class ItemsRepository : IItemsRepository
                 new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
         
         // add an entity
-        EntityEntry<ItemsCategory> newCategory = _context.ItemsCategories.Add(new ItemsCategory()
+        EntityEntry<ItemsCategory> newCategory = Context.ItemsCategories.Add(new ItemsCategory()
         {
             Title = categoryData.Title,
             CreatedAt = DateTime.Now,
             Image = imagePath
         });
-        _context.SaveChanges();
+        Context.SaveChanges();
 
         return newCategory.Entity; // return newly added object
     }
 
     public void UpdateItem(MinItemDto itemData, int itemId)
     {
-        Items? itemToUpdate = _context.Items.FirstOrDefault(i => i.Id == itemId); // search for object that is supposed to be updated
+        Items? itemToUpdate = Context.Items.FirstOrDefault(i => i.Id == itemId); // search for object that is supposed to be updated
         if (itemToUpdate is null) {
             throw new CodeException("No item with provided id found", StatusCodes.Status404NotFound);
         }
-        if (_context.ItemsCategories.FirstOrDefault(ic => ic.Id == itemData.CategoryId) is null)
+        if (Context.ItemsCategories.FirstOrDefault(ic => ic.Id == itemData.CategoryId) is null)
         {
             throw new CodeException("No Category with provided id found", StatusCodes.Status404NotFound);
         }
@@ -118,13 +115,13 @@ public class ItemsRepository : IItemsRepository
         itemToUpdate.Price = itemData.Price;
         
         // update
-        _context.Items.Update(itemToUpdate);
-        _context.SaveChanges();
+        Context.Items.Update(itemToUpdate);
+        Context.SaveChanges();
     }
 
     public void UpdateCategory(MinCategoryDto categoryData, int categoryId)
     {
-        ItemsCategory? categoryToUpdate = _context.ItemsCategories.FirstOrDefault(i => i.Id == categoryId);
+        ItemsCategory? categoryToUpdate = Context.ItemsCategories.FirstOrDefault(i => i.Id == categoryId);
         if (categoryToUpdate is null) {
             throw new CodeException("No item with provided id found", StatusCodes.Status404NotFound);
         }
@@ -135,37 +132,37 @@ public class ItemsRepository : IItemsRepository
         categoryToUpdate.Image = imagePath;
         categoryToUpdate.Title = categoryData.Title;
         
-        _context.ItemsCategories.Update(categoryToUpdate);
-        _context.SaveChanges();
+        Context.ItemsCategories.Update(categoryToUpdate);
+        Context.SaveChanges();
     }
 
     public bool DeleteItem(int itemId)
     {
-        Items? itemData = _context.Items.FirstOrDefault(i => i.Id == itemId);
+        Items? itemData = Context.Items.FirstOrDefault(i => i.Id == itemId);
         if (itemData is null) return false;
         _fileService.DeleteFile(itemData.Image);
         
-        _context.Items.Remove(itemData);
-        _context.SaveChanges();
+        Context.Items.Remove(itemData);
+        Context.SaveChanges();
         return true;
     }
 
     public bool DeleteCategory(int categoryId)
     {
-        ItemsCategory? categoryData = _context.ItemsCategories.FirstOrDefault(i => i.Id == categoryId);
+        ItemsCategory? categoryData = Context.ItemsCategories.FirstOrDefault(i => i.Id == categoryId);
         if (categoryData is null) return false;
         
         if (!string.IsNullOrEmpty(categoryData.Image)) _fileService.DeleteFile(categoryData.Image);
         
-        _context.ItemsCategories.Remove(categoryData);
-        _context.SaveChanges();
+        Context.ItemsCategories.Remove(categoryData);
+        Context.SaveChanges();
 
         return true;
     }
 
     public void GiveItem(Users user, int itemId) // gives item to user for certain price
     {
-        Items? item = _context.Items.Include(i => i.Owners).FirstOrDefault(i => i.Id == itemId);
+        Items? item = Context.Items.Include(i => i.Owners).FirstOrDefault(i => i.Id == itemId);
         if (item is null) // validate existing
             throw new CodeException("Item don't exist", StatusCodes.Status404NotFound);
         
@@ -179,6 +176,6 @@ public class ItemsRepository : IItemsRepository
         user.Points -= item.Price;
         item.Owners.Add(user);
         
-        _context.SaveChanges();
+        Context.SaveChanges();
     }
 }
