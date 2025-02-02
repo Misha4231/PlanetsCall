@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 import Footer from '../../components/Footer/Footer';
-import { useNavigate, useLocation  } from 'react-router-dom';
+import { useNavigate, useLocation, Link  } from 'react-router-dom';
 import {User} from './types';
 
-import { getUserBoard } from "../../services/userService";
-import { getUser } from '../../services/authService';
 import Header from '../../components/shared/Header';
 import { useAuth } from '../../context/AuthContext';
 
@@ -15,10 +13,13 @@ const Profile :React.FC = () => {
   // const [user, setUser] = useState<User | null>(null);
   // const [error, setError] = useState<string | null>(null);
 
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
-
+  if (loading) {
+    return <div>Ładowanie danych użytkownika...</div>;
+  }  
+  
   if (!isAuthenticated) {
     return (<div>
       <Header/>
@@ -33,12 +34,12 @@ const Profile :React.FC = () => {
 
 
 
-
   return (
     <div className="profile"> 
     
       <Header/>
       <main>
+        <button><Link to="/profile/settings">Edytuj ustawienia</Link></button>
         <h3>Username: {user.username}</h3>
         <h3>Email: {user.email}</h3>
         <div className="profileImg">

@@ -1,6 +1,7 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
-import { getFullUser, getUser, login as loginService, logout as logoutService, isAuthenticated } from '../services/authService';
+import { getUser, login as loginService, logout as logoutService, isAuthenticated } from '../services/authService';
+import { getFullUser, getAddAttendance } from '../services/userService';
 
 
 interface User {
@@ -36,28 +37,46 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   token: string | null;
+  loading : boolean | false;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(() => sessionStorage.getItem('authToken'));
 
   useEffect(() => {
-    if (token) {
-      getUser(token)
-        .then(setUser)
+    const storedToken = sessionStorage.getItem('authToken');
+    //console.log(storedToken);
+    if (storedToken) {
+      setLoading(true);
+      getUser(storedToken)
+        .then(basicUser => {
+          setUser(basicUser);
+          return getFullUser(storedToken);
+        })
+        .then(fullUser => {
+          setUser(fullUser);
+        })
+        .finally(() => {
+          setLoading(false);
+        })
         .catch(() => {
           setUser(null);
-          setToken("");
+          sessionStorage.removeItem('authToken');
+          setLoading(false);
         });
+    } else {
+      setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   const login = async (uniqueIdentifier: string, password: string) => {
     try {
       const { token: newToken, user: userData } = await loginService(uniqueIdentifier, password);
+      sessionStorage.setItem('authToken', newToken);
       setToken(newToken);
 
       const fullUserData = await getFullUser(newToken);
@@ -69,12 +88,13 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const logout = () => {
     logoutService();
+    sessionStorage.removeItem('authToken');
     setUser(null);
-    setToken("");
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{user, isAuthenticated: !!user, token, login, logout }}>
+    <AuthContext.Provider value={{user, isAuthenticated: !!user, token, login, logout, loading}}>
       {children}
     </AuthContext.Provider>
   );

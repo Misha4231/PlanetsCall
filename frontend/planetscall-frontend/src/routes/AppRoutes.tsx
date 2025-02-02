@@ -9,7 +9,7 @@ import App from '../App';
 //PROFILE LINKS
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import NotFound from '../pages/NotFound/NotFound';
-import Shop from '../pages/profile/Shop';
+import Shop from '../pages/shop/Shop';
 import { User } from "../pages/profile/types";
 
 
@@ -25,6 +25,10 @@ import ChangePassword from '../pages/auth/ChangePassword';
 import ForgotPassword from '../pages/auth/ForgotPassword';
 import ActivateAccount from '../pages/auth/ActivateAccount';
 import Settings from '../pages/profile/Settings';
+import Friends from '../pages/community/Friends';
+import CommunityMain from '../pages/community/CommunityMain';
+import CommunitySettings from '../pages/community/CommunitySettings';
+import Organisations from '../pages/community/Organisations';
 
 const mockUser: User = {
   id: 1,
@@ -67,29 +71,22 @@ const router = createBrowserRouter([
     path: '/auth/activate-account',
     element: <ActivateAccount />,
   },
+
+
   {
     path: '/profile/settings',
     element: <Settings />
   },
-
-
-
-
-
   {
     path: '/profile',
     element: <Profile/>
-  },
-  {
-    path: '/profile/shop',
-    element: <Shop />
   },
   {
     path: '/profile/level',
     element: <LevelTree />
   },
   {
-    path: '/profile/achievements ',
+    path: '/profile/achievements',
     element: <Achievements />
   },
   {
@@ -99,6 +96,33 @@ const router = createBrowserRouter([
   {
     path: '/:userName',
     element: <UserProfile />
+  },
+  {
+    path: '/profile/level-tree',
+    element: <LevelTree/>
+  },
+
+  
+  {
+    path: '/community',
+    element: <CommunityMain />
+  },
+  {
+    path: '/community/friends',
+    element: <Friends/>
+  },
+  {
+    path: '/community/organisations',
+    element: <Organisations/>
+  },
+  {
+    path: '/community/settings',
+    element: <CommunitySettings/>
+  },
+  
+  {
+    path: '/shop',
+    element: <Shop />
   },
 ]);
 

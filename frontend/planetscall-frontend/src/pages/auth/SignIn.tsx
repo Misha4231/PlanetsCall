@@ -6,7 +6,7 @@ import { login } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 
 const SignIn = () => {
-  const { login: loginUser } = useAuth();
+  const { login: loginUser, isAuthenticated } = useAuth();
   const [uniqueIdentifier, setUniqueIdentifier] = useState(''); 
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null); 
@@ -27,6 +27,14 @@ const SignIn = () => {
       setError(err.message || 'Błąd logowania. Sprawdź dane i spróbuj ponownie.');
     }
   };
+
+  if(isAuthenticated){
+    navigate('/profile'); 
+    return(<div>
+      <Header />
+      <h2>Jestes juz zalogowany</h2>
+      </div>)
+  }
 
   return (
     <div>

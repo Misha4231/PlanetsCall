@@ -10,7 +10,8 @@ const Header: React.FC = () => {
 
 
   const isProfilePage = location.pathname.startsWith('/profile');
-  const isOrganizationPage = location.pathname.startsWith('/organization');
+  const isCommunityPage = location.pathname.startsWith('/community');
+  const isShopPage = location.pathname.startsWith('/shop');
 
   return (
     <header>
@@ -22,8 +23,6 @@ const Header: React.FC = () => {
             {isProfilePage ? (
               <>
                 <li><Link to="/profile">Profil</Link></li>
-                <li><Link to="/profile/settings">Ustawienia</Link></li>
-                <li><Link to="/profile/shop">Sklep</Link></li>
                 <li><Link to="/profile/level">Lewel</Link></li>
                 <li><Link to="/profile/achievements">Osiągnięcia</Link></li>
                 <li><Link to="/profile/statistics">Statystyka</Link></li>
@@ -31,13 +30,22 @@ const Header: React.FC = () => {
             ) : (
               <li><Link to="/profile">Profil</Link></li>
             )}
-            {isOrganizationPage ? (
-              <>
-                <li><Link to="/organization">Organizacja Główna</Link></li>
-                <li><Link to="/organization/details">Szczegóły Organizacji</Link></li>
+            {isCommunityPage ? (
+              <>  
+                <li><Link to="/community">Społeczność</Link></li>
+                <li><Link to="/community/friends">Znajomi</Link></li>
+                <li><Link to="/community/organisations">Organizacje</Link></li>
+                <li><Link to="/community/settings">Ustawienia społecznośći</Link></li>
               </>
             ) : (
-              <li><Link to="/organization">Organizacja</Link></li>
+              <li><Link to="/community">Społeczność</Link></li>
+            )}
+            
+            {isShopPage ? (
+              <>
+              </>
+            ) : (
+              <li><Link to="/shop">Sklep</Link></li>
             )}
 
             {user?.isAdmin && <li><Link to="/admin">Panel Administracyjny</Link></li>}

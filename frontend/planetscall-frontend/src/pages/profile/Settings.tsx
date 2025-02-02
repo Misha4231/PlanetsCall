@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { updateUserSettings } from '../../services/authService';
+import { updateUserSettings } from '../../services/userService';
+import Header from '../../components/shared/Header';
 
 const Settings: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, token } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -78,12 +79,22 @@ const Settings: React.FC = () => {
     }
 
     try {
-      const authToken = localStorage.getItem('authToken') || ''; 
-      const response = await updateUserSettings(authToken, formData);
+      const authToken = token || ''; 
+      const userId = user?.id;
+
+      if (!userId) {
+        alert('Nie można zaktualizować ustawień: brak identyfikatora użytkownika');
+        return;
+      }
+    
+      console.log('Auth Token:', authToken);
+      console.log('User ID:', userId);
+
+      await updateUserSettings(authToken, userId, formData);
 
 
       alert('Dane zostały zaktualizowane!');
-      navigate('/');  
+      navigate('/profile');  
     } catch (err: any) {
       alert(err.message || 'Nie udało się zapisać ustawień');
     }
@@ -95,6 +106,7 @@ const Settings: React.FC = () => {
 
   return (
     <div>
+      <Header/>
       <h1>Ustawienia Profilu</h1>
       <form onSubmit={handleSubmit}>
         <div>
