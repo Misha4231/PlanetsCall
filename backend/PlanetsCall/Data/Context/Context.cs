@@ -80,7 +80,7 @@ public sealed class PlatensCallContext : DbContext
 
         // Zadania
         modelBuilder.Entity<Tasks>()
-            .HasOne<Users>(t => t.User)
+            .HasOne<Users>(t => t.Author)
             .WithMany(u => u.TasksCreatedCollection)
             .OnDelete(DeleteBehavior.SetNull);
         modelBuilder.Entity<Tasks>()

@@ -16,7 +16,7 @@ public class Tasks
     public int Reward { get; set; }
 
     public int? AuthorId { get; set; }
-    public Users? User { get; set; }
+    public Users? Author { get; set; }
 
     public int? OrganizationId { get; set; }
     public Organisations? Organisation { get; set; }
