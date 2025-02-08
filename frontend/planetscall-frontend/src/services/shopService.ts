@@ -1,78 +1,212 @@
 export const getCategories = async (authToken: string) => {
-    if (!authToken) {
-      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+
+  const response = await fetch('https://localhost:7000/api/Items/categories', {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+
+  if (!response.ok) throw new Error('Nie udało się pobrać kategorii.');
+
+  return await response.json();
+};
+
+//
+
+export const getItemsByCategory = async (authToken: string, categoryId: number, page: number = 1) => {
+  if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+
+  const response = await fetch(`https://localhost:7000/api/Items/${categoryId}?page=${page}`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+
+  if (!response.ok) throw new Error('Nie udało się pobrać przedmiotów.');
+
+  return await response.json();
+};
+
+//
+
+export const buyItem = async (authToken: string, itemId: number) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+
+  const response = await fetch(`https://localhost:7000/api/Items/buy/${itemId}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Nie udało się kupić przedmiotu.');
+  }
+
+  return await response.json();
+};
+
+//
+
+export const addCategory = async (authToken: string, title: string, image: string) => {
+  if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+
+  const response = await fetch('https://localhost:7000/api/Items/categories', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ title, image }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Błąd: ${response.status} - ${response.statusText}`);
+  }
+
+
+const text = await response.text();
+return text ? JSON.parse(text) : null;
+//return await response.json();
+};
+
+//
+
+export const removeCategory = async (authToken: string) => {
+  if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+
+  const response = await fetch('https://localhost:7000/api/Items/categories', {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Błąd: ${response.status} - ${response.statusText}`);
+  }
+
+  return await response.json();
+
+};
+
+//
+
+export const addItems = async (authToken: string, categoryId: number, price: number, image: string, rarity: string, title: string) => {
+  if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+
+  const response = await fetch('https://localhost:7000//api/Items', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      categoryId,
+      price,
+      image,
+      rarity,
+      title
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();  
+    throw new Error(errorData.message || 'Błąd logowania');
+  }
+
+  const data = await response.json();
+};
+
+//
+
+export const removeItems = async (authToken: string) => {
+  if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+
+  const response = await fetch('https://localhost:7000//api/Items', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();  
+    throw new Error(errorData.message || 'Błąd logowania');
+  }
+
+  const data = await response.json();
+};
+
+//
+
+export const updteItem = async (
+  authToken: string,
+  itemId: number,  
+  categoryId: number,
+  price: number,
+  image: string,
+  rarity: string,
+  title: string
+) => {
+
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+
+  
+  const response = await fetch(`https://localhost:7000/api/Items/${itemId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${authToken}`,
+    },
+    body: JSON.stringify({
+      categoryId, price, image, rarity, title
     }
+    ),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.log(errorData.error);
+    console.log(errorData);
+    throw new Error(errorData.message || 'Błąd aktualizacji itemu');
+  }
+
+  return await response.json();
+};
+
+//
+
+export const updteCategory = async (
+authToken: string,
+categoryId: number,
+title: string,
+image: string,
+) =>{
+
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+
   
-    const response = await fetch('https://localhost:7000/api/Items/categories', {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-  
-    if (!response.ok) {
-      throw new Error('Nie udało się pobrać kategorii.');
+  const response = await fetch(`https://localhost:7000/api/Items/category/${categoryId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${authToken}`,
+    },
+    body: JSON.stringify({
+      title, image
     }
-  
-    const data = await response.json();
-    return data.items ?? [];
-  };
-  
-  export const getItemsByCategory = async (authToken: string, categoryId: number, page: number) => {
-    if (!authToken) {
-      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
-    }
-  
-    const response = await fetch(`https://localhost:7000/api/Items/${categoryId}?page=${page}`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-  
-    if (!response.ok) {
-      throw new Error('Nie udało się pobrać przedmiotów.');
-    }
-  
-    const data = await response.json();
-    return data.items ?? [];
-  };
-  
-  export const buyItem = async (authToken: string, itemId: number) => {
-    if (!authToken) {
-      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
-    }
-  
-    const response = await fetch(`https://localhost:7000/api/Items/buy/${itemId}`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-  
-    if (!response.ok) {
-      throw new Error('Nie udało się kupić przedmiotu.');
-    }
-  
-    return await response.json();
-  };
-  
-  export const addCategory = async (authToken: string, categoryName: string) => {
-    if (!authToken) {
-      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
-    }
-  
-    const response = await fetch('https://localhost:7000/api/Items/categories', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name: categoryName }),
-    });
-  
-    if (!response.ok) {
-      throw new Error('Nie udało się dodać kategorii.');
-    }
-  
-    return await response.json();
-  };
-  
+    ),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.log(errorData.error);
+    console.log(errorData);
+    throw new Error(errorData.message || 'Błąd aktualizacji kategorii');
+  }
+
+  return await response.json();
+};
