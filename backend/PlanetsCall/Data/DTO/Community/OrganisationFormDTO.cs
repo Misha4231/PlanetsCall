@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Core.Attributes;
 
 namespace Data.DTO.Community;
 
@@ -12,7 +13,7 @@ public class OrganisationFormDto
     public required string UniqueName { get; set; }
     [MaxLength(250)]
     public string? Description { get; set; }
-    [Base64String]
+    [CleanBase64String]
     public string? OrganizationLogo { get; set; }
     [MaxLength(100)]
     public string? InstagramLink { get; set; }

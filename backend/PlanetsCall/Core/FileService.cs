@@ -25,6 +25,11 @@ public class FileService
             Directory.CreateDirectory(path);
         }
 
+        if (b64File.Contains(',')) // if representation contains header data
+        {
+            b64File = b64File.Split(',')[1]; // cut it out
+        }
+        
         byte[] image = Convert.FromBase64String(b64File); // from base64 to bytes
         if (image.Length > (maxWeight * 1024 * 1024)) // validate file size
         {
