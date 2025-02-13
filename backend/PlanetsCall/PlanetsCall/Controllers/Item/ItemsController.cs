@@ -7,6 +7,7 @@ using Data.Repository.User;
 using Microsoft.AspNetCore.Mvc;
 using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
+using PlanetsCall.Services.Caching;
 
 namespace PlanetsCall.Controllers.Item;
 
@@ -22,6 +23,7 @@ public class ItemsController(
     private readonly ILogsRepository _logsRepository = logsRepository;
 
     [HttpGet]
+    [Cache]
     [Route("{categoryId}/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetItemsBatch([FromRoute] int categoryId, [FromQuery] int page = 1) // Fetches a batch of items by category and paginates them
@@ -54,6 +56,7 @@ public class ItemsController(
     }
 
     [HttpGet]
+    [Cache]
     [Route("categories/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetCategories() // gets all categories (without pagination because there won't be many of it)

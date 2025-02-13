@@ -14,6 +14,7 @@ namespace PlanetsCall.Controllers.Admin;
 public class UserManagementController(IUsersRepository usersRepository) : ControllerBase
 {
     [HttpGet]
+    [Cache]
     [AdminOnlyFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetAllUsers([FromQuery] int page = 1) // get paginated list of users

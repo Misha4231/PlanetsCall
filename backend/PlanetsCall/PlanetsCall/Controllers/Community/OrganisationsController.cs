@@ -13,6 +13,7 @@ namespace PlanetsCall.Controllers.Community;
 public class OrganisationsController(IOrganisationsRepository organisationsRepository) : ControllerBase
 {
     [HttpGet]
+    [UserCache]
     [Route("my/")]
     [TokenAuthorizeFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -91,6 +92,7 @@ public class OrganisationsController(IOrganisationsRepository organisationsRepos
     }
 
     [HttpGet]
+    [UserCache]
     [Route("{organisationUniqueName}/requests/")]
     [TokenAuthorizeFilter]
     public IActionResult GetOrganisationJoinRequests(string organisationUniqueName) // Retrieves a list of user join requests for a specified organization.
@@ -140,6 +142,7 @@ public class OrganisationsController(IOrganisationsRepository organisationsRepos
     }
 
     [HttpGet]
+    [Cache]
     [Route("{organisationUniqueName}/users/")]
     public IActionResult GetMembers(string organisationUniqueName)
     {
@@ -169,6 +172,7 @@ public class OrganisationsController(IOrganisationsRepository organisationsRepos
     }
 
     [HttpGet]
+    [Cache]
     [Route("search/{searchPhrase}/")]
     public IActionResult SearchByPhrase(string searchPhrase, [FromQuery] int page = 1)
     {
@@ -178,6 +182,7 @@ public class OrganisationsController(IOrganisationsRepository organisationsRepos
     }
 
     [HttpGet]
+    [Cache]
     [Route("settings/{organisationUniqueName}/")]
     public IActionResult GetSettings(string organisationUniqueName)
     {

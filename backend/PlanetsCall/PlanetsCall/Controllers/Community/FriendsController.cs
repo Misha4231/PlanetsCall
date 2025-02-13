@@ -13,6 +13,7 @@ namespace PlanetsCall.Controllers.Community;
 public class FriendsController(IFriendsRepository friendsRepository) : ControllerBase
 {
     [HttpGet]
+    [UserCache]
     [Route("")]
     [TokenAuthorizeFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]

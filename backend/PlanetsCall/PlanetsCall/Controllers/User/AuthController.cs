@@ -189,6 +189,7 @@ namespace PlanetsCall.Controllers.User
         }
         
         [HttpGet]
+        [UserCache]
         [Route("me/full/")]
         [TokenAuthorizeFilter]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -200,6 +201,7 @@ namespace PlanetsCall.Controllers.User
         }
         
         [HttpGet]
+        [UserCache]
         [Route("me/min/")]
         [TokenAuthorizeFilter]
         [ProducesResponseType(StatusCodes.Status200OK)]

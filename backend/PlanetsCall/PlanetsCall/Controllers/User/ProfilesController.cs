@@ -65,6 +65,7 @@ public class ProfilesController(IUsersRepository usersRepository, ILogsRepositor
     }
     
     [HttpGet]
+    [UserCache]
     [TokenAuthorizeFilter]
     [Route("{username}/attendance/")]
     public IActionResult GetAttendance(string username) // get when user attend service
@@ -84,6 +85,7 @@ public class ProfilesController(IUsersRepository usersRepository, ILogsRepositor
     }
 
     [HttpGet]
+    [UserCache]
     [Route("{username}/")]
     public IActionResult GetUserProfile(string username) // get profile data to display profile
     {
@@ -98,6 +100,7 @@ public class ProfilesController(IUsersRepository usersRepository, ILogsRepositor
     }
 
     [HttpGet]
+    [Cache]
     [Route("search/{searchString}/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

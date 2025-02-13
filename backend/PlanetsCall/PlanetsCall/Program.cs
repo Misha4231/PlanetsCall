@@ -10,6 +10,7 @@ using Data.Repository.Task;
 using Data.Repository.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using PlanetsCall.Filters;
 using PlanetsCall.Helper;
 using PlanetsCall.Services.Caching;
 
@@ -35,7 +36,8 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 
 builder.Services.RegisterDataServices(builder.Configuration);
-builder.Services.AddStackExchangeRedisCache(options =>
+
+builder.Services.AddStackExchangeRedisCache(options => // connect to redis for caching purpose
 {
     options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
     options.InstanceName = builder.Configuration["RedisInstanceName"];

@@ -42,6 +42,7 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
       }
       
       [HttpGet]
+      [Cache]
       [Route("template-task/{id}")]
       [AdminOnlyFilter]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -56,6 +57,7 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
           return Ok(new FullTaskDto(task));
       }
       [HttpGet]
+      [Cache]
       [Route("template-task/")]
       [AdminOnlyFilter]
       [ProducesResponseType(StatusCodes.Status200OK)]

@@ -18,6 +18,7 @@ public class VerificationController(
     : ControllerBase
 {
     [HttpGet]
+    [Cache]
     [AdminOnlyFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetRequests() // gets a list of all verification requests and put it into DTO (to make organisation data smaller)

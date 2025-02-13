@@ -17,6 +17,7 @@ public class OrganisationRolesController(
     : ControllerBase
 {
     [HttpGet]
+    [UserCache]
     [TokenAuthorizeFilter]
     public IActionResult GetRoles()
     {
