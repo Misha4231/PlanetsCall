@@ -9,14 +9,10 @@ using Microsoft.Extensions.Configuration;
 namespace Data.Repository.Task;
 
 // CRUD repository for tasks
-public class TasksRepository : RepositoryBase, ITasksRepository
+public class TasksRepository(PlatensCallContext context, FileService fileService, IConfiguration configuration)
+    : RepositoryBase(context, configuration), ITasksRepository
 {
-    private readonly FileService _fileService;
-    public TasksRepository(PlatensCallContext context, FileService fileService, IConfiguration configuration)
-        : base(context, configuration)
-    {
-        this._fileService = fileService;
-    }
+    private readonly FileService _fileService = fileService;
 
     public void CreateTask(TemplateTask task, Users user) // create task (as an admin)
     {

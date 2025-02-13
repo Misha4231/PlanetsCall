@@ -10,15 +10,10 @@ namespace PlanetsCall.Helper;
  * SendForgottenPasswordMail, SendUserConfirmationMail - public methods called inside controllers
  * GenerateLink, SendMail - private helper methods
  */
-public class EmailSender
+public class EmailSender(HashManager hashManager, IConfiguration configuration)
 {
-    private readonly HashManager _hashManager; // used for hashing used and making code expiring
-    private readonly IConfiguration _configuration; // data for constructing mails
-    public EmailSender(HashManager hashManager, IConfiguration configuration)
-    {
-        this._hashManager = hashManager;
-        this._configuration = configuration;
-    }
+    // used for hashing used and making code expiring
+    // data for constructing mails
 
     public void SendForgottenPasswordMail(Users user) // sends email when user forgot password and wants to reset it
     { 
@@ -54,8 +49,8 @@ public class EmailSender
     private string GenerateLink(Users user, string endpoint)
     {
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // current timestamp to put it inside code and expire when needed
-        var userHash = _hashManager.Encrypt($"{user.Username}:{timestamp}");
-        var link = _configuration["WebsiteDomain"] + endpoint + userHash; // constructing link
+        var userHash = hashManager.Encrypt($"{user.Username}:{timestamp}");
+        var link = configuration["WebsiteDomain"] + endpoint + userHash; // constructing link
 
         return link;
     }
@@ -63,10 +58,10 @@ public class EmailSender
     // most important helper method to actually send mails with SMTP server
     private void SendMail(string receiver, string subject, string content, bool isHtml = false)
     {
-        var sender = _configuration.GetSection("SMTP:Username").Get<string>();
-        var senderPassword = _configuration.GetSection("SMTP:Password").Get<string>();
-        var Hostname = _configuration.GetSection("SMTP:Hostname").Get<string>();
-        var Port = _configuration.GetSection("SMTP:Port").Get<int>();
+        var sender = configuration.GetSection("SMTP:Username").Get<string>();
+        var senderPassword = configuration.GetSection("SMTP:Password").Get<string>();
+        var Hostname = configuration.GetSection("SMTP:Hostname").Get<string>();
+        var Port = configuration.GetSection("SMTP:Port").Get<int>();
         
         // Constructing mail body
         MailMessage mailMessage = new MailMessage();

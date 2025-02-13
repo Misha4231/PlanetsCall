@@ -3,17 +3,10 @@ using Data.Models;
 
 namespace Data.DTO.Community;
 
-public class FullOrganisationDto : MinOrganisationDto
+public class FullOrganisationDto(Organisations org) : MinOrganisationDto(org)
 {
-    public FullOrganisationDto(Organisations org) : base(org)
-    {
-        CreatedAt = org.CreatedAt;
-        UpdatedAt = org.UpdatedAt;
-        Creator = new MinUserDto(org.Creator);
-        Roles = org.Roles;
-    }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public MinUserDto Creator { get; set; }
-    public ICollection<OrganisationRoles> Roles { get; set; }
+    public DateTime CreatedAt { get; set; } = org.CreatedAt;
+    public DateTime UpdatedAt { get; set; } = org.UpdatedAt;
+    public MinUserDto Creator { get; set; } = new(org.Creator);
+    public ICollection<OrganisationRoles> Roles { get; set; } = org.Roles;
 }

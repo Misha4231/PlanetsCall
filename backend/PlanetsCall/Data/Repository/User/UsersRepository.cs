@@ -12,17 +12,13 @@ using PlanetsCall.Controllers.Exceptions;
 
 namespace Data.Repository.User;
 
-public class UsersRepository : RepositoryBase, IUsersRepository
+public class UsersRepository(
+    PlatensCallContext context,
+    HashManager hashManager,
+    FileService fileService,
+    IConfiguration configuration)
+    : RepositoryBase(context, configuration), IUsersRepository
 {
-    private readonly HashManager _hashManager;
-    private readonly FileService _fileService;
-    public UsersRepository(PlatensCallContext context, HashManager hashManager, FileService fileService, IConfiguration configuration) 
-    : base(context, configuration)
-    {
-        this._hashManager = hashManager;
-        this._fileService = fileService;
-    }
-
     public IEnumerable<Users> GetUsers()
     {
         return Context.Users.ToList();
@@ -78,7 +74,7 @@ public class UsersRepository : RepositoryBase, IUsersRepository
     {
         if (!string.IsNullOrEmpty(user.Password)) // check in case user uses another way of authorization
         {
-            user.Password = this._hashManager.Encrypt(user.Password); // passwords are stored in encrypted way
+            user.Password = hashManager.Encrypt(user.Password); // passwords are stored in encrypted way
         }
         
         Context.Users.Add(user); // add to table
@@ -108,7 +104,7 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         userToUpdate.BirthDate = user.BirthDate;
         userToUpdate.BirthDate = user.BirthDate;
         // update profile image
-        userToUpdate.ProfileImage = _fileService.UpdateFile(userToUpdate.ProfileImage ,user.ProfileImage, "profile_icons",new ImageFormat[] {ImageFormat.Jpeg, ImageFormat.Png}, 4);
+        userToUpdate.ProfileImage = fileService.UpdateFile(userToUpdate.ProfileImage ,user.ProfileImage, "profile_icons",new ImageFormat[] {ImageFormat.Jpeg, ImageFormat.Png}, 4);
         userToUpdate.PreferredLanguage = user.PreferredLanguage;
         userToUpdate.IsNotifiable = user.IsNotifiable;
         userToUpdate.IsVisible = user.IsVisible;
@@ -123,7 +119,7 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         
         if (user.Passwords != null)
         {
-            userToUpdate.Password = this._hashManager.Encrypt(user.Passwords.Password!);
+            userToUpdate.Password = hashManager.Encrypt(user.Passwords.Password!);
         }
 
         UpdateUser(userToUpdate);
@@ -151,7 +147,7 @@ public class UsersRepository : RepositoryBase, IUsersRepository
     public void DeleteUser(Users user)
     {
         // delete avatar file
-        if (user.ProfileImage != null) _fileService.DeleteFile(user.ProfileImage);
+        if (user.ProfileImage != null) fileService.DeleteFile(user.ProfileImage);
         
         // delete user and additional data related to it
         Context.Users.Remove(user);

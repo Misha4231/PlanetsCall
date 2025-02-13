@@ -10,15 +10,8 @@ namespace PlanetsCall.Controllers.Community;
 // friends CRUD
 [Route("/api/community/[controller]")]
 [ApiController]
-public class FriendsController : ControllerBase
+public class FriendsController(IFriendsRepository friendsRepository) : ControllerBase
 {
-    private readonly IFriendsRepository _friendsRepository;
-
-    public FriendsController(IFriendsRepository friendsRepository)
-    {
-        this._friendsRepository = friendsRepository;
-    }
-
     [HttpGet]
     [Route("")]
     [TokenAuthorizeFilter]
@@ -31,7 +24,7 @@ public class FriendsController : ControllerBase
 
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         
-        return Ok(_friendsRepository.GetFriends(requestUser!, page, search));
+        return Ok(friendsRepository.GetFriends(requestUser!, page, search));
     }
     
     [HttpPost]
@@ -45,7 +38,7 @@ public class FriendsController : ControllerBase
         // validate if user want to add himself to friends list
         if (username == requestUser!.Username) return BadRequest(new ErrorResponse(new List<string>() { "You can't add yourself to friends" }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
         
-        int code = _friendsRepository.AddFriend(requestUser!, username); //add
+        int code = friendsRepository.AddFriend(requestUser!, username); //add
         return StatusCode(code);
     }
     
@@ -60,7 +53,7 @@ public class FriendsController : ControllerBase
         // validate if user want to remove himself from the friends list
         if (username == requestUser!.Username) return BadRequest(new ErrorResponse(new List<string>() { "You can't remove yourself from friends" }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
         
-        int code = _friendsRepository.DeleteFriend(requestUser!, username); //remove
+        int code = friendsRepository.DeleteFriend(requestUser!, username); //remove
         return StatusCode(code);
     }
 }

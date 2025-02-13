@@ -11,18 +11,11 @@ namespace PlanetsCall.Controllers.Community;
 [Route("/api/community/organisations/{organisationName}/roles/")]
 [ApiController]
 [OrganisationFilter]
-public class OrganisationRolesController : ControllerBase
+public class OrganisationRolesController(
+    IOrganisationsRepository organisationsRepository,
+    IUsersRepository usersRepository)
+    : ControllerBase
 {
-    private readonly IOrganisationsRepository _organisationsRepository;
-    private readonly IUsersRepository _usersRepository;
-
-    public OrganisationRolesController(IOrganisationsRepository organisationsRepository, IUsersRepository usersRepository)
-    {
-        _organisationsRepository = organisationsRepository;
-        _usersRepository = usersRepository;
-    }
-
-
     [HttpGet]
     [TokenAuthorizeFilter]
     public IActionResult GetRoles()
@@ -47,8 +40,8 @@ public class OrganisationRolesController : ControllerBase
         
         try
         {
-            _organisationsRepository.EnsureUserHasPermission(requestUser!, organisation!.UniqueName, role => role.CanConfigureRoles);
-            FullRoleDto newRole = _organisationsRepository.CreateRole(organisation, role);
+            organisationsRepository.EnsureUserHasPermission(requestUser!, organisation!.UniqueName, role => role.CanConfigureRoles);
+            FullRoleDto newRole = organisationsRepository.CreateRole(organisation, role);
 
             return Ok(newRole);
         }
@@ -68,9 +61,9 @@ public class OrganisationRolesController : ControllerBase
 
         try
         {
-            _organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
+            organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
                 role => role.CanConfigureRoles);
-            FullRoleDto newRoleData = _organisationsRepository.UpdateRole(organisation, role, roleId);
+            FullRoleDto newRoleData = organisationsRepository.UpdateRole(organisation, role, roleId);
 
             return Ok(newRoleData);
         }
@@ -89,9 +82,9 @@ public class OrganisationRolesController : ControllerBase
 
         try
         {
-            _organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
+            organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
                 role => role.CanConfigureRoles);
-            _organisationsRepository.DeleteRole(roleId);
+            organisationsRepository.DeleteRole(roleId);
 
             return NoContent();
         }
@@ -110,12 +103,12 @@ public class OrganisationRolesController : ControllerBase
 
         try
         {
-            Users? user = _usersRepository.GetUserById(userId);
+            Users? user = usersRepository.GetUserById(userId);
             if (user is null) return NotFound();
             
-            _organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
+            organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
                 role => role.CanConfigureRoles);
-            _organisationsRepository.GrantRole(organisation, user, roleId);
+            organisationsRepository.GrantRole(organisation, user, roleId);
 
             return NoContent();
         }
@@ -135,12 +128,12 @@ public class OrganisationRolesController : ControllerBase
 
         try
         {
-            Users? user = _usersRepository.GetUserById(userId);
+            Users? user = usersRepository.GetUserById(userId);
             if (user is null) return NotFound();
             
-            _organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
+            organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
                 role => role.CanConfigureRoles);
-            _organisationsRepository.RevokeRole(organisation, user, roleId);
+            organisationsRepository.RevokeRole(organisation, user, roleId);
 
             return NoContent();
         }

@@ -20,18 +20,10 @@ namespace PlanetsCall.Controllers.Tasks;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class TasksController : ControllerBase
-{ 
-      private readonly ITasksRepository _tasksRepository;
-      private readonly IOrganisationsRepository _organisationsRepository;
-
-      public TasksController(ITasksRepository tasksRepository, IOrganisationsRepository organisationsRepository)
-      {
-          _tasksRepository = tasksRepository;
-          _organisationsRepository = organisationsRepository;
-      }
-
-      [HttpPost]
+public class TasksController(ITasksRepository tasksRepository, IOrganisationsRepository organisationsRepository)
+    : ControllerBase
+{
+    [HttpPost]
       [Route("template-task/")]
       [AdminOnlyFilter]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -44,7 +36,7 @@ public class TasksController : ControllerBase
           {
               return BadRequest("Available types: 1 (daily), 2 (weekly)");
           }
-          _tasksRepository.CreateTask(task, requestUser);
+          tasksRepository.CreateTask(task, requestUser);
 
           return Ok();
       }
@@ -56,7 +48,7 @@ public class TasksController : ControllerBase
       [ProducesResponseType(StatusCodes.Status200OK)]
       public IActionResult GetTask(int id) // get task by id
       {
-          var task = _tasksRepository.GetTaskById(id);
+          var task = tasksRepository.GetTaskById(id);
           if (task == null)
           {
               return NotFound();
@@ -69,7 +61,7 @@ public class TasksController : ControllerBase
       [ProducesResponseType(StatusCodes.Status200OK)]
       public IActionResult GetTasks() // get all tasks created by admins
       {
-          var task = _tasksRepository.GetAdminTasks();
+          var task = tasksRepository.GetAdminTasks();
           return Ok(task);
       }
 
@@ -80,7 +72,7 @@ public class TasksController : ControllerBase
       [ProducesResponseType(StatusCodes.Status200OK)]
       public IActionResult UpdateTask(int id, [FromBody] TemplateTask taskUpdate) // update admin task
       {
-          var updatedTask = _tasksRepository.UpdateTask(id, taskUpdate);
+          var updatedTask = tasksRepository.UpdateTask(id, taskUpdate);
           if (updatedTask == null)
           {
               return NotFound();
@@ -95,7 +87,7 @@ public class TasksController : ControllerBase
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       public IActionResult DeleteTask(int id) // delete admin task
       {
-          bool isDeleted = _tasksRepository.DeleteTask(id);
+          bool isDeleted = tasksRepository.DeleteTask(id);
           if (!isDeleted)
           {
               return NotFound();
@@ -113,11 +105,11 @@ public class TasksController : ControllerBase
           Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
           try
           {
-              Organisations organisation = _organisationsRepository.GetObjOrganisation(organizationName);
+              Organisations organisation = organisationsRepository.GetObjOrganisation(organizationName);
               // check if user have according permissions
-              _organisationsRepository.EnsureUserHasPermission(requestUser, organizationName, o => o.CanAddTask);
+              organisationsRepository.EnsureUserHasPermission(requestUser, organizationName, o => o.CanAddTask);
               
-              _tasksRepository.CreateTask(task, requestUser, organisation);
+              tasksRepository.CreateTask(task, requestUser, organisation);
           }
           catch (CodeException e)
           {

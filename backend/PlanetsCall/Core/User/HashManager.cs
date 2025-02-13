@@ -7,20 +7,15 @@ namespace Core.User;
 /*
  * Class to hash strings (using key from configuration)
  */
-public class HashManager
+public class HashManager(IConfiguration configuration)
 {
-    private readonly IConfiguration _configuration; // holding secret key
-    
-    public HashManager(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
+    // holding secret key
 
     public string Encrypt(string plainText) // encrypts plain text using SHA256 algorithm
     {
         using (var sha256 = SHA256.Create())
         {
-            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(_configuration["SecretKey"]!)); // hashing bytes from secret key
+            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(configuration["SecretKey"]!)); // hashing bytes from secret key
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText); 
 
             using (Aes aes = Aes.Create()) // Advanced Encryption Standard 
@@ -47,7 +42,7 @@ public class HashManager
         using (var sha256 = SHA256.Create())
         {
             // ensures we have the same key used during encryption
-            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(_configuration["SecretKey"]!));
+            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(configuration["SecretKey"]!));
             try
             {
                 // convert back to binary

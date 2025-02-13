@@ -6,19 +6,12 @@ using PlanetsCall.Controllers.Exceptions;
 
 namespace Core;
 
-public class FileService
+public class FileService(IWebHostEnvironment webHostEnvironment)
 {
-    private readonly IWebHostEnvironment _webHostEnvironment;
-
-    public FileService(IWebHostEnvironment webHostEnvironment)
-    {
-        _webHostEnvironment = webHostEnvironment;
-    }
-
     // saves base64 file and returns path to the newly created file
     public string SaveFile(string b64File, string directory /*folder name*/, IEnumerable<ImageFormat> allowedExtensions, int maxWeight)
     {
-        var wwwPath = _webHostEnvironment.WebRootPath; // path to wwwroot
+        var wwwPath = webHostEnvironment.WebRootPath; // path to wwwroot
         var path = Path.Combine(wwwPath, directory); // combine path to wwwroot with given folder
         if (!Directory.Exists(path)) // check if folder exists
         {
@@ -50,7 +43,7 @@ public class FileService
     // deletes given file
     public void DeleteFile(string fileDir)
     {
-        var wwwPath = Path.Combine(_webHostEnvironment.WebRootPath, fileDir); // combine to get full path
+        var wwwPath = Path.Combine(webHostEnvironment.WebRootPath, fileDir); // combine to get full path
         File.Delete(wwwPath); // delete file
     }
 

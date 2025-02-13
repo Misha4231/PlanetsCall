@@ -13,14 +13,9 @@ using PlanetsCall.Controllers.Exceptions;
 
 namespace Data.Repository.Community;
 
-public class OrganisationsRepository : RepositoryBase, IOrganisationsRepository
+public class OrganisationsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService)
+    : RepositoryBase(context, configuration), IOrganisationsRepository
 {
-    private readonly FileService _fileService;
-    public OrganisationsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService) 
-        : base(context, configuration)
-    {
-        _fileService = fileService;
-    }
     public PaginatedList<MinOrganisationDto> GetUserOrganisations(Users user, int page) // Retrieves a paginated list of organizations that the specified user is a member of.
     {
         int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>(); // Retrieve the page size from configuration settings.
@@ -79,7 +74,7 @@ public class OrganisationsRepository : RepositoryBase, IOrganisationsRepository
         string logoPath = "";
         if (!string.IsNullOrEmpty(organisationData.OrganizationLogo))
         {
-            logoPath = _fileService.SaveFile(organisationData.OrganizationLogo, "organisations",
+            logoPath = fileService.SaveFile(organisationData.OrganizationLogo, "organisations",
                 new ImageFormat[] { ImageFormat.Jpeg, ImageFormat.Png }, 4);
         }
 
@@ -267,7 +262,7 @@ public class OrganisationsRepository : RepositoryBase, IOrganisationsRepository
             throw new CodeException("Organisation UniqueName is taken", StatusCodes.Status400BadRequest);
         }
         
-        string? logoPath = _fileService.UpdateFile(organisationToUpdate.OrganizationLogo, organisation.OrganizationLogo, "organisations", new ImageFormat[] { ImageFormat.Jpeg, ImageFormat.Png }, 4);
+        string? logoPath = fileService.UpdateFile(organisationToUpdate.OrganizationLogo, organisation.OrganizationLogo, "organisations", new ImageFormat[] { ImageFormat.Jpeg, ImageFormat.Png }, 4);
         organisationToUpdate.Name = organisation.Name;
         organisationToUpdate.UniqueName = organisation.UniqueName;
         organisationToUpdate.Description = organisation.Description;
@@ -292,7 +287,7 @@ public class OrganisationsRepository : RepositoryBase, IOrganisationsRepository
         
         if (!string.IsNullOrEmpty(organisation.OrganizationLogo))
         {
-            _fileService.DeleteFile(organisation.OrganizationLogo);
+            fileService.DeleteFile(organisation.OrganizationLogo);
         }
 
         Context.Organizations.Remove(organisation);
@@ -323,7 +318,7 @@ public class OrganisationsRepository : RepositoryBase, IOrganisationsRepository
         string? image = role.Image;
         if (!string.IsNullOrEmpty(image))
         {
-            image = _fileService.SaveFile(image, "organisations",
+            image = fileService.SaveFile(image, "organisations",
                 new ImageFormat[] { ImageFormat.Jpeg, ImageFormat.Png }, 4);
         }
         EntityEntry<OrganisationRoles> newRole = Context.OrganizationRoles.Add(new OrganisationRoles()
@@ -352,7 +347,7 @@ public class OrganisationsRepository : RepositoryBase, IOrganisationsRepository
         OrganisationRoles? roleToUpdate = Context.OrganizationRoles.FirstOrDefault(r => r.Id == roleId);
         if (roleToUpdate is null) throw new CodeException("role is not exist", StatusCodes.Status404NotFound);
         
-        string? logoPath =_fileService.UpdateFile(roleToUpdate.Image, role.Image, "organisations",
+        string? logoPath =fileService.UpdateFile(roleToUpdate.Image, role.Image, "organisations",
             new ImageFormat[] { ImageFormat.Jpeg, ImageFormat.Png }, 4);
 
         roleToUpdate.Image = logoPath;

@@ -6,22 +6,15 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace PlanetsCall.Helper;
 
-public class JwtTokenManager
+public class JwtTokenManager(IConfiguration configuration)
 {
-    private readonly IConfiguration _configuration;
-    
-    public JwtTokenManager(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     // generates access token for later use in Authorization header
     public string GenerateToken(Users user)
     {
         // reading essential data from app settings
-        var jwtIssuer = _configuration.GetSection("Jwt:Issuer").Get<string>(); 
-        var jwtAudience = _configuration.GetSection("Jwt:Audience").Get<string>();
-        var jwtKey = _configuration.GetSection("Jwt:Key").Get<string>();
+        var jwtIssuer = configuration.GetSection("Jwt:Issuer").Get<string>(); 
+        var jwtAudience = configuration.GetSection("Jwt:Audience").Get<string>();
+        var jwtKey = configuration.GetSection("Jwt:Key").Get<string>();
             
         // making credentials
         var jwtSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!));

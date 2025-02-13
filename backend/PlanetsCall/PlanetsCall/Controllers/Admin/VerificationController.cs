@@ -12,23 +12,17 @@ namespace PlanetsCall.Controllers.Admin;
  */
 [Route("/api/admin/organisations/[controller]")]
 [ApiController]
-public class VerificationController : ControllerBase
+public class VerificationController(
+    IVerificationRepository verificationRepository,
+    IOrganisationsRepository organisationsRepository)
+    : ControllerBase
 {
-    private readonly IVerificationRepository _verificationRepository;
-    private readonly IOrganisationsRepository _organisationsRepository;
-
-    public VerificationController(IVerificationRepository verificationRepository, IOrganisationsRepository organisationsRepository)
-    {
-        this._verificationRepository = verificationRepository;
-        _organisationsRepository = organisationsRepository;
-    }
-
     [HttpGet]
     [AdminOnlyFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetRequests() // gets a list of all verification requests and put it into DTO (to make organisation data smaller)
     {
-        return Ok(_verificationRepository.GetRequestsList());
+        return Ok(verificationRepository.GetRequestsList());
     }
 
     [HttpPost("{organisationName}/{action}/")]
@@ -45,7 +39,7 @@ public class VerificationController : ControllerBase
         }
 
         try {
-            Organisations org = _organisationsRepository.GetObjOrganisation(organisationName);
+            Organisations org = organisationsRepository.GetObjOrganisation(organisationName);
             if (org.VerificationRequest is null) // check if organisation creator really made request
             {
                 return BadRequest(new ErrorResponse(new List<string>() { "Organisation owner didn't request verification" }, StatusCodes.Status400BadRequest,
@@ -53,8 +47,8 @@ public class VerificationController : ControllerBase
             }
             
             if (action == "approve") // if approve, than set isVerified equals true
-                _verificationRepository.VerifyOrganisation(org);
-            _verificationRepository.DeleteRequest(org.VerificationRequest); // delete request after processing it
+                verificationRepository.VerifyOrganisation(org);
+            verificationRepository.DeleteRequest(org.VerificationRequest); // delete request after processing it
 
             return Ok();
         }

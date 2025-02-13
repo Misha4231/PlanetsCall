@@ -10,14 +10,8 @@ namespace PlanetsCall.Controllers.Community;
 
 [ApiController]
 [Route("/api/community/[controller]")]
-public class OrganisationsController : ControllerBase
+public class OrganisationsController(IOrganisationsRepository organisationsRepository) : ControllerBase
 {
-    private readonly IOrganisationsRepository _organisationsRepository;
-    public OrganisationsController(IOrganisationsRepository organisationsRepository)
-    {
-        this._organisationsRepository = organisationsRepository;
-    }
-
     [HttpGet]
     [Route("my/")]
     [TokenAuthorizeFilter]
@@ -25,7 +19,7 @@ public class OrganisationsController : ControllerBase
     public IActionResult MyOrganisations([FromQuery] int page = 1) // get organisations assigned to user
     {
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
-        PaginatedList<MinOrganisationDto> o = _organisationsRepository.GetUserOrganisations(requestUser!, page);
+        PaginatedList<MinOrganisationDto> o = organisationsRepository.GetUserOrganisations(requestUser!, page);
         
         return Ok(o);
     }
@@ -42,7 +36,7 @@ public class OrganisationsController : ControllerBase
         Organisations? organisation;
         try
         {
-            organisation = _organisationsRepository.GetObjOrganisation(organisationUniqueName); // get organisation for validation
+            organisation = organisationsRepository.GetObjOrganisation(organisationUniqueName); // get organisation for validation
         }
         catch (CodeException e)
         {
@@ -71,7 +65,7 @@ public class OrganisationsController : ControllerBase
             return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
 
         // Proceed to join the organization.
-        _organisationsRepository.JoinOrganization(user!, organisationUniqueName);
+        organisationsRepository.JoinOrganization(user!, organisationUniqueName);
 
         return Ok();
     }
@@ -88,7 +82,7 @@ public class OrganisationsController : ControllerBase
         try
         {
             // Delegate the organization creation to the repository and return the created organization.
-            FullOrganisationDto newOrganisation = _organisationsRepository.CreateOrganisation(requestUser!, organisationDto);
+            FullOrganisationDto newOrganisation = organisationsRepository.CreateOrganisation(requestUser!, organisationDto);
             return Ok(newOrganisation);
         } catch (CodeException e)
         {
@@ -105,7 +99,7 @@ public class OrganisationsController : ControllerBase
         try
         {
             // Delegate the retrieval of join requests to the repository.
-            var reqUsers =_organisationsRepository.GetRequests(requestUser!, organisationUniqueName);
+            var reqUsers =organisationsRepository.GetRequests(requestUser!, organisationUniqueName);
 
             return Ok(reqUsers);
         } catch (CodeException e)
@@ -122,7 +116,7 @@ public class OrganisationsController : ControllerBase
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         try
         {
-            _organisationsRepository.AcceptRequest(requestUser!, organisationUniqueName, userId);
+            organisationsRepository.AcceptRequest(requestUser!, organisationUniqueName, userId);
         } catch (CodeException e)
         {
             return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
@@ -137,7 +131,7 @@ public class OrganisationsController : ControllerBase
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         try
         {
-            _organisationsRepository.RejectRequest(requestUser!, organisationUniqueName, userId);
+            organisationsRepository.RejectRequest(requestUser!, organisationUniqueName, userId);
         } catch (Exception e)
         {
             return BadRequest(new ErrorResponse(new List<string>() { e.Message }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
@@ -151,7 +145,7 @@ public class OrganisationsController : ControllerBase
     {
         try
         {
-            return Ok(_organisationsRepository.GetMembers(organisationUniqueName));
+            return Ok(organisationsRepository.GetMembers(organisationUniqueName));
         } catch (CodeException e)
         {
             return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
@@ -166,7 +160,7 @@ public class OrganisationsController : ControllerBase
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         try
         {
-            _organisationsRepository.RemoveMember(requestUser!, organisationUniqueName, userId);
+            organisationsRepository.RemoveMember(requestUser!, organisationUniqueName, userId);
         } catch (CodeException e)
         {
             return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
@@ -178,7 +172,7 @@ public class OrganisationsController : ControllerBase
     [Route("search/{searchPhrase}/")]
     public IActionResult SearchByPhrase(string searchPhrase, [FromQuery] int page = 1)
     {
-        var o = _organisationsRepository.SearchOrganization(searchPhrase, page);
+        var o = organisationsRepository.SearchOrganization(searchPhrase, page);
         
         return Ok(o);
     }
@@ -189,7 +183,7 @@ public class OrganisationsController : ControllerBase
     {
         try
         {
-            return Ok(_organisationsRepository.GetOrganisation(organisationUniqueName));
+            return Ok(organisationsRepository.GetOrganisation(organisationUniqueName));
         } catch (CodeException e)
         {
             return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
@@ -204,7 +198,7 @@ public class OrganisationsController : ControllerBase
         
         try
         {
-            return Ok(_organisationsRepository.UpdateOrganisation(newOrganisationData, requestUser));
+            return Ok(organisationsRepository.UpdateOrganisation(newOrganisationData, requestUser));
         } catch (CodeException e)
         {
             return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
@@ -220,7 +214,7 @@ public class OrganisationsController : ControllerBase
         
         try
         {
-            _organisationsRepository.RemoveOrganisation(organisationUniqueName, requestUser);
+            organisationsRepository.RemoveOrganisation(organisationUniqueName, requestUser);
             return Ok();
         } catch (CodeException e)
         {
@@ -237,7 +231,7 @@ public class OrganisationsController : ControllerBase
         
         try
         {
-            _organisationsRepository.AddVerificationRequest(organisationUniqueName, requestUser, description);
+            organisationsRepository.AddVerificationRequest(organisationUniqueName, requestUser, description);
             return Ok();
         } catch (CodeException e)
         {
