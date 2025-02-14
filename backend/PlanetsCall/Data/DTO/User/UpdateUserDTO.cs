@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Core.Attributes;
 using Data.Models;
 
 namespace Data.DTO.User;
@@ -18,7 +19,7 @@ public class UpdateUserDto
     public string? LastName { get; set; }
     public DateTime BirthDate { get; set; }
     public NewUserPasswordDto? Passwords { get; set; }
-    [Base64String]
+    [CleanBase64String]
     public string? ProfileImage { get; set; }
 
     [MaxLength(5)]

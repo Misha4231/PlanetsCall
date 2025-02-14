@@ -57,11 +57,16 @@ public class Users
     public int GroupTasksCompleted { get; set; }
     
     public ICollection<Users>? Friends { get; set; }
-    public ICollection<Users> FriendsOf { get; set; }
+    public ICollection<Users>? FriendsOf { get; set; }
     
     public ICollection<Organisations>? OwnedOrganizations { get; set; }
+<<<<<<< HEAD
     public ICollection<Organisations> MyOrganisation { get; set; }
     public ICollection<OrganisationRoles> OrganizationRoles { get; set; }
+=======
+    public ICollection<Organisations>? MyOrganisation { get; set; }
+    public ICollection<OrganisationRoles>? OrganizationRoles { get; set; }
+>>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
     
     public ICollection<UserAchievements>? AchievementsCollection { get; set; }
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }
@@ -78,5 +83,5 @@ public class Users
     public ICollection<Items> ItemsCollection { get; set; }
     
     public ICollection<Logs>? Actions { get; set; }
-    public ICollection<Organisations> RequestedOrganizations { get; set; }
+    public ICollection<Organisations>? RequestedOrganizations { get; set; }
 }

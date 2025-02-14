@@ -18,5 +18,6 @@ public interface IUsersRepository
     Users UpdateUser(UpdateUserDto user, int userId);
     ErrorResponse? UpdateUserValidation(UpdateUserDto user, int userId);
     void DeleteUser(Users user);
-
+    void ResetUserData(Users user);
+    PaginatedList<MinUserDto> GetUsersPaginated(int page);
 }

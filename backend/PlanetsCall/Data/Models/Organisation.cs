@@ -30,6 +30,7 @@ public class Organisations
     public bool IsPrivate { get; set; }
     public int MinimumJoinLevel { get; set; }
 
+<<<<<<< HEAD
     public required int CreatorId { get; set; }
     public required Users Creator { get; set; }
     
@@ -37,4 +38,14 @@ public class Organisations
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }
     public ICollection<Users> Requests { get; set; }
     public ICollection<Users> Members { get; set; }
+=======
+    public int? CreatorId { get; set; }
+    public Users? Creator { get; set; }
+    
+    public ICollection<OrganisationRoles> Roles { get; set; }
+    public ICollection<Tasks>? TasksCreatedCollection { get; set; }
+    public ICollection<Users>? Requests { get; set; }
+    public ICollection<Users>? Members { get; set; }
+    public OrganizationVerificationRequests? VerificationRequest { get; set; }
+>>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
 }

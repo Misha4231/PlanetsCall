@@ -227,4 +227,24 @@ public class OrganisationsController : ControllerBase
             return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
     }
+<<<<<<< HEAD
+=======
+
+    [HttpPost]
+    [Route("{organisationUniqueName}/request-verification/")]
+    [TokenAuthorizeFilter]
+    public IActionResult RequestVerification(string organisationUniqueName, [FromBody] string description) // requests a verification of the organisation
+    {
+        Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        
+        try
+        {
+            _organisationsRepository.AddVerificationRequest(organisationUniqueName, requestUser, description);
+            return Ok();
+        } catch (CodeException e)
+        {
+            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+        }
+    }
+>>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
 }

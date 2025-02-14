@@ -1,19 +1,18 @@
-﻿using Data.Context;
+﻿using Core;
+using Data.Context;
 using Data.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Data.Repository.Log;
 
-public class LogsRepository : ILogsRepository
+public class LogsRepository : RepositoryBase, ILogsRepository
 {
-    private readonly PlatensCallContext _context;
-    public LogsRepository(PlatensCallContext context)
-    {
-        this._context = context;
-    }
+    public LogsRepository(PlatensCallContext context, IConfiguration configuration) 
+        : base(context, configuration) {}
 
     public List<Logs> GetAttendance(Users user) // get when user used service (used for statistics)
     {
-        List<Logs> attendance = _context.Logs.Where(log => log.UserId == user.Id && log.Type == "attendance").Select(log => new Logs
+        List<Logs> attendance = Context.Logs.Where(log => log.UserId == user.Id && log.Type == "attendance").Select(log => new Logs
         {
             Id = log.Id,
             Type = log.Type,
@@ -27,10 +26,14 @@ public class LogsRepository : ILogsRepository
 
     public void AddAttendance(Users user) // add attendance today (used for statistics)
     {
+<<<<<<< HEAD
         if (!_context.Logs.Any(log =>
+=======
+        if (!Context.Logs.Any(log =>
+>>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
                 log.UserId == user.Id && log.Type == "attendance" && log.CreatedAt.Date == DateTime.Today)) // check if today's attendance is already marked
         {
-            _context.Logs.Add(new Logs()
+            Context.Logs.Add(new Logs()
             {
                 Type = "attendance",
                 UserId = user.Id,
@@ -38,7 +41,7 @@ public class LogsRepository : ILogsRepository
                 CreatedAt = DateTime.Now
             }); // add log
 
-            _context.SaveChanges();
+            Context.SaveChanges();
         }
     }
 }

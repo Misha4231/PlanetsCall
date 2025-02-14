@@ -3,10 +3,7 @@ using System;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore.Migrations;
-=======
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -15,21 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-<<<<<<< HEAD
-<<<<<<<< HEAD:backend/PlanetsCall/Data/Migrations/PlatensCallContextModelSnapshot.cs
-    partial class PlatensCallContextModelSnapshot : ModelSnapshot
-========
-    [Migration("20250120070716_OrganisationUserRelationFix")]
-    partial class OrganisationUserRelationFix
->>>>>>>> f86c380c28e9c6c821929ff547448e2078917dda:backend/PlanetsCall/Data/Migrations/20250120070716_OrganisationUserRelationFix.Designer.cs
+    [Migration("20250124202104_Add_OrganizationVerificationRequests_Table")]
+    partial class Add_OrganizationVerificationRequests_Table
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
-=======
-    partial class PlatensCallContextModelSnapshot : ModelSnapshot
-    {
-        protected override void BuildModel(ModelBuilder modelBuilder)
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -489,8 +476,6 @@ namespace Data.Migrations
                     b.ToTable("Organizations");
                 });
 
-<<<<<<< HEAD
-=======
             modelBuilder.Entity("Data.Models.OrganizationVerificationRequests", b =>
                 {
                     b.Property<int>("Id")
@@ -514,7 +499,6 @@ namespace Data.Migrations
                     b.ToTable("OrganizationVerificationRequests");
                 });
 
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
             modelBuilder.Entity("Data.Models.Regions", b =>
                 {
                     b.Property<long>("Id")
@@ -1186,8 +1170,6 @@ namespace Data.Migrations
                     b.Navigation("Creator");
                 });
 
-<<<<<<< HEAD
-=======
             modelBuilder.Entity("Data.Models.OrganizationVerificationRequests", b =>
                 {
                     b.HasOne("Data.Models.Organisations", "Organisation")
@@ -1199,7 +1181,6 @@ namespace Data.Migrations
                     b.Navigation("Organisation");
                 });
 
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
             modelBuilder.Entity("Data.Models.States", b =>
                 {
                     b.HasOne("Data.Models.Countries", "Country")
@@ -1479,11 +1460,8 @@ namespace Data.Migrations
                     b.Navigation("Roles");
 
                     b.Navigation("TasksCreatedCollection");
-<<<<<<< HEAD
-=======
 
                     b.Navigation("VerificationRequests");
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
                 });
 
             modelBuilder.Entity("Data.Models.Regions", b =>

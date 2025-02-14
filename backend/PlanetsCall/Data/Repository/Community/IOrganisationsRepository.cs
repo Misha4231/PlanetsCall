@@ -26,4 +26,8 @@ public interface IOrganisationsRepository
     void DeleteRole(int roleId);
     void GrantRole(Organisations organisation, Users user, int roleId);
     void RevokeRole(Organisations organisation, Users user, int roleId);
+<<<<<<< HEAD
+=======
+    OrganizationVerificationRequests AddVerificationRequest(string organisationUniqueName, Users user, string description);
+>>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
 }

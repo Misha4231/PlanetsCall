@@ -22,13 +22,15 @@ public sealed class PlatensCallContext : DbContext
     public DbSet<Regions> Regions { get; set; }
     public DbSet<States> States { get; set; }
     public DbSet<Subregions> Subregions { get; set; }
+    public DbSet<OrganizationVerificationRequests> OrganizationVerificationRequests { get; set; }
 
     public PlatensCallContext(DbContextOptions<PlatensCallContext> options) : base(options)
     { 
         //Database.EnsureCreated();
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     }
-
+    
+    // Configures the entity relationships and database schema using Fluent API.
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -62,7 +64,14 @@ public sealed class PlatensCallContext : DbContext
             .HasMany<Users>(o => o.Members)
             .WithMany(u => u.MyOrganisation)
             .UsingEntity(t => t.ToTable("OrganizationUsers"));
+<<<<<<< HEAD
         
+=======
+        modelBuilder.Entity<OrganizationVerificationRequests>()
+            .HasOne<Organisations>(o => o.Organisation)
+            .WithOne(o => o.VerificationRequest);
+
+>>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
         // Osiągnięcia
         modelBuilder.Entity<UserAchievements>()
             .HasOne<Achievements>(u => u.Achievement)

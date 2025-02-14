@@ -42,6 +42,10 @@ builder.Services.AddScoped<ILogsRepository, LogsRepository>();
 builder.Services.AddScoped<IItemsRepository, ItemsRepository>();
 builder.Services.AddScoped<IFriendsRepository, FriendsRepository>();
 builder.Services.AddScoped<IOrganisationsRepository, OrganisationsRepository>();
+<<<<<<< HEAD
+=======
+builder.Services.AddScoped<IVerificationRepository, VerificationRepository>();
+>>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
 builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<JwtTokenManager>();
 builder.Services.AddScoped<FileService>();
