@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import './Header.css';
 
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -14,9 +15,9 @@ const Header: React.FC = () => {
   const isShopPage = location.pathname.startsWith('/shop');
 
   return (
-    <header>
+    <header className='Header'>
       <nav>
-        <ul>
+        <ul className='Header'>
           <li><Link to="/">Strona Główna</Link></li>
           {isAuthenticated ? (
             <>

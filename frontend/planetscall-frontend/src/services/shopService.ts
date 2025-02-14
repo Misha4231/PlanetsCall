@@ -39,6 +39,10 @@ export const buyItem = async (authToken: string, itemId: number) => {
   });
 
   if (!response.ok) {
+    
+    const errorData = await response.json();
+    console.log(errorData.error);
+    console.log(errorData);
     throw new Error('Nie udało się kupić przedmiotu.');
   }
 
@@ -48,6 +52,9 @@ export const buyItem = async (authToken: string, itemId: number) => {
 //
 
 export const addCategory = async (authToken: string, title: string, image: string) => {
+  console.log("Token: " + authToken);
+  console.log("Tytul: " + title);
+  console.log("Obraz: " + image);
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
   const response = await fetch('https://localhost:7000/api/Items/categories', {
@@ -60,13 +67,16 @@ export const addCategory = async (authToken: string, title: string, image: strin
   });
 
   if (!response.ok) {
+    const errorData = await response.json();
+    console.log(errorData.error);
+    console.log(errorData);
     throw new Error(`Błąd: ${response.status} - ${response.statusText}`);
   }
 
-
-const text = await response.text();
-return text ? JSON.parse(text) : null;
-//return await response.json();
+//console.log(await response.text());
+// const text = await response.text();
+// return text ? JSON.parse(text) : null;
+return await response.json();
 };
 
 //

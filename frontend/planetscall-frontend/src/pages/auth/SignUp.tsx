@@ -17,7 +17,8 @@ const SignUp: React.FC = () => {
     setSuccess(null);
   
     try {
-      const response = await fetch('https://localhost:7000/api/Auth/sign-up', {
+      //const response = await fetch('https://localhost:7000/api/Auth/sign-up', {
+      const response = await fetch('https://localhost:7000/api/Auth/development-sign-up', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

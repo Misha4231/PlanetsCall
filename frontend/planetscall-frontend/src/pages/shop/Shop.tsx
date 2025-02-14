@@ -13,6 +13,7 @@ import {
 } from '../../services/shopService';
 import { getFullUser, getUser } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
+import Header from '../../components/shared/Header';
 
 const Shop: React.FC = () => {  
   const { token, isAuthenticated } = useAuth();
@@ -121,8 +122,22 @@ const Shop: React.FC = () => {
     alert(`Próbujesz ${item.name}!`);
   };
 
+
+  /** Konwersja obrazu na Base64 */
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setNewCategory({ ...newCategory, image: reader.result as string });
+      };
+    }
+  };
+
   return (
     <div>
+      <Header/>
       <h1>Sklep</h1>
       {isAuthenticated && token ? (
         <div>
@@ -148,11 +163,11 @@ const Shop: React.FC = () => {
               onChange={(e) => setNewCategory({ ...newCategory, title: e.target.value })}
             />
             <input
-              type="text"
-              placeholder="URL obrazka"
-              value={newCategory.image}
-              onChange={(e) => setNewCategory({ ...newCategory, image: e.target.value })}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
             />
+            {newCategory.image && <img src={newCategory.image} alt="Podgląd" style={{ width: 100, height: 100 }} />}
             <button onClick={handleAddCategory}>Dodaj</button>
           </div>
 
