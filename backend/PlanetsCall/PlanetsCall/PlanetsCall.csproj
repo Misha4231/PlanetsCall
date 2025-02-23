@@ -18,6 +18,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
         <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
         <PackageReference Include="System.Drawing.Common" Version="8.0.11" />

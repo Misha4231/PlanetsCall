@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using PlanetsCall.Filters;
 using PlanetsCall.Helper;
 using PlanetsCall.Services.Caching;
+using PlanetsCall.Services.TaskScheduling;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +75,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
+
+// configuring tasks assignment scheduling
+builder.Services.AddQuartz(opt =>
+{
+    var dailyJobKey = JobKey.Create("DailyTasksAssigmentJob"); // make job name
+    opt.AddJob<DailyTasksAssigner>(dailyJobKey) // register job
+        .AddTrigger(trigger => trigger
+            .ForJob(dailyJobKey)
+            .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(7, 0)) // execute every day at 7:00 am
+        ); 
+    
+    var weeklyJobKey = JobKey.Create("WeeklyTasksAssigmentJob"); // make job name
+    opt.AddJob<WeeklyTasksAssigner>(weeklyJobKey) // register job
+        .AddTrigger(trigger => trigger
+                .ForJob(weeklyJobKey)
+                .WithSchedule(CronScheduleBuilder.WeeklyOnDayAndHourAndMinute(DayOfWeek.Monday, 7, 0)) // every monday at 7:00 am
+        );
+});
+// create instance of job when it's triggered
+builder.Services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

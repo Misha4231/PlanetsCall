@@ -54,6 +54,11 @@ public class TasksRepository(PlatensCallContext context, FileService fileService
         return Context.Tasks.Include(t => t.Author).Include(t => t.Organisation).FirstOrDefault(t => t.Id == id);
     }
 
+    public List<Tasks> GetTasksByType(int type)
+    {
+        return Context.Tasks.Include(t => t.Author).Include(t => t.Organisation).Where(t => t.Type == type).ToList();
+    }
+
     public Tasks? UpdateTask(int id, TemplateTask updatedTask) // update the task with given id
     {
         var task = Context.Tasks.FirstOrDefault(t => t.Id == id);
@@ -85,12 +90,22 @@ public class TasksRepository(PlatensCallContext context, FileService fileService
         return true;
     }
 
-    public List<FullTaskDto> GetAdminTasks() // get all tasks created by admins
+    // deactivate all tasks with provided type
+    public void DeactivateTasksWithType(int type)
     {
-        List<FullTaskDto> res = Context.Tasks
-            .Include(t => t.Author)
-            .Include(t => t.Organisation)
-            .Select(t => new FullTaskDto(t)).ToList();
-        return res;
+        List<Tasks> tasksList = GetTasksByType(type);
+
+        foreach (Tasks task in tasksList)
+        {
+            task.IsActive = false;
+        }
+        
+        context.SaveChanges();
+    }
+
+    public void ActivateTask(Tasks task) // activate provided task
+    {
+        task.IsActive = true;
+        context.SaveChanges();
     }
 }
