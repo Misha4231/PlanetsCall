@@ -5,6 +5,8 @@ using Data.Repository.Task;
 using Microsoft.AspNetCore.Mvc;
 using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
+using PlanetsCall.Services.TaskScheduling;
+using Quartz;
 
 namespace PlanetsCall.Controllers.Task;
 
@@ -20,7 +22,7 @@ namespace PlanetsCall.Controllers.Task;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class TasksController(ITasksRepository tasksRepository, IOrganisationsRepository organisationsRepository)
+public class TasksController(ITasksRepository tasksRepository, IOrganisationsRepository organisationsRepository, ISchedulerFactory schedulerFactory, IServiceScopeFactory serviceScopeFactory)
     : ControllerBase
 {
     [HttpPost]
@@ -54,7 +56,7 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
           {
               return NotFound();
           }
-          return Ok(new FullTaskDto(task));
+          return Ok(task);
       }
       [HttpGet]
       [Cache]
@@ -75,7 +77,7 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status403Forbidden)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
-      public IActionResult GetOrganizationTasks(string organizationName) // get all tasks created by admins (type 1 and 2)
+      public IActionResult GetOrganizationTasks(string organizationName) // get all tasks created in organizations (type 3)
       {
           Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
           try
@@ -89,8 +91,7 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
           }
           
           Organisations organisation = organisationsRepository.GetObjOrganisation(organizationName);
-          var tasks = tasksRepository.GetTasksByType(3).Where(t => t.OrganizationId == organisation.Id).ToList();
-          return Ok(tasks);
+          return Ok(tasksRepository.GetOrganizationTasks(organisation));
       }
 
       [HttpPut]
@@ -106,7 +107,7 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
           {
               return NotFound();
           }
-          return Ok(new FullTaskDto(updatedTask));
+          return Ok(updatedTask);
       }
 
       [HttpDelete]
@@ -131,7 +132,7 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       public IActionResult ActivateTask(int id) // activate admin task
       {
-          Tasks? task = tasksRepository.GetTaskById(id);
+          FullTaskDto? task = tasksRepository.GetTaskById(id);
           if (task is null) return NotFound();
           
           tasksRepository.ActivateTask(task);
@@ -170,7 +171,7 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
       [TokenAuthorizeFilter]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status200OK)]
-      public IActionResult AddOrganizationTask(string organizationName, [FromBody] TaskInfo task) // create task (as an organization member with rights)
+      public async System.Threading.Tasks.Task<IActionResult> AddOrganizationTask(string organizationName, [FromBody] TaskInfo task) // create task (as an organization member with rights)
       {
           Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
           try
@@ -179,8 +180,9 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
               // check if user have according permissions
               organisationsRepository.EnsureUserHasPermission(requestUser, organizationName, o => o.CanAddTask);
               
-              tasksRepository.CreateTask(task, requestUser, organisation); // create task
-              // TODO add scheduler function that will deactivate task after 3 days
+              FullTaskDto newTask = tasksRepository.CreateTask(task, requestUser, organisation); // create task
+              // add background function that will deactivate task after 3 days
+              await ScheduleDeactivateTask(newTask.Id);
           }
           catch (CodeException e)
           {
@@ -194,7 +196,7 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
       [TokenAuthorizeFilter]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status200OK)]
-      public IActionResult ActivateOrganizationTask(string organizationName, int id) // activate existing task
+      public async System.Threading.Tasks.Task<IActionResult> ActivateOrganizationTask(string organizationName, int id) // activate existing task
       {
           Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
           try
@@ -203,12 +205,13 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
               // check if user have according permissions
               organisationsRepository.EnsureUserHasPermission(requestUser, organizationName, o => o.CanAddTask);
               
-              Tasks? task = tasksRepository.GetTaskById(id);
+              FullTaskDto? task = tasksRepository.GetTaskById(id);
               if (task is null) return NotFound();
               
               tasksRepository.ActivateTask(task); // activate task
               
-              // TODO add scheduler function that will deactivate task after 3 days
+              // add background function that will deactivate task after 3 days
+              ThreadPool.QueueUserWorkItem(async _ => await ScheduleDeactivateTask(task.Id));
           }
           catch (CodeException e)
           {
@@ -216,5 +219,30 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
           }
 
           return Ok();
+      }
+
+      // add background job to deactivate organization task
+      private async System.Threading.Tasks.Task ScheduleDeactivateTask(int taskId, CancellationToken token = default(CancellationToken))
+      {
+          try
+          {
+              await System.Threading.Tasks.Task.Delay(TimeSpan.FromDays(3), token); // wait 3 days
+
+              using (var scope = serviceScopeFactory.CreateScope()) // get new scope because the one from DI is disposed
+              {
+                  var repo = scope.ServiceProvider.GetService<ITasksRepository>();
+                  if (repo == null) return;
+                  
+                  var task = repo.GetTaskById(taskId);
+                  if (task != null)
+                  {
+                      repo.DeactivateTask(task);
+                  }
+              }
+          }
+          catch(TaskCanceledException)
+          {
+              return;
+          }
       }
 }

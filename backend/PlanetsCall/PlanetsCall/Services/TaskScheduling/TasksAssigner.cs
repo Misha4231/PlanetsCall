@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.DTO.Task;
+using Data.Models;
 using Data.Repository.Task;
 using Quartz;
 
@@ -16,7 +17,7 @@ public class TasksAssigner(ITasksRepository tasksRepository, int tasksType) : IJ
     {
         tasksRepository.DeactivateTasksWithType(_tasksType); // deactivate tasks
         
-        List<Tasks> taskTemplates = tasksRepository.GetTasksByType(_tasksType);
+        List<FullTaskDto> taskTemplates = tasksRepository.GetTasksByType(_tasksType);
         if (taskTemplates.Count > 0) // if there is a tasks with of type
         {
             int randomIdx = Random.Next(taskTemplates.Count); // get random task

@@ -2,6 +2,7 @@
 using Core.User;
 using Data.Context;
 using Data.DTO.Task;
+using Data.DTO.User;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,9 +15,9 @@ public class TasksRepository(PlatensCallContext context, FileService fileService
 {
     private readonly FileService _fileService = fileService;
 
-    public void CreateTask(TemplateTask task, Users user) // create task (as an admin)
+    public FullTaskDto CreateTask(TemplateTask task, Users user) // create task (as an admin)
     {
-        Context.Tasks.Add(new Tasks()
+        var newTask = Context.Tasks.Add(new Tasks()
         {
             Title = task.Title,
             Description = task.Description,
@@ -29,11 +30,12 @@ public class TasksRepository(PlatensCallContext context, FileService fileService
         });
 
         Context.SaveChanges();
+        return new FullTaskDto(newTask.Entity);
     }
 
-    public void CreateTask(TaskInfo task, Users user, Organisations organisation)// create task (as an organization member with rights)
+    public FullTaskDto CreateTask(TaskInfo task, Users user, Organisations organisation)// create task (as an organization member with rights)
     {
-        Context.Tasks.Add(new Tasks()
+        var newTask = Context.Tasks.Add(new Tasks()
         {
             Title = task.Title,
             Description = task.Description,
@@ -47,19 +49,38 @@ public class TasksRepository(PlatensCallContext context, FileService fileService
         });
 
         Context.SaveChanges();
+        return new FullTaskDto(newTask.Entity);
     }
 
-    public Tasks? GetTaskById(int id) // get task
+    public FullTaskDto? GetTaskById(int id) // get task
     {
-        return Context.Tasks.Include(t => t.Author).Include(t => t.Organisation).FirstOrDefault(t => t.Id == id);
+        return Context.Tasks
+            .Where(t => t.Id == id)
+            .Include(t => t.Author)
+            .Include(t => t.Organisation)
+            .Select(t => new FullTaskDto(t))
+            .FirstOrDefault();
     }
 
-    public List<Tasks> GetTasksByType(int type)
+    public List<FullTaskDto> GetTasksByType(int type)
     {
-        return Context.Tasks.Include(t => t.Author).Include(t => t.Organisation).Where(t => t.Type == type).ToList();
+        return Context.Tasks
+            .Where(t => t.Type == type)
+            .Include(t => t.Author)
+            .Include(t => t.Organisation)
+            .Select(t => new FullTaskDto(t))
+            .ToList();
     }
 
-    public Tasks? UpdateTask(int id, TemplateTask updatedTask) // update the task with given id
+    public List<FullTaskDto> GetOrganizationTasks(Organisations organisation)
+    {
+        return Context.Tasks.Include(t => t.Organisation)
+            .Where(t => t.Organisation == organisation)
+            .Select(t => new FullTaskDto(t))
+            .ToList();
+    }
+
+    public FullTaskDto? UpdateTask(int id, TemplateTask updatedTask) // update the task with given id
     {
         var task = Context.Tasks.FirstOrDefault(t => t.Id == id);
         if (task == null)
@@ -74,7 +95,7 @@ public class TasksRepository(PlatensCallContext context, FileService fileService
         task.IsGroup = updatedTask.IsGroup;
 
         Context.SaveChanges();
-        return task;
+        return new FullTaskDto(task);
     }
 
     public bool DeleteTask(int id) // delete the task with given id
@@ -93,9 +114,9 @@ public class TasksRepository(PlatensCallContext context, FileService fileService
     // deactivate all tasks with provided type
     public void DeactivateTasksWithType(int type)
     {
-        List<Tasks> tasksList = GetTasksByType(type);
+        List<FullTaskDto> tasksList = GetTasksByType(type);
 
-        foreach (Tasks task in tasksList)
+        foreach (FullTaskDto task in tasksList)
         {
             task.IsActive = false;
         }
@@ -103,9 +124,27 @@ public class TasksRepository(PlatensCallContext context, FileService fileService
         context.SaveChanges();
     }
 
+    public void DeactivateTask(Tasks task)
+    {
+        task.IsActive = false;
+        context.SaveChanges();
+    }
+
+    public void DeactivateTask(FullTaskDto task)
+    {
+        Tasks? dbTask = Context.Tasks.FirstOrDefault(t => t.Id == task.Id);
+        DeactivateTask(dbTask);
+    }
+
     public void ActivateTask(Tasks task) // activate provided task
     {
         task.IsActive = true;
         context.SaveChanges();
+    }
+
+    public void ActivateTask(FullTaskDto task)
+    {
+        Tasks? dbTask = Context.Tasks.FirstOrDefault(t => t.Id == task.Id);
+        ActivateTask(dbTask);
     }
 }

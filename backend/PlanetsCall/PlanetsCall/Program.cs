@@ -15,6 +15,7 @@ using PlanetsCall.Helper;
 using PlanetsCall.Services.Caching;
 using PlanetsCall.Services.TaskScheduling;
 using Quartz;
+using Quartz.Impl;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,8 @@ builder.Services.AddStackExchangeRedisCache(options => // connect to redis for c
     options.InstanceName = builder.Configuration["RedisInstanceName"];
 });
 
+builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+builder.Services.AddScoped<DeactivateOrganizationTaskJob>();
 builder.Services.AddScoped<IRedisCacheService, RedisCacheService>();
 builder.Services.AddScoped<HashManager>();
 builder.Services.AddScoped<PlatensCallContext>();
@@ -107,6 +110,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+var schedulerFactory = app.Services.GetService<ISchedulerFactory>();
+var scheduler = await schedulerFactory.GetScheduler();
+await scheduler.Start();
 
 app.UseHttpsRedirection();
 
