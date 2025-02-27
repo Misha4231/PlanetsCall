@@ -13,15 +13,9 @@ using PlanetsCall.Controllers.Exceptions;
 
 namespace Data.Repository.Item;
 
-public class ItemsRepository : RepositoryBase, IItemsRepository
+public class ItemsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService)
+    : RepositoryBase(context, configuration), IItemsRepository
 {
-    private readonly FileService _fileService;
-    public ItemsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService) 
-        : base(context, configuration)
-    {
-        _fileService = fileService;
-    }
-    
     public List<CategoriesListMember> GetCategories() // gets all categories
     {
         var categoriesList = Context.ItemsCategories
@@ -59,7 +53,7 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
         }
         
         // saves file or throws CodeException with code 415 Unsupported Media Type 
-        string imagePath = _fileService.SaveFile(itemData.Image, "items",
+        string imagePath = fileService.SaveFile(itemData.Image, "items",
                 new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
 
         EntityEntry<Items> newItem = Context.Items.Add(new Items() // creates an instance
@@ -78,7 +72,7 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
     public ItemsCategory AddCategory(MinCategoryDto categoryData) // adds new category for items to database
     {
         // saves file or throws CodeException with code 415 Unsupported Media Type 
-        string imagePath = _fileService.SaveFile(categoryData.Image, "items",
+        string imagePath = fileService.SaveFile(categoryData.Image, "items",
                 new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
         
         // add an entity
@@ -105,7 +99,7 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
         }
         
         // updates file or throws CodeException with code 415 Unsupported Media Type 
-        string? imagePath = _fileService.UpdateFile(itemToUpdate.Image, itemData.Image, "items",
+        string? imagePath = fileService.UpdateFile(itemToUpdate.Image, itemData.Image, "items",
             new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
 
         // assign values
@@ -126,7 +120,7 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
             throw new CodeException("No item with provided id found", StatusCodes.Status404NotFound);
         }
         
-        string? imagePath = _fileService.UpdateFile(categoryToUpdate.Image,categoryData.Image, "items",
+        string? imagePath = fileService.UpdateFile(categoryToUpdate.Image,categoryData.Image, "items",
             new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
 
         categoryToUpdate.Image = imagePath;
@@ -140,7 +134,7 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
     {
         Items? itemData = Context.Items.FirstOrDefault(i => i.Id == itemId);
         if (itemData is null) return false;
-        _fileService.DeleteFile(itemData.Image);
+        fileService.DeleteFile(itemData.Image);
         
         Context.Items.Remove(itemData);
         Context.SaveChanges();
@@ -152,7 +146,7 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
         ItemsCategory? categoryData = Context.ItemsCategories.FirstOrDefault(i => i.Id == categoryId);
         if (categoryData is null) return false;
         
-        if (!string.IsNullOrEmpty(categoryData.Image)) _fileService.DeleteFile(categoryData.Image);
+        if (!string.IsNullOrEmpty(categoryData.Image)) fileService.DeleteFile(categoryData.Image);
         
         Context.ItemsCategories.Remove(categoryData);
         Context.SaveChanges();

@@ -10,10 +10,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Data.Repository.Community;
 
-public class FriendsRepository : RepositoryBase, IFriendsRepository
+public class FriendsRepository(PlatensCallContext context, IConfiguration configuration)
+    : RepositoryBase(context, configuration), IFriendsRepository
 {
-    public FriendsRepository(PlatensCallContext context, IConfiguration configuration) : base(context, configuration) {}
-
     public PaginatedList<MinUserDto> GetFriends(Users user, int page, string? searchString = null) // get list friends of user
     {
         int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>();

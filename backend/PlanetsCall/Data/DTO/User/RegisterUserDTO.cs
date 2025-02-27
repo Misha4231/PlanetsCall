@@ -24,6 +24,11 @@ public class RegisterUserDto
             messages.Add("You must agree to Terms of service");
         }
 
+        if (Passwords is null)
+        {
+            messages.Add("Passwords can't be empty");
+        }
+
         List<string>? passwordMessages = Passwords?.IsValid(); // check everything important for password
         if (passwordMessages is not null && passwordMessages.Count > 0) // in case mistakes found, add it to list
         {

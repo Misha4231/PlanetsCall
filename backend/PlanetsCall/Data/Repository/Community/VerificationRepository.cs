@@ -6,10 +6,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Data.Repository.Community;
 
-public class VerificationRepository : RepositoryBase, IVerificationRepository
+public class VerificationRepository(PlatensCallContext context, IConfiguration configuration)
+   : RepositoryBase(context, configuration), IVerificationRepository
 {
-   public VerificationRepository(PlatensCallContext context, IConfiguration configuration) : base(context, configuration) {}
-
    public List<OrganizationVerificationRequestDto> GetRequestsList()
    { // gets a list of all verification requests and put it into DTO (to make organisation data smaller)
       List<OrganizationVerificationRequestDto> requestsList = Context.OrganizationVerificationRequests
