@@ -18,10 +18,12 @@ using Quartz.Impl;
 using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 /* Configures CORS policy to allow the front end application communicate with server
  Configuration["WebsiteDomain"] Specifies the domain where the front-end React app is hosted allowing controlled cross-origin requests
  Allows any HTTP method, any header, and credentials*/
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
@@ -40,6 +42,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 
 builder.Services.RegisterDataServices(builder.Configuration);
+
 
 builder.Services.AddStackExchangeRedisCache(options => // connect to redis for caching purpose
 {
@@ -64,6 +67,7 @@ builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<JwtTokenManager>();
 builder.Services.AddScoped<FileService>();
+
 
 var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
 var jwtAudience = Environment.GetEnvironmentVariable("WEBSITE_DOMAIN") ?? builder.Configuration.GetSection("Jwt:Audience").Get<string>();
@@ -122,7 +126,7 @@ if (schedulerFactory != null)
     await scheduler.Start();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseCors("AllowReactApp");
 

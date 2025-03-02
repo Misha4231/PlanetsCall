@@ -19,7 +19,8 @@ namespace PlanetsCall.Controllers.User
         IUsersRepository usersRepository,
         EmailSender emailSender,
         HashManager hashManager,
-        JwtTokenManager jwtTokenManager)
+        JwtTokenManager jwtTokenManager,
+        IWebHostEnvironment hostingEnvironment)
         : ControllerBase
     {
         // used everywhere through class for CRUD operations in database and partly for data validation
@@ -43,13 +44,13 @@ namespace PlanetsCall.Controllers.User
             return Ok(new FullUserDto(createdUser)); // return full created user
         }
         
-    #if DEBUG // restrict access to debug only
         [HttpPost]
         [Route("development-sign-up/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult ImmediateSignUp([FromBody] RegisterUserDto user) // register user for testing purposes without activation needed
         {
+            if (!hostingEnvironment.IsDevelopment()) return NotFound(); // restrict access to development only
             List<string> errorMessages = new List<string>();
             Users? createdUser = ValidateAndPrepareUser(user, true, errorMessages); // validate user
             if (createdUser is null) return BadRequest(new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier)); // is mistakes are found return code 400
@@ -57,7 +58,6 @@ namespace PlanetsCall.Controllers.User
             var token = jwtTokenManager.GenerateToken(createdUser); // generate token to later add it to Authorization header
             return Ok(new AccessTokenDto() { AccessToken = token }); // return token
         }
-    #endif
 
         // helper method to remove code repetition from SignUp and ImmediateSignUp methods
         private Users? ValidateAndPrepareUser(RegisterUserDto user, bool isActivated, List<string> errorMessages /* when lots of sensitive data provided, exceptions could contain many messages, so List is being used*/)

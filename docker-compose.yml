@@ -1,5 +1,42 @@
 services:
   redis:
-    image: redis
+    image: redis:latest
+    container_name: redis
     ports:
       - "6379:6379"
+    restart: always
+  api:
+    image: planets-call-api
+    container_name: api
+    build:
+      context: ./backend/PlanetsCall
+      dockerfile: Dockerfile
+      target: runtime
+    ports:
+      - 8080:8080
+    env_file:
+      - ./.env
+      - ./.env.db
+    depends_on:
+      - database
+      - redis
+    volumes:
+      - world_db:/tmp
+      - wwwroot:/app/wwwroot
+      - data_protection_keys:/root/.aspnet/DataProtection-Keys
+  database:
+    image: postgres:latest
+    container_name: database
+    env_file:
+      - ./.env.db
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - app_data:/var/lib/postgresql/data
+
+volumes:
+  app_data:
+  world_db:
+  wwwroot:
+  data_protection_keys:
