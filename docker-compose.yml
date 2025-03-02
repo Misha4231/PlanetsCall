@@ -21,7 +21,7 @@ services:
       - database
       - redis
     volumes:
-      - world_db:/tmp
+      - world_db:/data
       - wwwroot:/app/wwwroot
       - data_protection_keys:/root/.aspnet/DataProtection-Keys
   database:

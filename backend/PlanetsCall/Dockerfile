@@ -30,9 +30,9 @@ RUN apt-get update && apt-get install -y postgresql-client && apt-get install -y
 COPY --from=build /app/PlanetsCall/out .
 
 # Copy entrypoint script
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+COPY ./entrypoint.sh ./
+RUN chmod +x ./entrypoint.sh
 
 EXPOSE 8080
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
