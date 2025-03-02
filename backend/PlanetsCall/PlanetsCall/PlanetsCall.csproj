@@ -32,7 +32,24 @@
 
     <ItemGroup>
       <Folder Include="wwwroot\" />
-      <Folder Include="wwwroot\profile_icons\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\items\1c5119af-b610-4235-80a7-4ab9b558bddb.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\1f527d40-327e-4c79-a0af-3d2fe22649ac.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\24261562-e21d-4bd0-8987-f7b5edec31e6.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\41a3bf2e-67b0-4574-8aff-0180a22ef955.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\55f2e2cf-1c21-4a1f-8fc0-95e147eced3c.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\5d8d4a3f-2457-4628-8720-96ee83262ca7.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\5de2626b-cfdd-40d2-9942-626ada8b4071.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\679e098f-eaae-4b77-9e57-97c15fa3c01f.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\699ab378-92e3-4f13-9f36-ec3b96fe3ff0.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\6b465eb8-fe3b-4c84-9c0b-3ff95daeee82.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\70dbfc08-370b-4ce4-9a71-633d28957216.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\71bd487f-6c19-414b-9fe4-cd38d65fe6ac.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\9f304d35-c97c-4383-9b26-151dcf7d695c.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\a3b974fd-2885-44b7-8c93-8a2f6c7b37c0.Png" />
+      <_ContentIncludedByDefault Remove="wwwroot\items\a980273a-945b-41ee-b060-d838b59d8310.Png" />
     </ItemGroup>
 
 </Project>
