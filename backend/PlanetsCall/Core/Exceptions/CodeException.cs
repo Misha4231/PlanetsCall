@@ -1,4 +1,4 @@
-﻿namespace PlanetsCall.Controllers.Exceptions;
+﻿namespace Core.Exceptions;
 
 /*
  * Class inherited by Exception to provide HTTP code inside

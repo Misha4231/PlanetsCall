@@ -1,7 +1,6 @@
 ﻿using Data.Models;
 using Data.Repository.User;
 using Microsoft.AspNetCore.Mvc;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 
 namespace PlanetsCall.Controllers.Admin;
@@ -28,7 +27,7 @@ public class UserManagementController(IUsersRepository usersRepository) : Contro
     [AdminOnlyFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Block(string username)// Endpoint to block a user
+    public IActionResult Block(string? username)// Endpoint to block a user
     {
         return PerformAction("block", username); // Delegate the action to the shared method
     }
@@ -37,7 +36,7 @@ public class UserManagementController(IUsersRepository usersRepository) : Contro
     [AdminOnlyFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Unblock(string username) // Endpoint to unblock a user
+    public IActionResult Unblock(string? username) // Endpoint to unblock a user
     {
         return PerformAction("unblock", username); // Delegate the action to the shared method
     }
@@ -46,7 +45,7 @@ public class UserManagementController(IUsersRepository usersRepository) : Contro
      * Shared method to perform actions (block/unblock) on users.
      * This method reduces code duplication by centralizing the logic.
      */
-    private IActionResult PerformAction(string action, string username)
+    private IActionResult PerformAction(string action, string? username)
     {
         // Try to find the user by their username
         Users? user = usersRepository.GetUserByUsername(username);
@@ -67,7 +66,7 @@ public class UserManagementController(IUsersRepository usersRepository) : Contro
     [AdminOnlyFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Reset(string username) // reset all userdata (despite essential ones as email, username etc.)
+    public IActionResult Reset(string? username) // reset all userdata (despite essential ones as email, username etc.)
     {
         // Try to find the user by their username
         Users? user = usersRepository.GetUserByUsername(username);

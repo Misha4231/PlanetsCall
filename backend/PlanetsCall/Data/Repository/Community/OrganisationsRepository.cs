@@ -1,5 +1,5 @@
-﻿using System.Drawing.Imaging;
-using Core;
+﻿using Core;
+using Core.Exceptions;
 using Data.Context;
 using Data.DTO.Community;
 using Data.DTO.Global;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
-using PlanetsCall.Controllers.Exceptions;
+using SixLabors.ImageSharp.Formats;
 
 namespace Data.Repository.Community;
 
@@ -23,7 +23,7 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
         // Query to filter and project user's organizations.
         var organisationsQuery = Context.Organizations
             .Include(o => o.Members)
-            .Where(u => u.Members.Any(m => m.Id == user.Id))
+            .Where(u => u.Members!.Any(m => m.Id == user.Id))
             .Select(o => new MinOrganisationDto(o));
             
         // Fetch the paginated list of organizations for the requested page.
@@ -37,25 +37,25 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
         
         return new PaginatedList<MinOrganisationDto>(organisations, page, totalPages);
     }
-    public void JoinOrganization(Users user, string organisationUniqueName) // Adds the user to the specified organization, or adds them to the request list if the organization is private.
+    public void JoinOrganization(Users? user, string organisationUniqueName) // Adds the user to the specified organization, or adds them to the request list if the organization is private.
     {
         Organisations? organisation = GetObjOrganisation(organisationUniqueName); // Fetch the organisation by its unique name.
 
-        Users fullUser = Context.Users     // Load the full user entity, including their relationships with organizations.
+        Users? fullUser = Context.Users     // Load the full user entity, including their relationships with organizations.
             .Include(u => u.MyOrganisation)
             .Include(u => u.RequestedOrganizations)
-            .First(u => u.Id == user.Id);
+            .First(u => user != null && u.Id == user.Id);
 
         // If the organization is public, add the user to the members list.
         if (!organisation.IsPrivate)
         {
-            organisation.Members.Add(fullUser);
-            fullUser.MyOrganisation.Add(organisation);
+            if (organisation.Members != null) organisation.Members.Add(fullUser);
+            if (fullUser.MyOrganisation != null) fullUser.MyOrganisation.Add(organisation);
         }
         else // If the organization is private, add the user to the request list.
         {
-            organisation.Requests.Add(fullUser);
-            fullUser.RequestedOrganizations.Add(organisation);
+            if (organisation.Requests != null) organisation.Requests.Add(fullUser);
+            if (fullUser.RequestedOrganizations != null) fullUser.RequestedOrganizations.Add(organisation);
         }
         
         // Update the database with the modified entities.
@@ -75,7 +75,7 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
         if (!string.IsNullOrEmpty(organisationData.OrganizationLogo))
         {
             logoPath = fileService.SaveFile(organisationData.OrganizationLogo, "organisations",
-                new ImageFormat[] { ImageFormat.Jpeg, ImageFormat.Png }, 4);
+                new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
         }
 
         // Create a new organization entity and populate its properties from the DTO and user details.
@@ -112,8 +112,9 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
         Organisations organisation = Context.Organizations
             .Include(o => o.Requests)
             .FirstOrDefault(o => o.UniqueName == organisationUniqueName)!;
-        
-        return organisation.Requests.Select(u => new MinUserDto(u)).ToList();
+
+        if (organisation.Requests != null) return organisation.Requests.Select(u => new MinUserDto(u)).ToList();
+        return [];
     }
     public void AcceptRequest(Users user, string organisationUniqueName, int requestUserId) // Accepts a user's join request for a specific organization.
     {
@@ -133,18 +134,18 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
         {
             throw new CodeException("User with given id does not exist", StatusCodes.Status404NotFound);
         }
-        if (organisation.Members.Count >= 100) // Check if the organization has reached its maximum member capacity.
+        if (organisation.Members != null && organisation.Members.Count >= 100) // Check if the organization has reached its maximum member capacity.
         {
             throw new CodeException("Organisation can't have more than 100 members", StatusCodes.Status400BadRequest);
         }
         
         // Add to members
-        organisation.Members.Add(newMember);
-        newMember.MyOrganisation.Add(organisation);
-        
+        if (organisation.Members != null) organisation.Members.Add(newMember);
+        if (newMember.MyOrganisation != null) newMember.MyOrganisation.Add(organisation);
+
         // Remove request
-        organisation.Requests.Remove(newMember);
-        newMember.RequestedOrganizations.Remove(organisation);
+        if (organisation.Requests != null) organisation.Requests.Remove(newMember);
+        if (newMember.RequestedOrganizations != null) newMember.RequestedOrganizations.Remove(organisation);
 
         Context.SaveChanges();
     }
@@ -163,8 +164,8 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
             throw new CodeException("User with given id does not exist", StatusCodes.Status404NotFound);
         }
         // Remove request
-        organisation.Requests.Remove(rejectedMember);
-        rejectedMember.RequestedOrganizations.Remove(organisation);
+        if (organisation.Requests != null) organisation.Requests.Remove(rejectedMember);
+        if (rejectedMember.RequestedOrganizations != null) rejectedMember.RequestedOrganizations.Remove(organisation);
 
         Context.SaveChanges();
     }
@@ -179,7 +180,8 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
             throw new CodeException("Organisation does not exist", StatusCodes.Status404NotFound);
         }
 
-        return organisation.Members.Select(u => new MinUserDto(u)).ToList();
+        if (organisation.Members != null) return organisation.Members.Select(u => new MinUserDto(u)).ToList();
+        return [];
     }
     public void RemoveMember(Users user, string organisationUniqueName, int removeUserId)
     {
@@ -193,22 +195,25 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
             .FirstOrDefault(o => o.UniqueName == organisationUniqueName)!;
         Users? member = Context.Users
             .Include(u => u.MyOrganisation)
-            .Include(u => u.OrganizationRoles)
+            .Include(u => u.OrganizationRoles)!.ThenInclude(organisationRoles => organisationRoles.Organisation)
             .FirstOrDefault(u => u.Id == removeUserId);
         if (member is null)
         {
             throw new CodeException("User with given id does not exist", StatusCodes.Status404NotFound);
         }
 
-        organisation.Members.Remove(member);
-        member.MyOrganisation.Remove(organisation);
-        
-        OrganisationRoles? role = member.OrganizationRoles.FirstOrDefault(o => o.Organisation == organisation);
-        if (role is not null)
+        if (organisation.Members != null) organisation.Members.Remove(member);
+        if (member.MyOrganisation != null) member.MyOrganisation.Remove(organisation);
+
+        if (member.OrganizationRoles != null)
         {
-            member.OrganizationRoles.Remove(role);
+            OrganisationRoles? role = member.OrganizationRoles.FirstOrDefault(o => o.Organisation == organisation);
+            if (role is not null)
+            {
+                member.OrganizationRoles.Remove(role);
+            }
         }
-        
+
         Context.SaveChanges();
     }
     public PaginatedList<MinOrganisationDto> SearchOrganization(string searchString, int page)
@@ -262,7 +267,7 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
             throw new CodeException("Organisation UniqueName is taken", StatusCodes.Status400BadRequest);
         }
         
-        string? logoPath = fileService.UpdateFile(organisationToUpdate.OrganizationLogo, organisation.OrganizationLogo, "organisations", new ImageFormat[] { ImageFormat.Jpeg, ImageFormat.Png }, 4);
+        string? logoPath = fileService.UpdateFile(organisationToUpdate.OrganizationLogo, organisation.OrganizationLogo, "organisations", new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
         organisationToUpdate.Name = organisation.Name;
         organisationToUpdate.UniqueName = organisation.UniqueName;
         organisationToUpdate.Description = organisation.Description;
@@ -319,7 +324,7 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
         if (!string.IsNullOrEmpty(image))
         {
             image = fileService.SaveFile(image, "organisations",
-                new ImageFormat[] { ImageFormat.Jpeg, ImageFormat.Png }, 4);
+                new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
         }
         EntityEntry<OrganisationRoles> newRole = Context.OrganizationRoles.Add(new OrganisationRoles()
         {
@@ -348,7 +353,7 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
         if (roleToUpdate is null) throw new CodeException("role is not exist", StatusCodes.Status404NotFound);
         
         string? logoPath =fileService.UpdateFile(roleToUpdate.Image, role.Image, "organisations",
-            new ImageFormat[] { ImageFormat.Jpeg, ImageFormat.Png }, 4);
+            new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
 
         roleToUpdate.Image = logoPath;
         roleToUpdate.Title = role.Title;
@@ -375,27 +380,27 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
         Context.SaveChanges();
     }
 
-    public void GrantRole(Organisations organisation, Users user, int roleId)
+    public void GrantRole(Organisations organisation, Users? user, int roleId)
     {
         OrganisationRoles? roleToUpdate = Context.OrganizationRoles
             .Include(o => o.UsersWithRole)
             .FirstOrDefault(r => r.Id == roleId);
         if (roleToUpdate is null) throw new CodeException("role is not exist", StatusCodes.Status404NotFound);
-        if (roleToUpdate.UsersWithRole.Contains(user)) throw new CodeException("user have that role", StatusCodes.Status400BadRequest);
-        
-        roleToUpdate.UsersWithRole.Add(user);
+        if (roleToUpdate.UsersWithRole != null && user != null && roleToUpdate.UsersWithRole.Contains(user)) throw new CodeException("user have that role", StatusCodes.Status400BadRequest);
+
+        if (user != null) roleToUpdate.UsersWithRole?.Add(user);
         Context.SaveChanges();
     }
 
-    public void RevokeRole(Organisations organisation, Users user, int roleId)
+    public void RevokeRole(Organisations organisation, Users? user, int roleId)
     {
         OrganisationRoles? roleToUpdate = Context.OrganizationRoles
             .Include(o => o.UsersWithRole)
             .FirstOrDefault(r => r.Id == roleId);
         if (roleToUpdate is null) throw new CodeException("role is not exist", StatusCodes.Status404NotFound);
-        if (!roleToUpdate.UsersWithRole.Contains(user)) throw new CodeException("user doesn't have that role", StatusCodes.Status400BadRequest);
-        
-        roleToUpdate.UsersWithRole.Remove(user);
+        if (roleToUpdate.UsersWithRole != null && user != null && !roleToUpdate.UsersWithRole.Contains(user)) throw new CodeException("user doesn't have that role", StatusCodes.Status400BadRequest);
+
+        if (user != null) roleToUpdate.UsersWithRole?.Remove(user);
         Context.SaveChanges();
     }
 

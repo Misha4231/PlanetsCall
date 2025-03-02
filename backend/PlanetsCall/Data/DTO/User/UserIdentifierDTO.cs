@@ -6,5 +6,5 @@ public class UserIdentifierDto
 {
     [MaxLength(250)]
     [Required]
-    public required string UniqueIdentifier { get; set; }
+    public required string? UniqueIdentifier { get; set; }
 }

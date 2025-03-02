@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Drawing.Imaging;
 using Core;
+using Core.Exceptions;
 using Data.Context;
 using Data.DTO.Global;
 using Data.DTO.Item;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
-using PlanetsCall.Controllers.Exceptions;
 
 namespace Data.Repository.Item;
 
@@ -54,7 +54,7 @@ public class ItemsRepository(PlatensCallContext context, IConfiguration configur
         
         // saves file or throws CodeException with code 415 Unsupported Media Type 
         string imagePath = fileService.SaveFile(itemData.Image, "items",
-                new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
+            new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
 
         EntityEntry<Items> newItem = Context.Items.Add(new Items() // creates an instance
         {
@@ -73,7 +73,7 @@ public class ItemsRepository(PlatensCallContext context, IConfiguration configur
     {
         // saves file or throws CodeException with code 415 Unsupported Media Type 
         string imagePath = fileService.SaveFile(categoryData.Image, "items",
-                new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
+            new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
         
         // add an entity
         EntityEntry<ItemsCategory> newCategory = Context.ItemsCategories.Add(new ItemsCategory()
@@ -100,7 +100,7 @@ public class ItemsRepository(PlatensCallContext context, IConfiguration configur
         
         // updates file or throws CodeException with code 415 Unsupported Media Type 
         string? imagePath = fileService.UpdateFile(itemToUpdate.Image, itemData.Image, "items",
-            new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
+            new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
 
         // assign values
         itemToUpdate.Image = imagePath ?? "";
@@ -121,7 +121,7 @@ public class ItemsRepository(PlatensCallContext context, IConfiguration configur
         }
         
         string? imagePath = fileService.UpdateFile(categoryToUpdate.Image,categoryData.Image, "items",
-            new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
+            new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
 
         categoryToUpdate.Image = imagePath;
         categoryToUpdate.Title = categoryData.Title;
@@ -163,13 +163,13 @@ public class ItemsRepository(PlatensCallContext context, IConfiguration configur
         if (user.Points < item.Price) // validate balance
             throw new CodeException("Not enough points to buy item", StatusCodes.Status400BadRequest);
         
-        if (item.Owners.Contains(user)) // validate if user already have item
+        if (item.Owners != null && item.Owners.Contains(user)) // validate if user already have item
             throw new CodeException("You already have that item", StatusCodes.Status400BadRequest);
         
         // if everything ok, give item
         user.Points -= item.Price;
-        item.Owners.Add(user);
-        
+        if (item.Owners != null) item.Owners.Add(user);
+
         Context.SaveChanges();
     }
 }

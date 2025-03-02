@@ -54,7 +54,7 @@ public class CacheAttribute : ActionFilterAttribute
     }
 
     // generates key according to endpoint
-    public virtual string GenerateKeyCache(FilterContext context)
+    protected virtual string GenerateKeyCache(FilterContext context)
     {
         var path = context.HttpContext.Request.Path.ToString(); // get path
         var query = context.HttpContext.Request.QueryString.ToString(); // get query parameters

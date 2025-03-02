@@ -66,7 +66,7 @@ public class HashManager(IConfiguration configuration)
                     return Encoding.UTF8.GetString(decryptedBytes);
                 }
                 
-            } catch ( Exception _) // Errors may occur if the input is invalid, the key does not match
+            } catch ( Exception) // Errors may occur if the input is invalid, the key does not match
             {
                 return "";
             }

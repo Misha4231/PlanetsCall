@@ -1,8 +1,7 @@
-﻿using Data.DTO.Global;
+﻿using Core.Exceptions;
 using Data.Models;
 using Data.Repository.Community;
 using Microsoft.AspNetCore.Mvc;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 
 namespace PlanetsCall.Controllers.Community;
@@ -21,7 +20,7 @@ public class FriendsController(IFriendsRepository friendsRepository) : Controlle
     public IActionResult GetFriends([FromQuery] string search = "", [FromQuery] int page = 1)// returns paginated list for full-text search
     {
         if (search.Length > 200) // validate search string length
-            return BadRequest(new ErrorResponse(new List<string>() { "Search string can't be longer than 200 symbols"  }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+            return BadRequest(new ErrorResponse(["Search string can't be longer than 200 symbols"], StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
 
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         
@@ -37,9 +36,10 @@ public class FriendsController(IFriendsRepository friendsRepository) : Controlle
     {
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         // validate if user want to add himself to friends list
-        if (username == requestUser!.Username) return BadRequest(new ErrorResponse(new List<string>() { "You can't add yourself to friends" }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+        if (username == requestUser!.Username) return BadRequest(new ErrorResponse(
+            ["You can't add yourself to friends"], StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
         
-        int code = friendsRepository.AddFriend(requestUser!, username); //add
+        int code = friendsRepository.AddFriend(requestUser, username); //add
         return StatusCode(code);
     }
     
@@ -52,9 +52,10 @@ public class FriendsController(IFriendsRepository friendsRepository) : Controlle
     {
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         // validate if user want to remove himself from the friends list
-        if (username == requestUser!.Username) return BadRequest(new ErrorResponse(new List<string>() { "You can't remove yourself from friends" }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+        if (username == requestUser!.Username) return BadRequest(new ErrorResponse(
+            ["You can't remove yourself from friends"], StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
         
-        int code = friendsRepository.DeleteFriend(requestUser!, username); //remove
+        int code = friendsRepository.DeleteFriend(requestUser, username); //remove
         return StatusCode(code);
     }
 }

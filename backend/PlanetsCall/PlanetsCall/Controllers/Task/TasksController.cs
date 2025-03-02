@@ -1,12 +1,10 @@
-﻿using Data.DTO.Task;
+﻿using Core.Exceptions;
+using Data.DTO.Task;
 using Data.Models;
 using Data.Repository.Community;
 using Data.Repository.Task;
 using Microsoft.AspNetCore.Mvc;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
-using PlanetsCall.Services.TaskScheduling;
-using Quartz;
 
 namespace PlanetsCall.Controllers.Task;
 
@@ -22,7 +20,7 @@ namespace PlanetsCall.Controllers.Task;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class TasksController(ITasksRepository tasksRepository, IOrganisationsRepository organisationsRepository, ISchedulerFactory schedulerFactory, IServiceScopeFactory serviceScopeFactory)
+public class TasksController(ITasksRepository tasksRepository, IOrganisationsRepository organisationsRepository, IServiceScopeFactory serviceScopeFactory)
     : ControllerBase
 {
     [HttpPost]
@@ -38,7 +36,8 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
           {
               return BadRequest("Available types: 1 (daily), 2 (weekly)");
           }
-          tasksRepository.CreateTask(task, requestUser);
+
+          if (requestUser != null) tasksRepository.CreateTask(task, requestUser);
 
           return Ok();
       }
@@ -82,12 +81,13 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
           Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
           try
           {
-              organisationsRepository.EnsureUserHasPermission(requestUser, organizationName,
-                  role => role.CanUpdateTasks);
+              if (requestUser != null)
+                  organisationsRepository.EnsureUserHasPermission(requestUser, organizationName,
+                      role => role.CanUpdateTasks);
           }
           catch (CodeException e)
           {
-              return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+              return StatusCode(e.Code ,new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
           }
           
           Organisations organisation = organisationsRepository.GetObjOrganisation(organizationName);
@@ -150,12 +150,13 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
           Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
           try
           {
-              organisationsRepository.EnsureUserHasPermission(requestUser, organizationName,
-                  role => role.CanUpdateTasks);
+              if (requestUser != null)
+                  organisationsRepository.EnsureUserHasPermission(requestUser, organizationName,
+                      role => role.CanUpdateTasks);
           }
           catch (CodeException e)
           {
-              return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+              return StatusCode(e.Code ,new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
           }
           
           bool isDeleted = tasksRepository.DeleteTask(id);
@@ -171,22 +172,25 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
       [TokenAuthorizeFilter]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status200OK)]
-      public async System.Threading.Tasks.Task<IActionResult> AddOrganizationTask(string organizationName, [FromBody] TaskInfo task) // create task (as an organization member with rights)
+      public async Task<IActionResult> AddOrganizationTask(string organizationName, [FromBody] TaskInfo task) // create task (as an organization member with rights)
       {
           Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
           try
           {
               Organisations organisation = organisationsRepository.GetObjOrganisation(organizationName);
               // check if user have according permissions
-              organisationsRepository.EnsureUserHasPermission(requestUser, organizationName, o => o.CanAddTask);
-              
-              FullTaskDto newTask = tasksRepository.CreateTask(task, requestUser, organisation); // create task
-              // add background function that will deactivate task after 3 days
-              await ScheduleDeactivateTask(newTask.Id);
+              if (requestUser != null)
+              {
+                  organisationsRepository.EnsureUserHasPermission(requestUser, organizationName, o => o.CanAddTask);
+
+                  FullTaskDto newTask = tasksRepository.CreateTask(task, requestUser, organisation); // create task
+                  // add background function that will deactivate task after 3 days
+                  await ScheduleDeactivateTask(newTask.Id);
+              }
           }
           catch (CodeException e)
           {
-              return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+              return StatusCode(e.Code ,new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
           }
 
           return Ok();
@@ -196,29 +200,31 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
       [TokenAuthorizeFilter]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status200OK)]
-      public async System.Threading.Tasks.Task<IActionResult> ActivateOrganizationTask(string organizationName, int id) // activate existing task
+      public Task<IActionResult> ActivateOrganizationTask(string organizationName, int id) // activate existing task
       {
           Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
           try
           {
-              Organisations organisation = organisationsRepository.GetObjOrganisation(organizationName);
+              organisationsRepository.GetObjOrganisation(organizationName);
               // check if user have according permissions
-              organisationsRepository.EnsureUserHasPermission(requestUser, organizationName, o => o.CanAddTask);
-              
+              if (requestUser != null)
+                  organisationsRepository.EnsureUserHasPermission(requestUser, organizationName, o => o.CanAddTask);
+
               FullTaskDto? task = tasksRepository.GetTaskById(id);
-              if (task is null) return NotFound();
+              if (task is null) return System.Threading.Tasks.Task.FromResult<IActionResult>(NotFound());
               
               tasksRepository.ActivateTask(task); // activate task
               
               // add background function that will deactivate task after 3 days
-              ThreadPool.QueueUserWorkItem(async _ => await ScheduleDeactivateTask(task.Id));
+              ThreadPool.QueueUserWorkItem(async void (_) => await ScheduleDeactivateTask(task.Id));
           }
           catch (CodeException e)
           {
-              return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+              return System.Threading.Tasks.Task.FromResult<IActionResult>(StatusCode(e.Code ,new ErrorResponse(
+                  [e.Message], e.Code, HttpContext.TraceIdentifier)));
           }
 
-          return Ok();
+          return System.Threading.Tasks.Task.FromResult<IActionResult>(Ok());
       }
 
       // add background job to deactivate organization task
@@ -228,21 +234,18 @@ public class TasksController(ITasksRepository tasksRepository, IOrganisationsRep
           {
               await System.Threading.Tasks.Task.Delay(TimeSpan.FromDays(3), token); // wait 3 days
 
-              using (var scope = serviceScopeFactory.CreateScope()) // get new scope because the one from DI is disposed
-              {
-                  var repo = scope.ServiceProvider.GetService<ITasksRepository>();
-                  if (repo == null) return;
+              using var scope = serviceScopeFactory.CreateScope();
+              var repo = scope.ServiceProvider.GetService<ITasksRepository>();
+              if (repo == null) return;
                   
-                  var task = repo.GetTaskById(taskId);
-                  if (task != null)
-                  {
-                      repo.DeactivateTask(task);
-                  }
+              var task = repo.GetTaskById(taskId);
+              if (task != null)
+              {
+                  repo.DeactivateTask(task);
               }
           }
           catch(TaskCanceledException)
           {
-              return;
           }
       }
 }

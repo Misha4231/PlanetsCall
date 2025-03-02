@@ -8,7 +8,7 @@ public class Tasks
     public int Id { get; set; }
     [MaxLength(250)] 
     [Required]
-    public required string Title { get; set; }
+    public required string? Title { get; set; }
     [MaxLength(500)] 
     
     public string? Description { get; set; }

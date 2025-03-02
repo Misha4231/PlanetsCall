@@ -30,7 +30,7 @@ public class TokenAuthorizeFilter : Attribute, IAuthorizationFilter
             }
             
             // get user
-            Users? user = usersRepository.GetUserByEmail(userEmail!);
+            Users? user = usersRepository.GetUserByEmail(userEmail);
             if (user is null) // check if user exists
             {
                 context.Result = new UnauthorizedObjectResult("Not existing user");

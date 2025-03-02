@@ -1,9 +1,9 @@
+using Core.Exceptions;
 using Core.User;
 using Microsoft.AspNetCore.Mvc;
 using Data.DTO.User;
 using Data.Models;
 using Data.Repository.User;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 using PlanetsCall.Helper;
 
@@ -19,18 +19,13 @@ namespace PlanetsCall.Controllers.User
         IUsersRepository usersRepository,
         EmailSender emailSender,
         HashManager hashManager,
-        JwtTokenManager jwtTokenManager,
-        IWebHostEnvironment webHostEnvironment)
+        JwtTokenManager jwtTokenManager)
         : ControllerBase
     {
         // used everywhere through class for CRUD operations in database and partly for data validation
         // helper service to easily send confirmation emails
         // mainly used for hashing password
         // generates tokens to later put them in Authorization header
-
-        private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment; // used to make development only method
-        // Dependency Injection
-        // constructor assigns all helper services
 
 
         [HttpPost]
@@ -76,7 +71,7 @@ namespace PlanetsCall.Controllers.User
             if (errorMessages.Count() != 0) return null; 
 
             // only after user data validation construct one and add to database
-            Users newUser = new Users
+            var newUser = new Users
             {
                 Email = user.Email,
                 Username = user.Username,
@@ -88,7 +83,7 @@ namespace PlanetsCall.Controllers.User
                 Status = ""
             };
             
-            Users createdUser = usersRepository.InsertUser(newUser); // add to database
+            Users? createdUser = usersRepository.InsertUser(newUser); // add to database
             return createdUser;
         }
 
@@ -125,15 +120,15 @@ namespace PlanetsCall.Controllers.User
             // validate user credentials
             if (foundUser is null)
             {
-                return Unauthorized(new ErrorResponse(new List<string>(){"Invalid email or username"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+                return Unauthorized(new ErrorResponse(["Invalid email or username"], StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
             }
             if (string.IsNullOrEmpty(foundUser.Password))
             {
-                return Unauthorized(new ErrorResponse(new List<string>(){"Your account was registered via google"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+                return Unauthorized(new ErrorResponse(["Your account was registered via google"], StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
             }
             if (user.Password != hashManager.Decrypt(foundUser.Password))
             {
-                return Unauthorized(new ErrorResponse(new List<string>(){"Wrong password"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+                return Unauthorized(new ErrorResponse(["Wrong password"], StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
             }
 
             // update when last signed in
@@ -156,11 +151,11 @@ namespace PlanetsCall.Controllers.User
 
             if (foundUser is null)
             {
-                return Unauthorized(new ErrorResponse(new List<string>(){"Invalid email or username"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+                return Unauthorized(new ErrorResponse(["Invalid email or username"], StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
             }
             if (string.IsNullOrEmpty(foundUser.Password))
             {
-                return Unauthorized(new ErrorResponse(new List<string>(){"Your account was registered via google"}, StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
+                return Unauthorized(new ErrorResponse(["Your account was registered via google"], StatusCodes.Status401Unauthorized, HttpContext.TraceIdentifier));
             }
     
             // send mail with link
@@ -222,7 +217,7 @@ namespace PlanetsCall.Controllers.User
                 return new ConfirmationCodeValidationResponse(errorMessages, null);
             }
             
-            var userData = decodedCode.Split(':'); // code stored like that  "{username}:{timestamp}"
+            string?[] userData = decodedCode.Split(':'); // code stored like that  "{username}:{timestamp}"
             
             // check if code hasn't expired
             if (!long.TryParse(userData[1], out var timestamp))

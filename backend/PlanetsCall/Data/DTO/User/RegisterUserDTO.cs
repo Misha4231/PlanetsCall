@@ -8,10 +8,10 @@ public class RegisterUserDto
     [EmailAddress]
     [MaxLength(250)]
     [Required]
-    public required string Email { get; set; }
+    public required string? Email { get; set; }
     [Required]
     [MaxLength(250)]
-    public required string Username { get; set; }
+    public required string? Username { get; set; }
     public NewUserPasswordDto? Passwords { get; set; }
     public bool AgreedToTermsOfService { get; set; }
 

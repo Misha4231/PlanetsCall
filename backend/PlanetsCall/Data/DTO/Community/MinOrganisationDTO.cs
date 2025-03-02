@@ -1,41 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Data.DTO.User;
+﻿using Data.DTO.User;
 using Data.Models;
 
 namespace Data.DTO.Community;
 
-public class MinOrganisationDto
+public class MinOrganisationDto(Organisations org)
 {
-    public MinOrganisationDto(Organisations org)
-    {
-        Id = org.Id;
-        Name = org.Name;
-        UniqueName = org.UniqueName;
-        Description = org.Description;
-        IsVerified = org.IsVerified;
-        OrganizationLogo = org.OrganizationLogo;
-        InstagramLink = org.InstagramLink;
-        LinkedinLink = org.LinkedinLink;
-        YoutubeLink = org.YoutubeLink;
-        IsPrivate = org.IsPrivate;
-        MinimumJoinLevel = org.MinimumJoinLevel;
-        CreatorId = org.CreatorId;
-        if (org.Members is not null)
-            Members = org.Members.Select(m => new MinUserDto(m)).ToList();
-        else
-            Members = new List<MinUserDto>();
-    }
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string UniqueName { get; set; }
-    public string? Description { get; set; }
-    public bool IsVerified { get; set; }
-    public string? OrganizationLogo { get; set; }
-    public string? InstagramLink { get; set; }
-    public string? LinkedinLink { get; set; }
-    public string? YoutubeLink { get; set; }
-    public bool IsPrivate { get; set; }
-    public int MinimumJoinLevel { get; set; }
-    public int? CreatorId { get; set; }
-    public ICollection<MinUserDto> Members { get; set; }
+    public int Id { get; set; } = org.Id;
+    public string Name { get; set; } = org.Name;
+    public string UniqueName { get; set; } = org.UniqueName;
+    public string? Description { get; set; } = org.Description;
+    public bool IsVerified { get; set; } = org.IsVerified;
+    public string? OrganizationLogo { get; set; } = org.OrganizationLogo;
+    public string? InstagramLink { get; set; } = org.InstagramLink;
+    public string? LinkedinLink { get; set; } = org.LinkedinLink;
+    public string? YoutubeLink { get; set; } = org.YoutubeLink;
+    public bool IsPrivate { get; set; } = org.IsPrivate;
+    public int MinimumJoinLevel { get; set; } = org.MinimumJoinLevel;
+    public int? CreatorId { get; set; } = org.CreatorId;
+    public ICollection<MinUserDto> Members { get; set; } = 
+        org.Members?.Select(m => new MinUserDto(m)).ToList() ?? [];
 }

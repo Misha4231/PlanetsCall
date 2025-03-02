@@ -7,7 +7,7 @@ namespace Data.Repository.Community;
 
 public interface IFriendsRepository
 {
-    PaginatedList<MinUserDto> GetFriends(Users user, int page, string? searchString);
+    PaginatedList<MinUserDto> GetFriends(Users? user, int page, string? searchString);
     int AddFriend(Users user, string newFriendUsername);
     int DeleteFriend(Users user, string friendUsername);
 }

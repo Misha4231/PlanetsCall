@@ -5,7 +5,7 @@ namespace PlanetsCall.Services.TaskScheduling;
 
 public class DeactivateOrganizationTaskJob(ITasksRepository tasksRepository) : IJob
 {
-    public async Task Execute(IJobExecutionContext context)
+    public Task Execute(IJobExecutionContext context)
     {
         Console.WriteLine("EXEC");
         var taskId = (int)context.JobDetail.JobDataMap.Get("taskId");
@@ -16,5 +16,6 @@ public class DeactivateOrganizationTaskJob(ITasksRepository tasksRepository) : I
             tasksRepository.DeactivateTask(task);
         }
         Console.WriteLine("COMPLETE");
+        return Task.CompletedTask;
     }
 }

@@ -1,9 +1,9 @@
-﻿using Data.DTO.User;
+﻿using Core.Exceptions;
+using Data.DTO.User;
 using Data.Models;
 using Data.Repository.Log;
 using Data.Repository.User;
 using Microsoft.AspNetCore.Mvc;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 
 namespace PlanetsCall.Controllers.User;
@@ -39,7 +39,7 @@ public class ProfilesController(IUsersRepository usersRepository, ILogsRepositor
         }
         
         //update
-        Users u = usersRepository.UpdateUser(newUserData, userId);
+        Users? u = usersRepository.UpdateUser(newUserData, userId);
         return Ok(new FullUserDto(u));
     }
 
@@ -68,7 +68,7 @@ public class ProfilesController(IUsersRepository usersRepository, ILogsRepositor
     [UserCache]
     [TokenAuthorizeFilter]
     [Route("{username}/attendance/")]
-    public IActionResult GetAttendance(string username) // get when user attend service
+    public IActionResult GetAttendance(string? username) // get when user attend service
     {
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         Users? user = usersRepository.GetUserByUsername(username); // data is available to everybody if profile is visible
@@ -87,7 +87,7 @@ public class ProfilesController(IUsersRepository usersRepository, ILogsRepositor
     [HttpGet]
     [UserCache]
     [Route("{username}/")]
-    public IActionResult GetUserProfile(string username) // get profile data to display profile
+    public IActionResult GetUserProfile(string? username) // get profile data to display profile
     {
         Users? user = usersRepository.GetUserByUsername(username);
         if (user == null) // if user not found - 404

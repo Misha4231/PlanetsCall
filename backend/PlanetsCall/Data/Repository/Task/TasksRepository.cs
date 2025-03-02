@@ -121,30 +121,30 @@ public class TasksRepository(PlatensCallContext context, FileService fileService
             task.IsActive = false;
         }
         
-        context.SaveChanges();
+        Context.SaveChanges();
     }
 
     public void DeactivateTask(Tasks task)
     {
         task.IsActive = false;
-        context.SaveChanges();
+        Context.SaveChanges();
     }
 
     public void DeactivateTask(FullTaskDto task)
     {
         Tasks? dbTask = Context.Tasks.FirstOrDefault(t => t.Id == task.Id);
-        DeactivateTask(dbTask);
+        if (dbTask != null) DeactivateTask(dbTask);
     }
 
     public void ActivateTask(Tasks task) // activate provided task
     {
         task.IsActive = true;
-        context.SaveChanges();
+        Context.SaveChanges();
     }
 
     public void ActivateTask(FullTaskDto task)
     {
         Tasks? dbTask = Context.Tasks.FirstOrDefault(t => t.Id == task.Id);
-        ActivateTask(dbTask);
+        if (dbTask != null) ActivateTask(dbTask);
     }
 }

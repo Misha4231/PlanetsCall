@@ -1,26 +1,19 @@
-﻿using Data.DTO.Global;
+﻿using Core.Exceptions;
+using Data.DTO.Global;
 using Data.DTO.Item;
 using Data.Models;
 using Data.Repository.Item;
-using Data.Repository.Log;
-using Data.Repository.User;
 using Microsoft.AspNetCore.Mvc;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
-using PlanetsCall.Services.Caching;
 
 namespace PlanetsCall.Controllers.Item;
 
 [Route("api/[controller]")]
 [ApiController]
 public class ItemsController(
-    IUsersRepository usersRepository,
-    ILogsRepository logsRepository,
     IItemsRepository itemsRepository)
     : ControllerBase
 {
-    private readonly IUsersRepository _usersRepository = usersRepository;
-    private readonly ILogsRepository _logsRepository = logsRepository;
 
     [HttpGet]
     [Cache]
@@ -49,7 +42,7 @@ public class ItemsController(
         }
         catch (CodeException e)
         { // some mistake has been found
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
 
         return Ok();
@@ -79,7 +72,7 @@ public class ItemsController(
         }
         catch(CodeException e)
         {
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
     }
     
@@ -97,7 +90,7 @@ public class ItemsController(
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
     }
     
@@ -116,7 +109,7 @@ public class ItemsController(
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
     }
     [HttpPut]
@@ -134,7 +127,7 @@ public class ItemsController(
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
     }
     

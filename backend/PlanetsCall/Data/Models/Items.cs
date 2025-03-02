@@ -23,5 +23,5 @@ public class Items
     public required string Title { get; set; }
 
     
-    public ICollection<Users> Owners { get; set; }
+    public ICollection<Users>? Owners { get; set; }
 }

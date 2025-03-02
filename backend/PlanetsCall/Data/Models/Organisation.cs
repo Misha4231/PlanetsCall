@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,9 +34,9 @@ public class Organisations
     public int? CreatorId { get; set; }
     public Users? Creator { get; set; }
     
-    public ICollection<OrganisationRoles> Roles { get; set; }
+    public ICollection<OrganisationRoles>? Roles { get; set; }
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }
     public ICollection<Users>? Requests { get; set; }
-    public ICollection<Users>? Members { get; set; }
+    public List<Users>? Members { get; set; }
     public OrganizationVerificationRequests? VerificationRequest { get; set; }
 }

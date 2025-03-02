@@ -10,24 +10,25 @@ using Data.Repository.Task;
 using Data.Repository.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using PlanetsCall.Filters;
 using PlanetsCall.Helper;
 using PlanetsCall.Services.Caching;
 using PlanetsCall.Services.TaskScheduling;
 using Quartz;
 using Quartz.Impl;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
 /* Configures CORS policy to allow the front end application communicate with server
- Configuration["WebsiteDomain"] Specifies the domain where the front-end React app is hosted allowing controlled cross origin requests
+ Configuration["WebsiteDomain"] Specifies the domain where the front-end React app is hosted allowing controlled cross-origin requests
  Allows any HTTP method, any header, and credentials*/
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
         // Specifies the allowed origins
-        policy.WithOrigins(builder.Configuration["WebsiteDomain"]!)
+        policy.WithOrigins((Environment.GetEnvironmentVariable("WEBSITE_DOMAIN") ??
+                            builder.Configuration["WebsiteDomain"])!)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -42,7 +43,9 @@ builder.Services.RegisterDataServices(builder.Configuration);
 
 builder.Services.AddStackExchangeRedisCache(options => // connect to redis for caching purpose
 {
-    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+    options.Configuration = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("REDIS_HOST")) ?
+        Environment.GetEnvironmentVariable("REDIS_HOST") + ':' + Environment.GetEnvironmentVariable("REDIS_PORT")
+        : builder.Configuration.GetConnectionString("RedisConnection");
     options.InstanceName = builder.Configuration["RedisInstanceName"];
 });
 
@@ -62,21 +65,22 @@ builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<JwtTokenManager>();
 builder.Services.AddScoped<FileService>();
 
-var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
-var jwtAudience = builder.Configuration.GetSection("Jwt:Audience").Get<string>();
-var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
+var jwtAudience = Environment.GetEnvironmentVariable("WEBSITE_DOMAIN") ?? builder.Configuration.GetSection("Jwt:Audience").Get<string>();
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? builder.Configuration.GetSection("Jwt:Key").Get<string>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtIssuer,
-        ValidAudience = jwtAudience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-    };
+    if (jwtKey != null)
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
 });
 
 // configuring tasks assignment scheduling
@@ -112,8 +116,11 @@ if (app.Environment.IsDevelopment())
 }
 
 var schedulerFactory = app.Services.GetService<ISchedulerFactory>();
-var scheduler = await schedulerFactory.GetScheduler();
-await scheduler.Start();
+if (schedulerFactory != null)
+{
+    var scheduler = await schedulerFactory.GetScheduler();
+    await scheduler.Start();
+}
 
 app.UseHttpsRedirection();
 

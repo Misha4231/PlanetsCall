@@ -6,7 +6,7 @@ public class SignInUserDto
 {
     [MaxLength(250)]
     [Required]
-    public required string UniqueIdentifier { get; set; }
+    public required string? UniqueIdentifier { get; set; }
     
     [MaxLength(250)]
     [Required]

@@ -1,9 +1,9 @@
-﻿using Data.DTO.Community;
+﻿using Core.Exceptions;
+using Data.DTO.Community;
 using Data.DTO.Global;
 using Data.Models;
 using Data.Repository.Community;
 using Microsoft.AspNetCore.Mvc;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 
 namespace PlanetsCall.Controllers.Community;
@@ -39,26 +39,26 @@ public class OrganisationsController(IOrganisationsRepository organisationsRepos
         {
             organisation = organisationsRepository.GetObjOrganisation(organisationUniqueName); // get organisation for validation
         }
-        catch (CodeException e)
+        catch (CodeException)
         {
             return NotFound();
         }
 
         // Validation checks to ensure the user meets the criteria for joining the organization.
         List<string> errorMessages = new List<string>();
-        if (organisation.MinimumJoinLevel > user.Progress) 
+        if (user != null && organisation.MinimumJoinLevel > user.Progress) 
         {
             errorMessages.Add("User does not have enough level");  // Check if the user's level meets the minimum requirement.
         }
-        if (organisation.Members.Count >= 50) // Validate the maximum member limit.
+        if (organisation.Members is { Count: >= 50 }) // Validate the maximum member limit.
         {
             errorMessages.Add("Organisation can't have more than 50 members"); 
         }
-        if (organisation.Members.Contains(user))  // Check if the user is already a member.
+        if (organisation.Members != null && user != null && organisation.Members.Contains(user))  // Check if the user is already a member.
         {
             errorMessages.Add("User is already a member"); 
         }
-        if (organisation.Requests.Contains(user) && organisation.IsPrivate) // Check if a prior request exists for a private organization.
+        if (organisation.Requests != null && user != null && organisation.Requests.Contains(user) && organisation.IsPrivate) // Check if a prior request exists for a private organization.
         {
             errorMessages.Add("User has sent request previously");
         }
@@ -203,11 +203,14 @@ public class OrganisationsController(IOrganisationsRepository organisationsRepos
         
         try
         {
-            return Ok(organisationsRepository.UpdateOrganisation(newOrganisationData, requestUser));
+            if (requestUser != null)
+                return Ok(organisationsRepository.UpdateOrganisation(newOrganisationData, requestUser));
         } catch (CodeException e)
         {
             return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
+
+        return BadRequest();
     }
     
     [HttpDelete]
@@ -219,7 +222,7 @@ public class OrganisationsController(IOrganisationsRepository organisationsRepos
         
         try
         {
-            organisationsRepository.RemoveOrganisation(organisationUniqueName, requestUser);
+            if (requestUser != null) organisationsRepository.RemoveOrganisation(organisationUniqueName, requestUser);
             return Ok();
         } catch (CodeException e)
         {
@@ -236,7 +239,8 @@ public class OrganisationsController(IOrganisationsRepository organisationsRepos
         
         try
         {
-            organisationsRepository.AddVerificationRequest(organisationUniqueName, requestUser, description);
+            if (requestUser != null)
+                organisationsRepository.AddVerificationRequest(organisationUniqueName, requestUser, description);
             return Ok();
         } catch (CodeException e)
         {
