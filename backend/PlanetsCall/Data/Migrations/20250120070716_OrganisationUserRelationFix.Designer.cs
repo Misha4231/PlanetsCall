@@ -12,12 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-<<<<<<<< HEAD:backend/PlanetsCall/Data/Migrations/PlatensCallContextModelSnapshot.cs
-    partial class PlatensCallContextModelSnapshot : ModelSnapshot
-========
     [Migration("20250120070716_OrganisationUserRelationFix")]
     partial class OrganisationUserRelationFix
->>>>>>>> f86c380c28e9c6c821929ff547448e2078917dda:backend/PlanetsCall/Data/Migrations/20250120070716_OrganisationUserRelationFix.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

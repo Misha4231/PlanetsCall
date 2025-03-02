@@ -30,17 +30,10 @@ public class UsersRepository : RepositoryBase, IUsersRepository
 
     public PaginatedList<MinUserDto> SearchUsers(string searchString, int page) // simple full text search with pagination
     {
-<<<<<<< HEAD
-        int pageSize = _configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>(); // how many items per page are being fetched in pagination
-
-        // search by username, first name and last name, then wrap it to min user dto
-        var users = _context.Users
-=======
         int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>(); // how many items per page are being fetched in pagination
 
         // search by username, first name and last name, then wrap it to min user dto
         var users = Context.Users
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
             .OrderBy(u => u.Id) // sort
             .Where(u => u.Username.ToLower().Contains(searchString.ToLower()) ||
                         (u.FirstName != null && u.FirstName.ToLower().Contains(searchString.ToLower())) ||
@@ -88,28 +81,17 @@ public class UsersRepository : RepositoryBase, IUsersRepository
             user.Password = this._hashManager.Encrypt(user.Password); // passwords are stored in encrypted way
         }
         
-<<<<<<< HEAD
-        _context.Users.Add(user); // add to table
-        _context.SaveChanges(); // save changes
-=======
         Context.Users.Add(user); // add to table
         Context.SaveChanges(); // save changes
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
 
         return user;
     }
 
     public Users UpdateUser(Users user) // updates user
     {
-<<<<<<< HEAD
-        user.UpdatedAt = DateTime.Now;
-        _context.Users.Update(user);
-        _context.SaveChanges();
-=======
         user.UpdatedAt = DateTime.Now; // update the UpdatedAt time to now
         Context.Users.Update(user);
         Context.SaveChanges();
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
 
         return user;
     }
@@ -159,13 +141,8 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         if (userToUpdate.Email != user.Email && GetUserByEmail(user.Email) != null) errorMessages.Add("User with given email is already exists");
         if (userToUpdate.Username != user.Username && GetUserByUsername(user.Username) != null) errorMessages.Add("User with given username is already exists");
         if (user.Passwords != null) errorMessages.AddRange(user.Passwords.IsValid());
-<<<<<<< HEAD
-        if (user.CityId != null && !_context.Cities.Any(c => c.Id == user.CityId)) errorMessages.Add("Invalid CityId provided.");
-        if (user.CountryId != null && !_context.Countries.Any(c => c.Id == user.CountryId)) errorMessages.Add("Invalid CountryId provided.");
-=======
         if (user.CityId != null && !Context.Cities.Any(c => c.Id == user.CityId)) errorMessages.Add("Invalid CityId provided.");
         if (user.CountryId != null && !Context.Countries.Any(c => c.Id == user.CountryId)) errorMessages.Add("Invalid CountryId provided.");
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
         
         // in case some mistakes found, return null
         return errorMessages.Count() != 0 ? new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, "") : null;
@@ -177,13 +154,6 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         if (user.ProfileImage != null) _fileService.DeleteFile(user.ProfileImage);
         
         // delete user and additional data related to it
-<<<<<<< HEAD
-        _context.Users.Remove(user);
-        var logs = _context.Logs.Where(log => log.UserId == user.Id).ToList();
-        _context.RemoveRange(logs);
-        
-        _context.SaveChanges();
-=======
         Context.Users.Remove(user);
         var logs = Context.Logs.Where(log => log.UserId == user.Id).ToList();
         Context.RemoveRange(logs);
@@ -243,6 +213,5 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         var totalPages = (int)Math.Ceiling(count / (double)pageSize);
         
         return new PaginatedList<MinUserDto>(res, page, totalPages);
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
     }
 }

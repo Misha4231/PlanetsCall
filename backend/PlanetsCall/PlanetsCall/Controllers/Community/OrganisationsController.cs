@@ -227,8 +227,6 @@ public class OrganisationsController : ControllerBase
             return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
     }
-<<<<<<< HEAD
-=======
 
     [HttpPost]
     [Route("{organisationUniqueName}/request-verification/")]
@@ -246,5 +244,4 @@ public class OrganisationsController : ControllerBase
             return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
         }
     }
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
 }

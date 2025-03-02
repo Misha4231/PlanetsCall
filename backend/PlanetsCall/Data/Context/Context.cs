@@ -64,14 +64,10 @@ public sealed class PlatensCallContext : DbContext
             .HasMany<Users>(o => o.Members)
             .WithMany(u => u.MyOrganisation)
             .UsingEntity(t => t.ToTable("OrganizationUsers"));
-<<<<<<< HEAD
-        
-=======
         modelBuilder.Entity<OrganizationVerificationRequests>()
             .HasOne<Organisations>(o => o.Organisation)
             .WithOne(o => o.VerificationRequest);
 
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
         // Osiągnięcia
         modelBuilder.Entity<UserAchievements>()
             .HasOne<Achievements>(u => u.Achievement)

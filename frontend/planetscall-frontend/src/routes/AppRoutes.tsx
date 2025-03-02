@@ -29,6 +29,8 @@ import Friends from '../pages/community/Friends';
 import CommunityMain from '../pages/community/CommunityMain';
 import CommunitySettings from '../pages/community/CommunitySettings';
 import Organisations from '../pages/community/Organisations';
+import CreateOrganisation from '../pages/community/CreateOrganisation';
+import FindOrganisation from '../pages/community/FindOrganisation';
 
 const mockUser: User = {
   id: 1,
@@ -94,7 +96,7 @@ const router = createBrowserRouter([
     element: <Statistics />
   },
   {
-    path: '/:userName',
+    path: '/user/:userName',
     element: <UserProfile />
   },
   {
@@ -114,6 +116,14 @@ const router = createBrowserRouter([
   {
     path: '/community/organisations',
     element: <Organisations/>
+  },
+  {
+    path: '/community/organisations/create',
+    element: <CreateOrganisation/>
+  },
+  {
+    path: '/community/organisations/find',
+    element: <FindOrganisation/>
   },
   {
     path: '/community/settings',

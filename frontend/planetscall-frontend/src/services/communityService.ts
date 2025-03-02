@@ -86,12 +86,12 @@ export const getMyOrganisations = async (authToken: string, page: number) => {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/my`, {
+  console.log(page);
+  const response = await fetch(`https://localhost:7000/api/community/Organisations/my?page=${page}`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
-    body: JSON.stringify(page),
   });
 
   if (!response.ok) {
@@ -126,7 +126,7 @@ export const getAnotherOrganisationJoin = async (authToken: string, organisation
   return data;
 };
 
-export const createOrganisation = async (authToken: number, organisationData: any) => {
+export const createOrganisation = async (authToken: string, organisationData: any) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -147,7 +147,7 @@ export const createOrganisation = async (authToken: number, organisationData: an
   return await response.json();
 };
 
-export const getOrganisationRequests = async (authToken: number, organisationUniqueName: string) => {
+export const getOrganisationRequests = async (authToken: string, organisationUniqueName: string) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -165,7 +165,7 @@ export const getOrganisationRequests = async (authToken: number, organisationUni
   return await response.json();
 };
 
-export const acceptOrganisationRequest = async (authToken: number, organisationUniqueName: string, userId: number) => {
+export const acceptOrganisationRequest = async (authToken: string, organisationUniqueName: string, userId: number) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -184,7 +184,7 @@ export const acceptOrganisationRequest = async (authToken: number, organisationU
   return await response.json();
 };
 
-export const rejectOrganisationRequest = async (authToken: number, organisationUniqueName: string, userId: number) => {
+export const rejectOrganisationRequest = async (authToken: string, organisationUniqueName: string, userId: number) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -203,7 +203,7 @@ export const rejectOrganisationRequest = async (authToken: number, organisationU
   return await response.json();
 };
 
-export const getOrganisationUsers = async (authToken: number, organisationUniqueName: string) => {
+export const getOrganisationUsers = async (authToken: string, organisationUniqueName: string) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -221,7 +221,7 @@ export const getOrganisationUsers = async (authToken: number, organisationUnique
   return await response.json();
 };
 
-export const removeOrganisationUser = async (authToken: number, organisationUniqueName: string, userId: number) => {
+export const removeOrganisationUser = async (authToken: string, organisationUniqueName: string, userId: number) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -240,7 +240,7 @@ export const removeOrganisationUser = async (authToken: number, organisationUniq
   return await response.json();
 };
 
-export const searchOrganisations = async (authToken: number, searchPhrase: string, page = 1) => {
+export const searchOrganisations = async (authToken: string, searchPhrase: string, page = 1) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -258,7 +258,7 @@ export const searchOrganisations = async (authToken: number, searchPhrase: strin
   return await response.json();
 };
 
-export const getOrganisationSettings = async (authToken: number, organisationUniqueName: string) => {
+export const getOrganisationSettings = async (authToken: string, organisationUniqueName: string) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -276,7 +276,7 @@ export const getOrganisationSettings = async (authToken: number, organisationUni
   return await response.json();
 };
 
-export const updateOrganisationSettings = async (authToken: number, organisationUniqueName: string, settingsData: any) => {
+export const updateOrganisationSettings = async (authToken: string, organisationUniqueName: string, settingsData: any) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -297,7 +297,7 @@ export const updateOrganisationSettings = async (authToken: number, organisation
   return await response.json();
 };
 
-export const deleteOrganisation = async (authToken: number, organisationUniqueName: string) => {
+export const deleteOrganisation = async (authToken: string, organisationUniqueName: string) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -320,7 +320,7 @@ export const deleteOrganisation = async (authToken: number, organisationUniqueNa
 //OrganisationRoles
 
 
-export const getOrganisationRoles = async (authToken: number, organisationName: string) => {
+export const getOrganisationRoles = async (authToken: string, organisationName: string) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -338,7 +338,7 @@ export const getOrganisationRoles = async (authToken: number, organisationName: 
   return await response.json();
 };
 
-export const createOrganisationRole = async (authToken: number, organisationName: string, roleData: any) => {
+export const createOrganisationRole = async (authToken: string, organisationName: string, roleData: any) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -359,7 +359,7 @@ export const createOrganisationRole = async (authToken: number, organisationName
   return await response.json();
 };
 
-export const updateOrganisationRole = async (authToken: number, organisationName: string, roleId: number, roleData: any) => {
+export const updateOrganisationRole = async (authToken: string, organisationName: string, roleId: number, roleData: any) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -380,7 +380,7 @@ export const updateOrganisationRole = async (authToken: number, organisationName
   return await response.json();
 };
 
-export const deleteOrganisationRole = async (authToken: number, organisationName: string, roleId: number) => {
+export const deleteOrganisationRole = async (authToken: string, organisationName: string, roleId: number) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -399,7 +399,7 @@ export const deleteOrganisationRole = async (authToken: number, organisationName
   return await response.json();
 };
 
-export const grantOrganisationRole = async (authToken: number, organisationName: string, roleId: number, userId: number ) => {
+export const grantOrganisationRole = async (authToken: string, organisationName: string, roleId: number, userId: number ) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -418,7 +418,7 @@ export const grantOrganisationRole = async (authToken: number, organisationName:
   return await response.json();
 };
 
-export const revokeOrganisationRole = async (authToken: number, organisationName: string, roleId: number, userId: number ) => {
+export const revokeOrganisationRole = async (authToken: string, organisationName: string, roleId: number, userId: number ) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }

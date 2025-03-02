@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../../components/shared/Header'
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import  {Friend} from "../../types/Friend";
 import { getFriends, addFriend, removeFriend } from '../../services/communityService';
 
 const Friends = () => {
@@ -80,8 +82,8 @@ const Friends = () => {
         {friends
           .filter(friend => friend.username.toLowerCase().includes(search.toLowerCase()))
           .map(friend => (
-            <li key={friend.username}>
-              {friend.username}
+            <li key={friend.username}>              
+              <Link to={`/user/${friend.username}`}>{friend.username}</Link>
               <button onClick={() => handleRemoveFriend(friend.username)}>Usuń</button>
             </li>
           ))}

@@ -20,14 +20,10 @@ public class MinOrganisationDto
         IsPrivate = org.IsPrivate;
         MinimumJoinLevel = org.MinimumJoinLevel;
         CreatorId = org.CreatorId;
-<<<<<<< HEAD
-        Members = org.Members.Select(m => new MinUserDto(m)).ToList();
-=======
         if (org.Members is not null)
             Members = org.Members.Select(m => new MinUserDto(m)).ToList();
         else
             Members = new List<MinUserDto>();
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
     }
     public int Id { get; set; }
     public string Name { get; set; }
@@ -40,10 +36,6 @@ public class MinOrganisationDto
     public string? YoutubeLink { get; set; }
     public bool IsPrivate { get; set; }
     public int MinimumJoinLevel { get; set; }
-<<<<<<< HEAD
-    public int CreatorId { get; set; }
-=======
     public int? CreatorId { get; set; }
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
     public ICollection<MinUserDto> Members { get; set; }
 }

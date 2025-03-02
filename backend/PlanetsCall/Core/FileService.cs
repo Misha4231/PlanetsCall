@@ -25,21 +25,6 @@ public class FileService
             Directory.CreateDirectory(path);
         }
 
-<<<<<<< HEAD
-        byte[] image = Convert.FromBase64String(b64File); // from base64 to bytes
-        if (image.Length > (maxWeight * 1024 * 1024)) // validate file size
-        {
-            throw new CodeException("File size exceeds the maximum allowed size", StatusCodes.Status415UnsupportedMediaType);
-        }
-
-        using var ms = new MemoryStream(image);
-        Image img = Image.FromStream(ms); // create image object
-        if (!allowedExtensions.Contains(img.RawFormat)) // validate extentions
-        {
-            throw new CodeException("File type not allowed", StatusCodes.Status415UnsupportedMediaType);
-        }
-
-=======
         if (b64File.Contains(',')) // if representation contains header data
         {
             b64File = b64File.Split(',')[1]; // cut it out
@@ -58,7 +43,6 @@ public class FileService
             throw new CodeException("File type not allowed", StatusCodes.Status415UnsupportedMediaType);
         }
 
->>>>>>> f86c380c28e9c6c821929ff547448e2078917dda
         string? extension = new ImageFormatConverter().ConvertToString(img.RawFormat);
         var fileName = $"{Guid.NewGuid()}.{extension}"; // construct file name
         var filePath = Path.Combine(path, fileName); // final file path
