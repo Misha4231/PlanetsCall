@@ -244,10 +244,12 @@ export const searchOrganisations = async (authToken: string, searchPhrase: strin
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
-
+  //searchPhrase = "zielony";
   const response = await fetch(`https://localhost:7000/api/community/Organisations/search/${searchPhrase}?page=${page}`, {
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json-patch+json',
     },
   });
 
@@ -255,6 +257,7 @@ export const searchOrganisations = async (authToken: string, searchPhrase: strin
     throw new Error('Nie udało się wyszukać organizacji.');
   }
 
+  console.log(response);
   return await response.json();
 };
 

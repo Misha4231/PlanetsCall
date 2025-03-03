@@ -14,6 +14,8 @@ const UsersProfile = () => {
   const [anotherUser, setAnotherU] = useState<Friend  | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [isFriend, setIsFriend] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAttendance = async () => {
@@ -51,14 +53,36 @@ const UsersProfile = () => {
       alert('Failed to add friend.');
     }
   };
+  
+  const handleRemoveFriend = async () => {
+    if (!token || !anotherUser) return;
+
+    try {
+      setLoading(true);
+      await removeFriend(token, anotherUser.username);
+      setIsFriend(false); 
+      setFriends(prev => prev.filter((friend: Friend) => friend.username !== anotherUser.username));
+      alert('Friend removed!');
+    } catch (err: any) {
+      setError(err.message);
+      alert('Failed to remove friend.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   return (
     <div>
       <Header/>
       <h3>Inny użytkownik</h3>
-      {!isFriend && isAuthenticated && (
+      {!isFriend && isAuthenticated ?(
         <button onClick={handleAddFriend}>Dodaj do Znajomych</button>
-      )}
+      ): (
+        <button onClick={handleRemoveFriend} disabled={loading}>
+          {loading ? 'Usuwanie...' : 'Usuń znajomego'}
+        </button>
+          )}
       <main>
         <h3>Username: {anotherUser?.username}</h3>
         <h3>Email: {anotherUser?.email}</h3>

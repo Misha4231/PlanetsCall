@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Header from '../../components/shared/Header'
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import  {Friend} from "../../types/Friend";
+import  {Friend} from "./communityTypes";
 import { getFriends, addFriend, removeFriend } from '../../services/communityService';
 
 const Friends = () => {

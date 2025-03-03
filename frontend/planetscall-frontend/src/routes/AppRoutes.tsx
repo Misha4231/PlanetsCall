@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Home from '../pages/home/Home';
 
-import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, Link, RouterProvider, useNavigate } from 'react-router-dom';
 
 import App from '../App';
 //import NotFound from '../pages/NotFound/NotFound';
@@ -11,7 +11,6 @@ import { AuthProvider, useAuth } from '../context/AuthContext';
 import NotFound from '../pages/NotFound/NotFound';
 import Shop from '../pages/shop/Shop';
 import { User } from "../pages/profile/types";
-
 
 import SignIn from '../pages/auth/SignIn';
 import SignUp from '../pages/auth/SignUp';
@@ -31,6 +30,7 @@ import CommunitySettings from '../pages/community/CommunitySettings';
 import Organisations from '../pages/community/Organisations';
 import CreateOrganisation from '../pages/community/CreateOrganisation';
 import FindOrganisation from '../pages/community/FindOrganisation';
+import AnOrganisation from '../pages/community/AnOrganisation';
 
 const mockUser: User = {
   id: 1,
@@ -118,6 +118,10 @@ const router = createBrowserRouter([
     element: <Organisations/>
   },
   {
+    path: '/community/organisations/:organisationUniqueName',
+    element: <AnOrganisation/>
+  },
+  {
     path: '/community/organisations/create',
     element: <CreateOrganisation/>
   },
@@ -151,6 +155,7 @@ const PrivateRoute: React.FC<{ component: JSX.Element }> = ({ component }) => {
 const AppRoutes: React.FC = () => {
   return (
     <AuthProvider>
+      
       <RouterProvider router={router} />
     </AuthProvider>
   );

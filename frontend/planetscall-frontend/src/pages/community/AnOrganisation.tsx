@@ -1,25 +1,29 @@
 // AnOrganisation.tsx
 import React, { useEffect, useState } from 'react';
 import { getOrganisationSettings, getOrganisationUsers } from '../../services/communityService';
+import { useAuth } from '../../context/AuthContext';
+import { useParams } from 'react-router-dom';
 
-const AnOrganisation = ({ authToken, organisationUniqueName }: { authToken: string; organisationUniqueName: string }) => {
+const AnOrganisation = () => {
+  const { user, isAuthenticated, token } = useAuth();
   const [organisation, setOrganisation] = useState<any>(null);
   const [users, setUsers] = useState([]);
   const [error, setError] = useState('');
+  const { organisationUniqueName } = useParams<{ organisationUniqueName: string }>();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const orgData = await getOrganisationSettings(authToken, organisationUniqueName);
+        const orgData = await getOrganisationSettings(token, organisationUniqueName);
         setOrganisation(orgData);
-        const userData = await getOrganisationUsers(authToken, organisationUniqueName);
+        const userData = await getOrganisationUsers(token, organisationUniqueName);
         setUsers(userData);
       } catch (err) {
         setError('Failed to load organisation data.');
       }
     };
     fetchData();
-  }, [authToken, organisationUniqueName]);
+  }, [token, organisationUniqueName]);
 
   return (
     <div>
