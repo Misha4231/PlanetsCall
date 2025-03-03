@@ -698,14 +698,11 @@ namespace Data.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganisationId");
+                    b.HasIndex("AuthorId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("OrganisationId");
 
                     b.ToTable("Tasks");
                 });
@@ -933,7 +930,6 @@ namespace Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("PreferredLanguage")
-                        .IsRequired()
                         .HasMaxLength(5)
                         .HasColumnType("character varying(5)");
 
@@ -948,7 +944,6 @@ namespace Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
@@ -1202,19 +1197,19 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.Tasks", b =>
                 {
+                    b.HasOne("Data.Models.Users", "Author")
+                        .WithMany("TasksCreatedCollection")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Data.Models.Organisations", "Organisation")
                         .WithMany("TasksCreatedCollection")
                         .HasForeignKey("OrganisationId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Data.Models.Users", "User")
-                        .WithMany("TasksCreatedCollection")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.Navigation("Author");
 
                     b.Navigation("Organisation");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Data.Models.TasksVerification", b =>

@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
 WORKDIR /app
 
 # copy the solution file
@@ -17,17 +17,11 @@ COPY Core/. ./Core/
 COPY Data/. ./Data/
 COPY PlanetsCall/. ./PlanetsCall/
 
-# publish app
-WORKDIR /app/PlanetsCall
-RUN dotnet publish -c "${ASPNETCORE_ENVIRONMENT}" -o out
-
-# run app
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-WORKDIR /app
-
+# install neccessary packages for entrypoint.sh
 RUN apt-get update && apt-get install -y postgresql-client && apt-get install -y curl
 
-COPY --from=build /app/PlanetsCall/out .
+# Run migrations
+RUN dotnet publish -c Debug -o PlanetsCall/out
 
 # Copy entrypoint script
 COPY ./entrypoint.sh ./

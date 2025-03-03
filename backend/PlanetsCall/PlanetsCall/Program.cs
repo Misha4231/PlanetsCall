@@ -67,7 +67,7 @@ builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<JwtTokenManager>();
 builder.Services.AddScoped<FileService>();
-
+builder.Services.PrepareDatabase();
 
 var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
 var jwtAudience = Environment.GetEnvironmentVariable("WEBSITE_DOMAIN") ?? builder.Configuration.GetSection("Jwt:Audience").Get<string>();

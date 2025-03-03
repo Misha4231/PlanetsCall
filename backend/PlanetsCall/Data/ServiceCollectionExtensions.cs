@@ -24,15 +24,6 @@ public static class ServiceCollectionExtensions
             o.UseNpgsql(databaseConnectionString);
         });
 
-        using (var serviceProvider = services.BuildServiceProvider())
-        {
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<PlatensCallContext>();
-                dbContext.Database.Migrate(); // Apply pending migrations
-            }
-        }
-
         return services;
     }
 }
