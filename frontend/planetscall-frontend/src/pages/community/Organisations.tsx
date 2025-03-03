@@ -3,24 +3,7 @@ import Header from '../../components/shared/Header';
 import { useAuth } from '../../context/AuthContext';
 import { getMyOrganisations } from '../../services/communityService';
 import { Link } from 'react-router-dom';
-
-interface Organisation {
-  id: number;
-  name: string;
-  uniqueName: string;
-  description: string;
-  organizationLogo: string;
-  isPrivate: boolean;
-  minimumJoinLevel: number;
-}
-
-interface OrganisationsResponse {
-  items: Organisation[];
-  pageIndex: number;
-  totalPages: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
-}
+import { Organisation, OrganisationsResponse } from './communityTypes';
 
 const Organisations: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();

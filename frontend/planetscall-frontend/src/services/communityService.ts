@@ -323,6 +323,24 @@ export const deleteOrganisation = async (authToken: string, organisationUniqueNa
 //OrganisationRoles
 
 
+export const getOrganisationData = async (authToken: string, organisationUniqueName: string) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+
+  const response = await fetch(`https://localhost:7000/api/community/Organisations/settings/${organisationUniqueName}`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Nie udało się pobrać danych organizacji.');
+  }
+
+  return await response.json();
+};
+
 export const getOrganisationRoles = async (authToken: string, organisationName: string) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');

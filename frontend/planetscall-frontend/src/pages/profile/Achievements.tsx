@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Achievements = () => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loadingUser } = useAuth();
   const navigate = useNavigate();
 
-  if (loading) {
+  if (loadingUser) {
     return <div>Ładowanie danych użytkownika...</div>;
   }  
   

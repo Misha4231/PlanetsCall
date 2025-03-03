@@ -118,7 +118,7 @@ const router = createBrowserRouter([
     element: <Organisations/>
   },
   {
-    path: '/community/organisations/:organisationUniqueName',
+    path: '/community/organisation/:organisationUniqueName',
     element: <AnOrganisation/>
   },
   {

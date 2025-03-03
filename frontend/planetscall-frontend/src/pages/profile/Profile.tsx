@@ -13,10 +13,10 @@ const Profile :React.FC = () => {
   // const [user, setUser] = useState<User | null>(null);
   // const [error, setError] = useState<string | null>(null);
 
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loadingUser } = useAuth();
   const navigate = useNavigate();
 
-  if (loading) {
+  if (loadingUser) {
     return <div>Ładowanie danych użytkownika...</div>;
   }  
   

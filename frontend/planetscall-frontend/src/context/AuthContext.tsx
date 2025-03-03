@@ -37,14 +37,14 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   token: string | null;
-  loading : boolean | false;
+  loadingUser : boolean | false;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingUser, setLoading] = useState(true);
   const [token, setToken] = useState<string | null>(() => sessionStorage.getItem('authToken'));
 
   useEffect(() => {
@@ -94,7 +94,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{user, isAuthenticated: !!user, token, login, logout, loading}}>
+    <AuthContext.Provider value={{user, isAuthenticated: !!user, token, login, logout, loadingUser}}>
       {children}
     </AuthContext.Provider>
   );

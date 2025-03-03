@@ -31,3 +31,19 @@ export interface OrganisationsResponse {
     hasPreviousPage: boolean;
     hasNextPage: boolean;
 }
+
+export interface Member {
+    email: string;
+    firstName: null | string; 
+    id: number;
+    isActivated: boolean;
+    isAdmin: boolean;
+    isBlocked: boolean;
+    lastName: null | string; 
+    points: number;
+    preferredLanguage: string;
+    profileImage: null | string;
+    progress: number;
+    status: string;
+    username: string;
+  }
