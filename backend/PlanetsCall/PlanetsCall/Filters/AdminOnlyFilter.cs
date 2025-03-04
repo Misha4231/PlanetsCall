@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Data.Models;
 using Data.Repository.User;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -33,7 +32,7 @@ public class AdminOnlyFilter : Attribute, IAuthorizationFilter
             }
             
             // get user and check if IsAdmin property is true
-            Users? user = usersRepository.GetUserByEmail(userEmail!);
+            Users? user = usersRepository.GetUserByEmail(userEmail);
             if (user is null) // check if user exists
             {
                 context.Result = new UnauthorizedObjectResult("Not existing user");

@@ -8,41 +8,28 @@
 
 ## Kroki do uruchomienia backendu projektu
 
-### Krok 1: Zainstaluj PostgreSQL
-- **Dla Windows**: pobierz [PgAdmin4](https://www.pgadmin.org/download/pgadmin-4-windows/)
-- **Dla Linux**: pobierz PostgreSQL z [oficjalnej strony](https://www.postgresql.org/download/linux/)
+### Krok 1: Pobierz Docker
+- **Dla Windows**: pobierz [Docker](https://docs.docker.com/desktop/setup/install/windows-install/)
+- **Dla Linux**: pobierz [Docker](https://docs.docker.com/desktop/setup/install/linux/)
 
-### Krok 2: Utwórz bazę danych
-Utwórz nową bazę danych o nazwie `planets_call`.
-
-### Krok 3: Skonfiguruj ConnectionString
-1. Otwórz plik `backend/PlanetsCall/PlanetsCall/appsettings.Development.json`
-2. Znajdź linię:
-   ```json
-   "PostgresConnection": "connection string tutaj"
-   ```
-3. Wpisz swój ciąg połączenia, aby wyglądał następująco:
-   ```
-   host=localhost;port=5432;database=planets_call;username=<nazwa użytkownika, który utworzył bazę danych>;password=<hasło użytkownika, który utworzył bazę danych>
-   ```
-
-> **UWAGA:** Nie commituj prawdziwego hasła do repozytorium!
-
-### Krok 4: Zaktualizuj bazę danych
-Przejdź do katalogu `backend/PlanetsCall` i uruchom następującą komendę:
+### Krok 2: Uruchom
+Znajdując się w katalogu głównym (tam gdzie leży `docker-compose.yml`) wpisz komendę
 ```bash
-dotnet ef database update -p Data -s PlanetsCall
+docker compose up --build -d
 ```
-Ta komenda utworzy wszystkie tabele w bazie danych.
+!!!UWAGA!!! - pierwsze uruchomienie zajmie trochę czasu ze względu na to, że pobierają się  postgreSQL, Redis, itp. oraz 
+baza danych `world.sql` jest importowana.
+`Kolejne uruchomienia będą znacznie szybsze`
 
-### Krok 5: Zaimportuj dane z pliku [world.sql](https://github.com/dr5hn/countries-states-cities-database/blob/master/psql/world.sql)
-1. Po dodaniu folderu bin PostgreSQL do zmiennych środowiskowych, przejdź do katalogu, w którym znajduje się plik `world.sql`.
-2. Wykonaj poniższą komendę:
-   ```bash
-   psql -U <nazwa użytkownika> -d planets_call -f world.sql
-   ```
-
-### Krok 6: Otwórz backend/PlanetsCall/PlanetsCall.sln za pomocą Visual Studio lub innego IDE
-### Krok 7: Uruchom projekt:
-- **Dla Visual Studio**: Po prostu kliknij na `Run`
-- **Za pomocą terminalu**: wpisz komende `dotnet run --project PlanetsCall`
+### Jak korzystać?
+- API używa port 8080 (http://localhost:8080)
+- Aplikacja zawsze posiada administratora (is_admin=true) dane do logowania się znaudują w `.env.db`
+### Jak wyłączyć?
+```bash
+docker compose down
+```
+lub
+```bash
+docker compose down -v
+```
+druga komenda usuwa volumes (czyli wszystkie dane wewnątrz)

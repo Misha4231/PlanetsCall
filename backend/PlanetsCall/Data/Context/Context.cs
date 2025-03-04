@@ -80,7 +80,7 @@ public sealed class PlatensCallContext : DbContext
 
         // Zadania
         modelBuilder.Entity<Tasks>()
-            .HasOne<Users>(t => t.User)
+            .HasOne<Users>(t => t.Author)
             .WithMany(u => u.TasksCreatedCollection)
             .OnDelete(DeleteBehavior.SetNull);
         modelBuilder.Entity<Tasks>()
@@ -92,7 +92,7 @@ public sealed class PlatensCallContext : DbContext
             .WithMany(t => t.Verifications)
             .OnDelete(DeleteBehavior.SetNull);
         modelBuilder.Entity<TasksVerification>()
-            .HasOne<Users>(v => v.User)
+            .HasOne<Users>(v => v.Executor)
             .WithMany(u => u.TasksCompleted);
         modelBuilder.Entity<TasksVerification>()
             .HasOne<Users>(v => v.Inspector)

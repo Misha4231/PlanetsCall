@@ -9,10 +9,10 @@ public class Users
     public int Id { get; set; }
     [Required]
     [MaxLength(250)]
-    public required string Email { get; set; }
+    public required string? Email { get; set; }
     [Required]
     [MaxLength(250)]
-    public required string Username { get; set; }
+    public required string? Username { get; set; }
     public int AccountType { get; set; }
     public bool IsActivated { get; set; }
     public bool IsBlocked { get; set; }
@@ -32,13 +32,13 @@ public class Users
     public DateTime LastLogin { get; set; }
     public bool IsAdmin { get; set; }
     [MaxLength(5)]
-    public required string PreferredLanguage { get; set; }
+    public required string? PreferredLanguage { get; set; }
     public bool IsNotifiable { get; set; }
     public bool IsVisible { get; set; }
     [MaxLength(300)]
     public string? Description { get; set; }
     [MaxLength(50)]
-    public required string Status { get; set; } //active, offline 
+    public required string? Status { get; set; } //active, offline 
     [MaxLength(100)]
     public string? InstagramLink { get; set; }
     [MaxLength(100)]

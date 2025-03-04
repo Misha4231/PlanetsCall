@@ -2,36 +2,19 @@
 
 namespace Data.DTO.User;
 
-public class MinUserDto
+public class MinUserDto(Users? user)
 {
-    public MinUserDto(Users user)
-    {
-        Id = user.Id;
-        Email = user.Email;
-        Username = user.Username;
-        IsActivated = user.IsActivated;
-        IsBlocked = user.IsBlocked;
-        FirstName = user.FirstName;
-        LastName = user.LastName;
-        Points = user.Points;
-        Progress = user.Progress;
-        ProfileImage = user.ProfileImage;
-        IsAdmin = user.IsAdmin;
-        PreferredLanguage = user.PreferredLanguage;
-        Status = user.Status;
-    }
-    
-    public int Id { get; set; }
-    public string Email { get; set; }
-    public string Username { get; set; }
-    public bool IsActivated { get; set; }
-    public bool IsBlocked { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public int Points { get; set; }
-    public uint Progress { get; set; }
-    public string? ProfileImage { get; set; }
-    public bool IsAdmin { get; set; }
-    public string PreferredLanguage { get; set; }
-    public string Status { get; set; }
+    public int Id { get; set; } = user!.Id;
+    public string? Email { get; set; } = user.Email;
+    public string? Username { get; set; } = user.Username;
+    public bool IsActivated { get; set; } = user.IsActivated;
+    public bool IsBlocked { get; set; } = user.IsBlocked;
+    public string? FirstName { get; set; } = user.FirstName;
+    public string? LastName { get; set; } = user.LastName;
+    public int Points { get; set; } = user.Points;
+    public uint Progress { get; set; } = user.Progress;
+    public string? ProfileImage { get; set; } = user.ProfileImage;
+    public bool IsAdmin { get; set; } = user.IsAdmin;
+    public string? PreferredLanguage { get; set; } = user.PreferredLanguage;
+    public string? Status { get; set; } = user.Status;
 }

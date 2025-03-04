@@ -1,5 +1,6 @@
 ﻿using System.Drawing.Imaging;
 using Core;
+using Core.Exceptions;
 using Core.User;
 using Data.Context;
 using Data.DTO.Global;
@@ -8,22 +9,17 @@ using Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using PlanetsCall.Controllers.Exceptions;
 
 namespace Data.Repository.User;
 
-public class UsersRepository : RepositoryBase, IUsersRepository
+public class UsersRepository(
+    PlatensCallContext context,
+    HashManager hashManager,
+    FileService fileService,
+    IConfiguration configuration)
+    : RepositoryBase(context, configuration), IUsersRepository
 {
-    private readonly HashManager _hashManager;
-    private readonly FileService _fileService;
-    public UsersRepository(PlatensCallContext context, HashManager hashManager, FileService fileService, IConfiguration configuration) 
-    : base(context, configuration)
-    {
-        this._hashManager = hashManager;
-        this._fileService = fileService;
-    }
-
-    public IEnumerable<Users> GetUsers()
+    public IEnumerable<Users?> GetUsers()
     {
         return Context.Users.ToList();
     }
@@ -35,9 +31,9 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         // search by username, first name and last name, then wrap it to min user dto
         var users = Context.Users
             .OrderBy(u => u.Id) // sort
-            .Where(u => u.Username.ToLower().Contains(searchString.ToLower()) ||
-                        (u.FirstName != null && u.FirstName.ToLower().Contains(searchString.ToLower())) ||
-                        (u.LastName != null && u.LastName.ToLower().Contains(searchString.ToLower())))
+            .Where(u => u.Username != null && (u.Username.ToLower().Contains(searchString.ToLower()) ||
+                                               (u.FirstName != null && u.FirstName.ToLower().Contains(searchString.ToLower())) ||
+                                               (u.LastName != null && u.LastName.ToLower().Contains(searchString.ToLower()))))
             .Select(u => new MinUserDto(u));
             
         // pagination
@@ -64,41 +60,47 @@ public class UsersRepository : RepositoryBase, IUsersRepository
                 .FirstOrDefault(u => u.Id == id)!;
     }
 
-    public Users? GetUserByUsername(string username)
+    public Users? GetUserByUsername(string? username)
     {
         return Context.Users.FirstOrDefault(u => u.Username == username);
     }
 
-    public Users? GetUserByEmail(string email)
+    public Users? GetUserByEmail(string? email)
     {
         return Context.Users.FirstOrDefault(u => u.Email == email);
     }
 
-    public Users InsertUser(Users user) // Insert user to database
+    public Users? InsertUser(Users? user) // Insert user to database
     {
-        if (!string.IsNullOrEmpty(user.Password)) // check in case user uses another way of authorization
+        if (!string.IsNullOrEmpty(user?.Password)) // check in case user uses another way of authorization
         {
-            user.Password = this._hashManager.Encrypt(user.Password); // passwords are stored in encrypted way
+            user.Password = hashManager.Encrypt(user.Password); // passwords are stored in encrypted way
         }
-        
-        Context.Users.Add(user); // add to table
-        Context.SaveChanges(); // save changes
 
+        if (user != null)
+        {
+            Context.Users.Add(user); // add to table
+            Context.SaveChanges(); // save changes
+        }
         return user;
     }
 
-    public Users UpdateUser(Users user) // updates user
+    public Users? UpdateUser(Users? user) // updates user
     {
-        user.UpdatedAt = DateTime.Now; // update the UpdatedAt time to now
-        Context.Users.Update(user);
-        Context.SaveChanges();
+        if (user != null)
+        {
+            user.UpdatedAt = DateTime.Now; // update the UpdatedAt time to now
+            Context.Users.Update(user);
+            Context.SaveChanges();
 
+            return user;
+        }
         return user;
     }
 
-    public Users UpdateUser(UpdateUserDto user, int userId) // update user from UpdateUserDto with assigning all values
+    public Users? UpdateUser(UpdateUserDto user, int userId) // update user from UpdateUserDto with assigning all values
     {
-        Users userToUpdate = GetUserById(userId)!; // get user (existing must be checked earlier)
+        Users? userToUpdate = GetUserById(userId)!; // get user (existing must be checked earlier)
 
         // assign values from DTO to model
         userToUpdate.Email = user.Email;
@@ -108,7 +110,7 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         userToUpdate.BirthDate = user.BirthDate;
         userToUpdate.BirthDate = user.BirthDate;
         // update profile image
-        userToUpdate.ProfileImage = _fileService.UpdateFile(userToUpdate.ProfileImage ,user.ProfileImage, "profile_icons",new ImageFormat[] {ImageFormat.Jpeg, ImageFormat.Png}, 4);
+        userToUpdate.ProfileImage = fileService.UpdateFile(userToUpdate.ProfileImage ,user.ProfileImage, "profile_icons",new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
         userToUpdate.PreferredLanguage = user.PreferredLanguage;
         userToUpdate.IsNotifiable = user.IsNotifiable;
         userToUpdate.IsVisible = user.IsVisible;
@@ -123,7 +125,7 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         
         if (user.Passwords != null)
         {
-            userToUpdate.Password = this._hashManager.Encrypt(user.Passwords.Password!);
+            userToUpdate.Password = hashManager.Encrypt(user.Passwords.Password!);
         }
 
         UpdateUser(userToUpdate);
@@ -148,22 +150,25 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         return errorMessages.Count() != 0 ? new ErrorResponse(errorMessages, StatusCodes.Status400BadRequest, "") : null;
     }
 
-    public void DeleteUser(Users user)
+    public void DeleteUser(Users? user)
     {
         // delete avatar file
-        if (user.ProfileImage != null) _fileService.DeleteFile(user.ProfileImage);
+        if (user != null && user.ProfileImage != null) fileService.DeleteFile(user.ProfileImage);
         
         // delete user and additional data related to it
-        Context.Users.Remove(user);
-        var logs = Context.Logs.Where(log => log.UserId == user.Id).ToList();
-        Context.RemoveRange(logs);
-        
+        if (user != null)
+        {
+            Context.Users.Remove(user);
+            var logs = Context.Logs.Where(log => log.UserId == user.Id).ToList();
+            Context.RemoveRange(logs);
+        }
+
         Context.SaveChanges();
     }
 
     public void ResetUserData(Users user) // resets user data
     {
-        Users fullUser = Context.Users // get user with all related data
+        Users? fullUser = Context.Users // get user with all related data
             .Include(u => u.Friends)
             .Include(u => u.AchievementsCollection)
             .Include(u => u.CreatedTopics)
@@ -193,10 +198,13 @@ public class UsersRepository : RepositoryBase, IUsersRepository
         fullUser?.TasksVerified?.Clear();
         fullUser?.LikedCommentsCollection?.Clear();
         fullUser?.TopicCommentsCollection?.Clear();
-        fullUser.Progress = 1;
-        fullUser.Points = 0;
+        if (fullUser != null)
+        {
+            fullUser.Progress = 1;
+            fullUser.Points = 0;
 
-        UpdateUser(fullUser); // update data in database
+            UpdateUser(fullUser); // update data in database
+        }
     }
 
     public PaginatedList<MinUserDto> GetUsersPaginated(int page) // gets paginated list of users

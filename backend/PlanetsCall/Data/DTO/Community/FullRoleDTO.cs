@@ -3,38 +3,21 @@ using Data.Models;
 
 namespace Data.DTO.Community;
 
-public class FullRoleDto
+public class FullRoleDto (OrganisationRoles role)
 {
-    public FullRoleDto(OrganisationRoles role)
-    {
-        Id = role.Id;
-        Title = role.Title;
-        CanDeleteOrganization = role.CanDeleteOrganization;
-        CanRemoveUsers = role.CanRemoveUsers;
-        CanAcceptUsers = role.CanAcceptUsers;
-        CanConfigureOrganization = role.CanConfigureOrganization;
-        CanAddTask = role.CanAddTask;
-        CanConfigureRoles = role.CanConfigureRoles;
-        CanGivePermissions = role.CanGivePermissions;
-        CanUpdateTasks = role.CanUpdateTasks;
-        CanDeleteTasks = role.CanDeleteTasks;
-        Image = role.Image;
-        OrganisationId = role.OrganisationId;
-        UsersWithRole = role.UsersWithRole?.Select(user => new MinUserDto(user)).ToList() ?? new List<MinUserDto>();
-    }
-    
-    public int Id { get; set; }
-    public string? Title { get; set; }
-    public bool CanDeleteOrganization { get; set; }
-    public bool CanRemoveUsers { get; set; }
-    public bool CanAcceptUsers { get; set; }
-    public bool CanConfigureOrganization { get; set; }
-    public bool CanAddTask { get; set; }
-    public bool CanConfigureRoles { get; set; }
-    public bool CanGivePermissions { get; set; }
-    public bool CanUpdateTasks { get; set; }
-    public bool CanDeleteTasks { get; set; }
-    public string? Image { get; set; }
-    public int OrganisationId { get; set; }
-    public ICollection<MinUserDto>? UsersWithRole { get; set; }
+    public int Id { get; set; } = role.Id;
+    public string? Title { get; set; } = role.Title;
+    public bool CanDeleteOrganization { get; set; } = role.CanDeleteOrganization;
+    public bool CanRemoveUsers { get; set; } = role.CanRemoveUsers;
+    public bool CanAcceptUsers { get; set; } = role.CanAcceptUsers;
+    public bool CanConfigureOrganization { get; set; } = role.CanConfigureOrganization;
+    public bool CanAddTask { get; set; } = role.CanAddTask;
+    public bool CanConfigureRoles { get; set; } = role.CanConfigureRoles;
+    public bool CanGivePermissions { get; set; } = role.CanGivePermissions;
+    public bool CanUpdateTasks { get; set; } = role.CanUpdateTasks;
+    public bool CanDeleteTasks { get; set; } = role.CanDeleteTasks;
+    public string? Image { get; set; } = role.Image;
+    public int OrganisationId { get; set; } = role.OrganisationId;
+    public ICollection<MinUserDto>? UsersWithRole { get; set; } =
+        (role.UsersWithRole ?? throw new InvalidOperationException()).Select(user => new MinUserDto(user)).ToList();
 }

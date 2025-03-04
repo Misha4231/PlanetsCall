@@ -21,6 +21,6 @@ public class OrganisationRoles
     [MaxLength(300)]
     public string? Image { get; set; }
     public int OrganisationId { get; set; }
-    public Organisations Organisation { get; set; }
-    public ICollection<Users> UsersWithRole { get; set; }
+    public Organisations? Organisation { get; set; }
+    public ICollection<Users>? UsersWithRole { get; set; }
 }

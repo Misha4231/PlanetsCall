@@ -1,7 +1,7 @@
-﻿using Data.Models;
+﻿using Core.Exceptions;
+using Data.Models;
 using Data.Repository.Community;
 using Microsoft.AspNetCore.Mvc;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 
 namespace PlanetsCall.Controllers.Admin;
@@ -12,23 +12,18 @@ namespace PlanetsCall.Controllers.Admin;
  */
 [Route("/api/admin/organisations/[controller]")]
 [ApiController]
-public class VerificationController : ControllerBase
+public class VerificationController(
+    IVerificationRepository verificationRepository,
+    IOrganisationsRepository organisationsRepository)
+    : ControllerBase
 {
-    private readonly IVerificationRepository _verificationRepository;
-    private readonly IOrganisationsRepository _organisationsRepository;
-
-    public VerificationController(IVerificationRepository verificationRepository, IOrganisationsRepository organisationsRepository)
-    {
-        this._verificationRepository = verificationRepository;
-        _organisationsRepository = organisationsRepository;
-    }
-
     [HttpGet]
+    [Cache]
     [AdminOnlyFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetRequests() // gets a list of all verification requests and put it into DTO (to make organisation data smaller)
     {
-        return Ok(_verificationRepository.GetRequestsList());
+        return Ok(verificationRepository.GetRequestsList());
     }
 
     [HttpPost("{organisationName}/{action}/")]
@@ -40,27 +35,27 @@ public class VerificationController : ControllerBase
     { 
         if (action != "approve" && action != "reject") // check if action is valid
         {
-            return BadRequest(new ErrorResponse(new List<string>() { "Available actions: approve, reject" }, StatusCodes.Status400BadRequest,
+            return BadRequest(new ErrorResponse(["Available actions: approve, reject"], StatusCodes.Status400BadRequest,
                 HttpContext.TraceIdentifier));
         }
 
         try {
-            Organisations org = _organisationsRepository.GetObjOrganisation(organisationName);
+            Organisations org = organisationsRepository.GetObjOrganisation(organisationName);
             if (org.VerificationRequest is null) // check if organisation creator really made request
             {
-                return BadRequest(new ErrorResponse(new List<string>() { "Organisation owner didn't request verification" }, StatusCodes.Status400BadRequest,
+                return BadRequest(new ErrorResponse(["Organisation owner didn't request verification"], StatusCodes.Status400BadRequest,
                     HttpContext.TraceIdentifier));
             }
             
-            if (action == "approve") // if approve, than set isVerified equals true
-                _verificationRepository.VerifyOrganisation(org);
-            _verificationRepository.DeleteRequest(org.VerificationRequest); // delete request after processing it
+            if (action == "approve") // if approved, then set isVerified equals true
+                verificationRepository.VerifyOrganisation(org);
+            verificationRepository.DeleteRequest(org.VerificationRequest); // delete request after processing it
 
             return Ok();
         }
         catch (CodeException ex)
         {
-            return StatusCode(ex.Code ,new ErrorResponse(new List<string>() { ex.Message }, ex.Code, HttpContext.TraceIdentifier));
+            return StatusCode(ex.Code ,new ErrorResponse([ex.Message], ex.Code, HttpContext.TraceIdentifier));
         }
     }
 }

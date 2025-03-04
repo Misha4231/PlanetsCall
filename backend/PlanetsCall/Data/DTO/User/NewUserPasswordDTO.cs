@@ -11,38 +11,38 @@ public class NewUserPasswordDto
     
     public List<string> IsValid()
     {
-        List<string> Messages = new List<string>(); // error messages
+        List<string> messages = new List<string>(); // error messages
         
         if (string.IsNullOrEmpty(this.Password))
         {
-            Messages.Add("Password can't be empty");
+            messages.Add("Password can't be empty");
         }
         else
         {
             if (this.Password.Length < 6)
             {
-                Messages.Add("Password must be at least 6 symbols");
+                messages.Add("Password must be at least 6 symbols");
             }
             if (this.Password.Contains(' '))
             {
-                Messages.Add("Password must contain white symbols");
+                messages.Add("Password must contain white symbols");
             }
             if (!this.Password.Any(char.IsUpper))
             {
-                Messages.Add("Password must contain at least 1 upper case character");
+                messages.Add("Password must contain at least 1 upper case character");
             }
         }
 
         if (string.IsNullOrEmpty(this.PasswordConfirmation))
         {
-            Messages.Add("Password confirmation can't be empty");
+            messages.Add("Password confirmation can't be empty");
         }
 
         if (this.Password != this.PasswordConfirmation)
         {
-            Messages.Add("Password and Password confirmation must be same");
+            messages.Add("Password and Password confirmation must be same");
         }
 
-        return Messages;
+        return messages;
     }
 }

@@ -1,15 +1,10 @@
-﻿namespace PlanetsCall.Controllers.Exceptions;
+﻿namespace Core.Exceptions;
 
 /*
  * Class inherited by Exception to provide HTTP code inside
  * object and return correct response
  */
-public class CodeException : Exception
+public class CodeException(string message, int code) : Exception(message)
 {
-    public CodeException(string message, int code) : base(message)
-    {
-        Code = code;
-    }
-
-    public int Code { get; }
+    public int Code { get; } = code;
 }

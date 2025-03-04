@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Drawing.Imaging;
 using Core;
+using Core.Exceptions;
 using Data.Context;
 using Data.DTO.Global;
 using Data.DTO.Item;
@@ -9,19 +10,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
-using PlanetsCall.Controllers.Exceptions;
 
 namespace Data.Repository.Item;
 
-public class ItemsRepository : RepositoryBase, IItemsRepository
+public class ItemsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService)
+    : RepositoryBase(context, configuration), IItemsRepository
 {
-    private readonly FileService _fileService;
-    public ItemsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService) 
-        : base(context, configuration)
-    {
-        _fileService = fileService;
-    }
-    
     public List<CategoriesListMember> GetCategories() // gets all categories
     {
         var categoriesList = Context.ItemsCategories
@@ -59,8 +53,8 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
         }
         
         // saves file or throws CodeException with code 415 Unsupported Media Type 
-        string imagePath = _fileService.SaveFile(itemData.Image, "items",
-                new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
+        string imagePath = fileService.SaveFile(itemData.Image, "items",
+            new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
 
         EntityEntry<Items> newItem = Context.Items.Add(new Items() // creates an instance
         {
@@ -78,8 +72,8 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
     public ItemsCategory AddCategory(MinCategoryDto categoryData) // adds new category for items to database
     {
         // saves file or throws CodeException with code 415 Unsupported Media Type 
-        string imagePath = _fileService.SaveFile(categoryData.Image, "items",
-                new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
+        string imagePath = fileService.SaveFile(categoryData.Image, "items",
+            new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
         
         // add an entity
         EntityEntry<ItemsCategory> newCategory = Context.ItemsCategories.Add(new ItemsCategory()
@@ -105,8 +99,8 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
         }
         
         // updates file or throws CodeException with code 415 Unsupported Media Type 
-        string? imagePath = _fileService.UpdateFile(itemToUpdate.Image, itemData.Image, "items",
-            new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
+        string? imagePath = fileService.UpdateFile(itemToUpdate.Image, itemData.Image, "items",
+            new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
 
         // assign values
         itemToUpdate.Image = imagePath ?? "";
@@ -126,8 +120,8 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
             throw new CodeException("No item with provided id found", StatusCodes.Status404NotFound);
         }
         
-        string? imagePath = _fileService.UpdateFile(categoryToUpdate.Image,categoryData.Image, "items",
-            new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Gif }, 4);
+        string? imagePath = fileService.UpdateFile(categoryToUpdate.Image,categoryData.Image, "items",
+            new List<string> { "png", "jpg", "jpeg", "gif" }, 4);
 
         categoryToUpdate.Image = imagePath;
         categoryToUpdate.Title = categoryData.Title;
@@ -140,7 +134,7 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
     {
         Items? itemData = Context.Items.FirstOrDefault(i => i.Id == itemId);
         if (itemData is null) return false;
-        _fileService.DeleteFile(itemData.Image);
+        fileService.DeleteFile(itemData.Image);
         
         Context.Items.Remove(itemData);
         Context.SaveChanges();
@@ -152,7 +146,7 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
         ItemsCategory? categoryData = Context.ItemsCategories.FirstOrDefault(i => i.Id == categoryId);
         if (categoryData is null) return false;
         
-        if (!string.IsNullOrEmpty(categoryData.Image)) _fileService.DeleteFile(categoryData.Image);
+        if (!string.IsNullOrEmpty(categoryData.Image)) fileService.DeleteFile(categoryData.Image);
         
         Context.ItemsCategories.Remove(categoryData);
         Context.SaveChanges();
@@ -169,13 +163,13 @@ public class ItemsRepository : RepositoryBase, IItemsRepository
         if (user.Points < item.Price) // validate balance
             throw new CodeException("Not enough points to buy item", StatusCodes.Status400BadRequest);
         
-        if (item.Owners.Contains(user)) // validate if user already have item
+        if (item.Owners != null && item.Owners.Contains(user)) // validate if user already have item
             throw new CodeException("You already have that item", StatusCodes.Status400BadRequest);
         
         // if everything ok, give item
         user.Points -= item.Price;
-        item.Owners.Add(user);
-        
+        if (item.Owners != null) item.Owners.Add(user);
+
         Context.SaveChanges();
     }
 }

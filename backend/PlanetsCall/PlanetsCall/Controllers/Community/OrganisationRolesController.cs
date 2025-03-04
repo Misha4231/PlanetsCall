@@ -1,9 +1,9 @@
-﻿using Data.DTO.Community;
+﻿using Core.Exceptions;
+using Data.DTO.Community;
 using Data.Models;
 using Data.Repository.Community;
 using Data.Repository.User;
 using Microsoft.AspNetCore.Mvc;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 
 namespace PlanetsCall.Controllers.Community;
@@ -11,31 +11,30 @@ namespace PlanetsCall.Controllers.Community;
 [Route("/api/community/organisations/{organisationName}/roles/")]
 [ApiController]
 [OrganisationFilter]
-public class OrganisationRolesController : ControllerBase
+public class OrganisationRolesController(
+    IOrganisationsRepository organisationsRepository,
+    IUsersRepository usersRepository)
+    : ControllerBase
 {
-    private readonly IOrganisationsRepository _organisationsRepository;
-    private readonly IUsersRepository _usersRepository;
-
-    public OrganisationRolesController(IOrganisationsRepository organisationsRepository, IUsersRepository usersRepository)
-    {
-        _organisationsRepository = organisationsRepository;
-        _usersRepository = usersRepository;
-    }
-
-
     [HttpGet]
+    [UserCache]
     [TokenAuthorizeFilter]
     public IActionResult GetRoles()
     {
         Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
         Organisations? organisation = HttpContext.GetRouteValue("Organisation") as Organisations;
-        if (organisation!.IsPrivate && !organisation.Members.Contains(requestUser))
+        if (organisation!.IsPrivate && organisation.Members != null && requestUser != null && !organisation.Members.Contains(requestUser))
         {
-            return BadRequest(new ErrorResponse(new List<string>() { "Access denied" }, StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
+            return BadRequest(new ErrorResponse(["Access denied"], StatusCodes.Status400BadRequest, HttpContext.TraceIdentifier));
         }
 
-        var roles = organisation.Roles.Select(r => new FullRoleDto(r)).ToList();
-        return Ok(roles);
+        if (organisation.Roles != null)
+        {
+            var roles = organisation.Roles.Select(r => new FullRoleDto(r)).ToList();
+            return Ok(roles);
+        }
+
+        return NotFound();
     }
 
     [HttpPost]
@@ -47,14 +46,14 @@ public class OrganisationRolesController : ControllerBase
         
         try
         {
-            _organisationsRepository.EnsureUserHasPermission(requestUser!, organisation!.UniqueName, role => role.CanConfigureRoles);
-            FullRoleDto newRole = _organisationsRepository.CreateRole(organisation, role);
+            organisationsRepository.EnsureUserHasPermission(requestUser!, organisation!.UniqueName, roles => roles.CanConfigureRoles);
+            FullRoleDto newRole = organisationsRepository.CreateRole(organisation, role);
 
             return Ok(newRole);
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
     }
 
@@ -68,16 +67,21 @@ public class OrganisationRolesController : ControllerBase
 
         try
         {
-            _organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
-                role => role.CanConfigureRoles);
-            FullRoleDto newRoleData = _organisationsRepository.UpdateRole(organisation, role, roleId);
+            if (requestUser != null && organisation != null)
+            {
+                organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
+                    roles => roles.CanConfigureRoles);
+                FullRoleDto newRoleData = organisationsRepository.UpdateRole(organisation, role, roleId);
 
-            return Ok(newRoleData);
+                return Ok(newRoleData);
+            }
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
+
+        return BadRequest();
     }
     [HttpDelete]
     [Route("{roleId}/")]
@@ -89,16 +93,20 @@ public class OrganisationRolesController : ControllerBase
 
         try
         {
-            _organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
-                role => role.CanConfigureRoles);
-            _organisationsRepository.DeleteRole(roleId);
-
-            return NoContent();
+            if (requestUser != null && organisation != null)
+            {
+                organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
+                    role => role.CanConfigureRoles);
+                organisationsRepository.DeleteRole(roleId);
+                return NoContent();
+            }
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
+        
+        return BadRequest();
     }
     [HttpPost]
     [Route("{roleId}/grant/{userId}/")]
@@ -110,19 +118,25 @@ public class OrganisationRolesController : ControllerBase
 
         try
         {
-            Users? user = _usersRepository.GetUserById(userId);
+            Users? user = usersRepository.GetUserById(userId);
             if (user is null) return NotFound();
-            
-            _organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
-                role => role.CanConfigureRoles);
-            _organisationsRepository.GrantRole(organisation, user, roleId);
 
-            return NoContent();
+
+            if (requestUser != null && organisation != null)
+            {
+                organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
+                    role => role.CanConfigureRoles);
+                organisationsRepository.GrantRole(organisation, user, roleId);
+                
+                return NoContent();
+            }
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
+        
+        return BadRequest();
     }
     
     [HttpPost]
@@ -135,18 +149,23 @@ public class OrganisationRolesController : ControllerBase
 
         try
         {
-            Users? user = _usersRepository.GetUserById(userId);
+            Users? user = usersRepository.GetUserById(userId);
             if (user is null) return NotFound();
-            
-            _organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
-                role => role.CanConfigureRoles);
-            _organisationsRepository.RevokeRole(organisation, user, roleId);
 
-            return NoContent();
+            if (requestUser != null && organisation != null)
+            {
+                organisationsRepository.EnsureUserHasPermission(requestUser, organisation.UniqueName,
+                    role => role.CanConfigureRoles);
+                organisationsRepository.RevokeRole(organisation, user, roleId);
+
+                return NoContent();
+            }
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code ,new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code ,new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
+        
+        return BadRequest();
     }
 }

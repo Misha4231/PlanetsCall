@@ -36,8 +36,8 @@ public class DisplayUserDto
 
     }
     public int Id { get; set; }
-    public string Email { get; set; }
-    public string Username { get; set; }
+    public string? Email { get; set; }
+    public string? Username { get; set; }
     public int AccountType { get; set; }
     public bool IsBlocked { get; set; }
     public string? FirstName { get; set; }
@@ -48,10 +48,10 @@ public class DisplayUserDto
     public string? ProfileImage { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsAdmin { get; set; }
-    public string PreferredLanguage { get; set; }
+    public string? PreferredLanguage { get; set; }
     public bool IsVisible { get; set; }
     public string? Description { get; set; }
-    public string Status { get; set; }
+    public string? Status { get; set; }
     public string? InstagramLink { get; set; }
     public string? LinkedinLink { get; set; }
     public string? YoutubeLink { get; set; }

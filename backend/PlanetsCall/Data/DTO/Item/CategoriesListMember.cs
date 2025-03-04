@@ -3,22 +3,17 @@ using Data.Models;
 
 namespace Data.DTO.Item;
 
-public class CategoriesListMember
+public class CategoriesListMember(ItemsCategory category)
 {
-    public int Id { get; set; }
+    public int Id { get; set; } = category.Id;
+
     [MaxLength(50)]
-    public string Title { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public string Title { get; set; } = category.Title;
+
+    public DateTime CreatedAt { get; set; } = category.CreatedAt;
+
     [MaxLength(300)]
-    public string? Image { get; set; }
-    public int AttachedItemsCount { get; set; }
-    
-    public CategoriesListMember(ItemsCategory category)
-    {
-        Id = category.Id;
-        Title = category.Title;
-        CreatedAt = category.CreatedAt;
-        Image = category.Image;
-        AttachedItemsCount = category.AttachedItems?.Count ?? 0; // Handles null AttachedItems
-    }
+    public string? Image { get; set; } = category.Image;
+
+    public int AttachedItemsCount { get; set; } = category.AttachedItems?.Count ?? 0; // Handles null AttachedItems
 }

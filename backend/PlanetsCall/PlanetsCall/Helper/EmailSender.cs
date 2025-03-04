@@ -2,6 +2,8 @@
 using Data.Models;
 using System.Net;
 using System.Net.Mail;
+using DotNetEnv;
+
 
 namespace PlanetsCall.Helper;
 
@@ -10,15 +12,10 @@ namespace PlanetsCall.Helper;
  * SendForgottenPasswordMail, SendUserConfirmationMail - public methods called inside controllers
  * GenerateLink, SendMail - private helper methods
  */
-public class EmailSender
+public class EmailSender(HashManager hashManager, IConfiguration configuration)
 {
-    private readonly HashManager _hashManager; // used for hashing used and making code expiring
-    private readonly IConfiguration _configuration; // data for constructing mails
-    public EmailSender(HashManager hashManager, IConfiguration configuration)
-    {
-        this._hashManager = hashManager;
-        this._configuration = configuration;
-    }
+    // used for hashing used and making code expiring
+    // data for constructing mails
 
     public void SendForgottenPasswordMail(Users user) // sends email when user forgot password and wants to reset it
     { 
@@ -54,43 +51,46 @@ public class EmailSender
     private string GenerateLink(Users user, string endpoint)
     {
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // current timestamp to put it inside code and expire when needed
-        var userHash = _hashManager.Encrypt($"{user.Username}:{timestamp}");
-        var link = _configuration["WebsiteDomain"] + endpoint + userHash; // constructing link
+        var userHash = hashManager.Encrypt($"{user.Username}:{timestamp}");
+        var link = configuration["WebsiteDomain"] + endpoint + userHash; // constructing link
 
         return link;
     }
     
     // most important helper method to actually send mails with SMTP server
-    private void SendMail(string receiver, string subject, string content, bool isHtml = false)
+    private void SendMail(string? receiver, string subject, string content, bool isHtml = false)
     {
-        var sender = _configuration.GetSection("SMTP:Username").Get<string>();
-        var senderPassword = _configuration.GetSection("SMTP:Password").Get<string>();
-        var Hostname = _configuration.GetSection("SMTP:Hostname").Get<string>();
-        var Port = _configuration.GetSection("SMTP:Port").Get<int>();
-        
-        // Constructing mail body
-        MailMessage mailMessage = new MailMessage();
-        mailMessage.From = new MailAddress(sender);
-        mailMessage.To.Add(receiver);
-        mailMessage.Subject = subject;
-        mailMessage.Body = content;
-        mailMessage.IsBodyHtml = isHtml;
-        
-        // Configuring SMTP client
-        SmtpClient smtpClient = new SmtpClient();
-        smtpClient.Host = Hostname;
-        smtpClient.Port = Port;
-        smtpClient.UseDefaultCredentials = false;
-        smtpClient.Credentials = new NetworkCredential(sender, senderPassword);
-        smtpClient.EnableSsl = true;
+        var sender = Environment.GetEnvironmentVariable("SMTP_USERNAME") ?? configuration.GetSection("SMTP:Username").Get<string>();
+        var senderPassword = Environment.GetEnvironmentVariable("SMTP_PASSWORD") ?? configuration.GetSection("SMTP:Password").Get<string>();
+        var hostname = Environment.GetEnvironmentVariable("SMTP_HOSTNAME") ?? configuration.GetSection("SMTP:Hostname").Get<string>();
+        var port = int.TryParse(Environment.GetEnvironmentVariable("SMTP_PORT"), out int p) ? p : configuration.GetSection("SMTP:Port").Get<int>();
 
-        try
+        // Constructing mail body
+        if (sender != null && hostname != null)
         {
-            smtpClient.Send(mailMessage); // sending mail
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error: " + ex.Message);
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.From = new MailAddress(sender);
+            if (receiver != null) mailMessage.To.Add(receiver);
+            mailMessage.Subject = subject;
+            mailMessage.Body = content;
+            mailMessage.IsBodyHtml = isHtml;
+            
+            // Configuring SMTP client
+            SmtpClient smtpClient = new SmtpClient();
+            smtpClient.Host = hostname;
+            smtpClient.Port = port;
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.Credentials = new NetworkCredential(sender, senderPassword);
+            smtpClient.EnableSsl = true;
+
+            try
+            {
+                smtpClient.Send(mailMessage); // sending mail
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
         }
     }
 }

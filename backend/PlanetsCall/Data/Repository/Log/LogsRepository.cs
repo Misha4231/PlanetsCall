@@ -5,11 +5,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Data.Repository.Log;
 
-public class LogsRepository : RepositoryBase, ILogsRepository
+public class LogsRepository(PlatensCallContext context, IConfiguration configuration)
+    : RepositoryBase(context, configuration), ILogsRepository
 {
-    public LogsRepository(PlatensCallContext context, IConfiguration configuration) 
-        : base(context, configuration) {}
-
     public List<Logs> GetAttendance(Users user) // get when user used service (used for statistics)
     {
         List<Logs> attendance = Context.Logs.Where(log => log.UserId == user.Id && log.Type == "attendance").Select(log => new Logs

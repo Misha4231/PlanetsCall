@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDB : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -241,11 +241,11 @@ namespace Data.Migrations
                     UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     LastLogin = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     IsAdmin = table.Column<bool>(type: "boolean", nullable: false),
-                    PreferredLanguage = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: false),
+                    PreferredLanguage = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: true),
                     IsNotifiable = table.Column<bool>(type: "boolean", nullable: false),
                     IsVisible = table.Column<bool>(type: "boolean", nullable: false),
                     Description = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     InstagramLink = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     LinkedinLink = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     YoutubeLink = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
@@ -337,7 +337,7 @@ namespace Data.Migrations
                     YoutubeLink = table.Column<string>(type: "text", nullable: true),
                     IsPrivate = table.Column<bool>(type: "boolean", nullable: false),
                     MinimumJoinLevel = table.Column<int>(type: "integer", nullable: false),
-                    CreatorId = table.Column<int>(type: "integer", nullable: false)
+                    CreatorId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -480,6 +480,26 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrganizationVerificationRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OrganisationId = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrganizationVerificationRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrganizationVerificationRequests_Organizations_Organisation~",
+                        column: x => x.OrganisationId,
+                        principalTable: "Organizations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tasks",
                 columns: table => new
                 {
@@ -490,11 +510,11 @@ namespace Data.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Reward = table.Column<int>(type: "integer", nullable: false),
                     AuthorId = table.Column<int>(type: "integer", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: true),
                     OrganizationId = table.Column<int>(type: "integer", nullable: true),
                     OrganisationId = table.Column<int>(type: "integer", nullable: true),
-                    UpdateAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    IsGroup = table.Column<bool>(type: "boolean", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -506,8 +526,8 @@ namespace Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_Tasks_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Tasks_Users_AuthorId",
+                        column: x => x.AuthorId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
@@ -571,11 +591,9 @@ namespace Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    IsGroup = table.Column<bool>(type: "boolean", nullable: false),
                     Proof = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
                     CompletedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    AuthorId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    ExecutorId = table.Column<int>(type: "integer", nullable: false),
                     InspectorId = table.Column<int>(type: "integer", nullable: false),
                     CheckedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     IsApproved = table.Column<bool>(type: "boolean", nullable: false),
@@ -592,14 +610,14 @@ namespace Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_TasksVerification_Users_InspectorId",
-                        column: x => x.InspectorId,
+                        name: "FK_TasksVerification_Users_ExecutorId",
+                        column: x => x.ExecutorId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TasksVerification_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_TasksVerification_Users_InspectorId",
+                        column: x => x.InspectorId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -755,6 +773,12 @@ namespace Data.Migrations
                 column: "MyOrganisationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrganizationVerificationRequests_OrganisationId",
+                table: "OrganizationVerificationRequests",
+                column: "OrganisationId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_states_country_id",
                 table: "states",
                 column: "country_id");
@@ -765,14 +789,19 @@ namespace Data.Migrations
                 column: "region_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tasks_AuthorId",
+                table: "Tasks",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tasks_OrganisationId",
                 table: "Tasks",
                 column: "OrganisationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_UserId",
-                table: "Tasks",
-                column: "UserId");
+                name: "IX_TasksVerification_ExecutorId",
+                table: "TasksVerification",
+                column: "ExecutorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TasksVerification_InspectorId",
@@ -783,11 +812,6 @@ namespace Data.Migrations
                 name: "IX_TasksVerification_TaskId",
                 table: "TasksVerification",
                 column: "TaskId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TasksVerification_UserId",
-                table: "TasksVerification",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TopicComments_AnswerToId",
@@ -867,6 +891,9 @@ namespace Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrganizationUsers");
+
+            migrationBuilder.DropTable(
+                name: "OrganizationVerificationRequests");
 
             migrationBuilder.DropTable(
                 name: "TasksVerification");

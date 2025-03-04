@@ -675,8 +675,11 @@ namespace Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsGroup")
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("OrganisationId")
                         .HasColumnType("integer");
@@ -692,17 +695,14 @@ namespace Data.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
-                    b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int?>("UserId")
+                    b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganisationId");
+                    b.HasIndex("AuthorId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("OrganisationId");
 
                     b.ToTable("Tasks");
                 });
@@ -715,22 +715,19 @@ namespace Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CheckedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("CompletedAt")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("ExecutorId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("InspectorId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsApproved")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsGroup")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Message")
@@ -746,16 +743,13 @@ namespace Data.Migrations
                     b.Property<int>("TaskId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ExecutorId");
 
                     b.HasIndex("InspectorId");
 
                     b.HasIndex("TaskId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("TasksVerification");
                 });
@@ -936,7 +930,6 @@ namespace Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("PreferredLanguage")
-                        .IsRequired()
                         .HasMaxLength(5)
                         .HasColumnType("character varying(5)");
 
@@ -951,7 +944,6 @@ namespace Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
@@ -1205,23 +1197,29 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.Tasks", b =>
                 {
+                    b.HasOne("Data.Models.Users", "Author")
+                        .WithMany("TasksCreatedCollection")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Data.Models.Organisations", "Organisation")
                         .WithMany("TasksCreatedCollection")
                         .HasForeignKey("OrganisationId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Data.Models.Users", "User")
-                        .WithMany("TasksCreatedCollection")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.Navigation("Author");
 
                     b.Navigation("Organisation");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Data.Models.TasksVerification", b =>
                 {
+                    b.HasOne("Data.Models.Users", "Executor")
+                        .WithMany("TasksCompleted")
+                        .HasForeignKey("ExecutorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Data.Models.Users", "Inspector")
                         .WithMany("TasksVerified")
                         .HasForeignKey("InspectorId")
@@ -1234,17 +1232,11 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
-                    b.HasOne("Data.Models.Users", "User")
-                        .WithMany("TasksCompleted")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Executor");
 
                     b.Navigation("Inspector");
 
                     b.Navigation("Task");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Data.Models.TopicComments", b =>

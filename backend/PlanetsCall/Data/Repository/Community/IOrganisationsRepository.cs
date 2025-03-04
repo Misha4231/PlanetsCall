@@ -8,7 +8,7 @@ namespace Data.Repository.Community;
 public interface IOrganisationsRepository
 {
     PaginatedList<MinOrganisationDto> GetUserOrganisations(Users user, int page);
-    void JoinOrganization(Users user, string organisationUniqueName);
+    void JoinOrganization(Users? user, string organisationUniqueName);
     FullOrganisationDto CreateOrganisation(Users user, OrganisationFormDto organisationData);
     List<MinUserDto> GetRequests(Users user, string organisationUniqueName);
     void AcceptRequest(Users user, string organisationUniqueName, int requestUserId);
@@ -24,7 +24,7 @@ public interface IOrganisationsRepository
     FullRoleDto CreateRole(Organisations organisation, RolesFormDto role);
     FullRoleDto UpdateRole(Organisations organisation, RolesFormDto role, int roleId);
     void DeleteRole(int roleId);
-    void GrantRole(Organisations organisation, Users user, int roleId);
-    void RevokeRole(Organisations organisation, Users user, int roleId);
+    void GrantRole(Organisations organisation, Users? user, int roleId);
+    void RevokeRole(Organisations organisation, Users? user, int roleId);
     OrganizationVerificationRequests AddVerificationRequest(string organisationUniqueName, Users user, string description);
 }

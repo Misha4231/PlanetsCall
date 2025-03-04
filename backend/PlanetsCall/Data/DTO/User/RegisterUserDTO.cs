@@ -8,10 +8,10 @@ public class RegisterUserDto
     [EmailAddress]
     [MaxLength(250)]
     [Required]
-    public required string Email { get; set; }
+    public required string? Email { get; set; }
     [Required]
     [MaxLength(250)]
-    public required string Username { get; set; }
+    public required string? Username { get; set; }
     public NewUserPasswordDto? Passwords { get; set; }
     public bool AgreedToTermsOfService { get; set; }
 
@@ -22,6 +22,11 @@ public class RegisterUserDto
         if (!this.AgreedToTermsOfService)
         {
             messages.Add("You must agree to Terms of service");
+        }
+
+        if (Passwords is null)
+        {
+            messages.Add("Passwords can't be empty");
         }
 
         List<string>? passwordMessages = Passwords?.IsValid(); // check everything important for password

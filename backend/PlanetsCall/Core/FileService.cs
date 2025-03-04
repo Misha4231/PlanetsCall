@@ -1,24 +1,16 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using SixLabors.ImageSharp;
+using Core.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using PlanetsCall.Controllers.Exceptions;
 
 namespace Core;
 
-public class FileService
+public class FileService(IWebHostEnvironment webHostEnvironment)
 {
-    private readonly IWebHostEnvironment _webHostEnvironment;
-
-    public FileService(IWebHostEnvironment webHostEnvironment)
-    {
-        _webHostEnvironment = webHostEnvironment;
-    }
-
     // saves base64 file and returns path to the newly created file
-    public string SaveFile(string b64File, string directory /*folder name*/, IEnumerable<ImageFormat> allowedExtensions, int maxWeight)
+    public string SaveFile(string b64File, string directory /*folder name*/, IEnumerable<string> allowedExtensions, int maxWeight)
     {
-        var wwwPath = _webHostEnvironment.WebRootPath; // path to wwwroot
+        var wwwPath = webHostEnvironment.WebRootPath; // path to wwwroot
         var path = Path.Combine(wwwPath, directory); // combine path to wwwroot with given folder
         if (!Directory.Exists(path)) // check if folder exists
         {
@@ -30,24 +22,34 @@ public class FileService
             b64File = b64File.Split(',')[1]; // cut it out
         }
         
-        byte[] image = Convert.FromBase64String(b64File); // from base64 to bytes
-        if (image.Length > (maxWeight * 1024 * 1024)) // validate file size
+        byte[] imageData; // from base64 to bytes
+        try
+        {
+            imageData = Convert.FromBase64String(b64File);
+        }
+        catch (FormatException)
+        {
+            throw new Exception("Invalid base64 format");
+        }
+        
+        if (imageData.Length > (maxWeight * 1024 * 1024)) // validate file size
         {
             throw new CodeException("File size exceeds the maximum allowed size", StatusCodes.Status415UnsupportedMediaType);
         }
-
-        using var ms = new MemoryStream(image);
-        Image img = Image.FromStream(ms); // create image object
-        if (!allowedExtensions.Contains(img.RawFormat)) // validate extentions
+        
+        using var image = Image.Load(new MemoryStream(imageData)); // load image
+        
+        var format = Image.DetectFormat(imageData); // Get the image format
+        if (format == null || !allowedExtensions.Contains(format.Name.ToLower()))
         {
-            throw new CodeException("File type not allowed", StatusCodes.Status415UnsupportedMediaType);
+            throw new Exception("File type not allowed");
         }
-
-        string? extension = new ImageFormatConverter().ConvertToString(img.RawFormat);
+        
+        var extension = format.FileExtensions.First();
         var fileName = $"{Guid.NewGuid()}.{extension}"; // construct file name
         var filePath = Path.Combine(path, fileName); // final file path
 
-        img.Save(filePath); // Save the image
+        image.Save(filePath); // Save the image
 
         return Path.Combine(directory, fileName).Replace("\\", "/"); // return wwwroot based path in linux format
     }
@@ -55,18 +57,17 @@ public class FileService
     // deletes given file
     public void DeleteFile(string fileDir)
     {
-        var wwwPath = Path.Combine(_webHostEnvironment.WebRootPath, fileDir); // combine to get full path
+        var wwwPath = Path.Combine(webHostEnvironment.WebRootPath, fileDir); // combine to get full path
         File.Delete(wwwPath); // delete file
     }
 
     // removes old file and saves new one (mostly used in update method)
-    public string? UpdateFile(string? from, string? to, string directory, IEnumerable<ImageFormat> allowedExtensions, int maxWeight)
+    public string? UpdateFile(string? from, string? to, string directory, IEnumerable<string> allowedExtensions, int maxWeight)
     {
         if (from == to) return from; // (base case) if file is not changed
         
         if (!string.IsNullOrEmpty(from)) DeleteFile(from); // if the old file provided - delete
-        if (!string.IsNullOrEmpty(to)) return SaveFile(to, directory, allowedExtensions, maxWeight); // if the new file provided - save
-
-        return to;
+        return !string.IsNullOrEmpty(to) ? SaveFile(to, directory, allowedExtensions, maxWeight) : // if the new file provided - save
+            to;
     }
 }

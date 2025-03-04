@@ -10,23 +10,23 @@ using Microsoft.Extensions.Configuration;
 
 namespace Data.Repository.Community;
 
-public class FriendsRepository : RepositoryBase, IFriendsRepository
+public class FriendsRepository(PlatensCallContext context, IConfiguration configuration)
+    : RepositoryBase(context, configuration), IFriendsRepository
 {
-    public FriendsRepository(PlatensCallContext context, IConfiguration configuration) : base(context, configuration) {}
-
-    public PaginatedList<MinUserDto> GetFriends(Users user, int page, string? searchString = null) // get list friends of user
+    public PaginatedList<MinUserDto> GetFriends(Users? user, int page, string? searchString = null) // get list friends of user
     {
+        if (user == null) return new PaginatedList<MinUserDto>([], 0, 0);
         int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>();
         
         // Base query for friends
         var query = Context.Users
             .Include(u => u.FriendsOf)
-            .Where(u => u.FriendsOf.Contains(user));
+            .Where(u => u.FriendsOf!.Contains(user));
         
         // Apply search filter if provided
         if (!string.IsNullOrEmpty(searchString))
         {
-            query = query.Where(u => u.Username.Contains(searchString));
+            query = query.Where(u => u.Username!.Contains(searchString));
         }
         
         // Execute the query with pagination
@@ -37,7 +37,7 @@ public class FriendsRepository : RepositoryBase, IFriendsRepository
             .ToList();
         
         // Calculate total count and pages
-        var count = Context.Users.Count(u => u.FriendsOf.Contains(user));
+        var count = Context.Users.Count(u => u.FriendsOf!.Contains(user));
         var totalPages = (int)Math.Ceiling(count / (double)pageSize);
         
         return new PaginatedList<MinUserDto>(friends, page, totalPages);
@@ -45,23 +45,27 @@ public class FriendsRepository : RepositoryBase, IFriendsRepository
 
     public int /*status code*/ AddFriend(Users user, string newFriendUsername)
     {
-        Users fullUser = Context.Users.Include(u => u.FriendsOf).First(u => u.Id == user.Id); // get user with friends list
+        Users? fullUser = Context.Users.Include(u => u.FriendsOf).First(u => u.Id == user.Id); // get user with friends list
         Users? newFriend = Context.Users.Include(u => u.FriendsOf).FirstOrDefault(u => u.Username == newFriendUsername);
         if (newFriend is null)
         {
             return StatusCodes.Status404NotFound;
-            //throw new Exception("The user with the specified username does not exist");
         }
         
-        if (fullUser.FriendsOf.Contains(newFriend))
+        if (fullUser.FriendsOf != null && fullUser.FriendsOf.Contains(newFriend))
         {
             return StatusCodes.Status400BadRequest;
             //throw new Exception("Users are already friends");
         }
         // add users to many-to-many relation
-        fullUser.FriendsOf.Add(newFriend);
-        newFriend.FriendsOf.Add(fullUser);
+        if (fullUser.FriendsOf != null && newFriend.FriendsOf != null)
+        {
+            fullUser.FriendsOf.Add(newFriend);
+            newFriend.FriendsOf.Add(fullUser);
+        }
+
         Context.Users.Update(fullUser);
+        //Context.Users.Update(newFriend);
         Context.SaveChanges();
         
         return StatusCodes.Status200OK;
@@ -69,21 +73,25 @@ public class FriendsRepository : RepositoryBase, IFriendsRepository
 
     public int DeleteFriend(Users user, string friendUsername) 
     {
-        Users fullUser = Context.Users.Include(u => u.FriendsOf).First(u => u.Id == user.Id);
+        Users? fullUser = Context.Users.Include(u => u.FriendsOf).First(u => u.Id == user.Id);
         Users? friend = Context.Users.Include(u => u.FriendsOf).FirstOrDefault(u => u.Username == friendUsername);
         if (friend is null)
         {
             return StatusCodes.Status404NotFound;
         }
         
-        if (!fullUser.FriendsOf.Contains(friend))
+        if (fullUser.FriendsOf != null && !fullUser.FriendsOf.Contains(friend))
         {
             return StatusCodes.Status400BadRequest;
         }
 
         // remove users to many-to-many relation
-        fullUser.FriendsOf.Remove(friend);
-        friend.FriendsOf.Remove(fullUser);
+        if (fullUser.FriendsOf != null && friend.FriendsOf != null)
+        {
+            fullUser.FriendsOf.Remove(friend);
+            friend.FriendsOf.Remove(fullUser);
+        }
+
         Context.Users.Update(fullUser);
         Context.SaveChanges();
         

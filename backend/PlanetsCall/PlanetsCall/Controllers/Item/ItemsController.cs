@@ -1,36 +1,27 @@
-﻿using Data.DTO.Global;
+﻿using Core.Exceptions;
+using Data.DTO.Global;
 using Data.DTO.Item;
 using Data.Models;
 using Data.Repository.Item;
-using Data.Repository.Log;
-using Data.Repository.User;
 using Microsoft.AspNetCore.Mvc;
-using PlanetsCall.Controllers.Exceptions;
 using PlanetsCall.Filters;
 
 namespace PlanetsCall.Controllers.Item;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ItemsController : ControllerBase
+public class ItemsController(
+    IItemsRepository itemsRepository)
+    : ControllerBase
 {
-    private readonly IUsersRepository _usersRepository;
-    private readonly ILogsRepository _logsRepository;
-    private readonly IItemsRepository _itemsRepository;
-    
-    public ItemsController(IUsersRepository usersRepository, ILogsRepository logsRepository, IItemsRepository itemsRepository)
-    {
-        _usersRepository = usersRepository;
-        _logsRepository = logsRepository;
-        _itemsRepository = itemsRepository;
-    }
 
     [HttpGet]
+    [Cache]
     [Route("{categoryId}/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetItemsBatch([FromRoute] int categoryId, [FromQuery] int page = 1) // Fetches a batch of items by category and paginates them
     {
-        PaginatedList<MinItemDto> pageItems = _itemsRepository.GetItemsPartition(categoryId, page); // Retrieves a paginates list of items for given category
+        PaginatedList<MinItemDto> pageItems = itemsRepository.GetItemsPartition(categoryId, page); // Retrieves a paginates list of items for given category
 
         return Ok(pageItems);
     }
@@ -47,22 +38,23 @@ public class ItemsController : ControllerBase
 
         try
         {
-            _itemsRepository.GiveItem(requestUser!, itemId); // call repository method to validate everything and give item
+            itemsRepository.GiveItem(requestUser!, itemId); // call repository method to validate everything and give item
         }
         catch (CodeException e)
         { // some mistake has been found
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
 
         return Ok();
     }
 
     [HttpGet]
+    [Cache]
     [Route("categories/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetCategories() // gets all categories (without pagination because there won't be many of it)
     {
-        return Ok(_itemsRepository.GetCategories());
+        return Ok(itemsRepository.GetCategories());
     }
     
     [HttpPost]
@@ -75,12 +67,12 @@ public class ItemsController : ControllerBase
     {
         try
         {
-            Items newItem = _itemsRepository.AddItem(item); // add to database
+            Items newItem = itemsRepository.AddItem(item); // add to database
             return Ok(newItem);
         }
         catch(CodeException e)
         {
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
     }
     
@@ -93,12 +85,12 @@ public class ItemsController : ControllerBase
     {
         try
         {
-            ItemsCategory newCategory = _itemsRepository.AddCategory(category); // add to database
+            ItemsCategory newCategory = itemsRepository.AddCategory(category); // add to database
             return Ok(newCategory);
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
     }
     
@@ -112,12 +104,12 @@ public class ItemsController : ControllerBase
     {
         try
         {
-            _itemsRepository.UpdateItem(item, itemId); // update item in database
+            itemsRepository.UpdateItem(item, itemId); // update item in database
             return Ok();
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
     }
     [HttpPut]
@@ -130,12 +122,12 @@ public class ItemsController : ControllerBase
     {
         try
         {
-            _itemsRepository.UpdateCategory(category, categoryId); // update category in database
+            itemsRepository.UpdateCategory(category, categoryId); // update category in database
             return Ok();
         }
         catch (CodeException e)
         {
-            return StatusCode(e.Code, new ErrorResponse(new List<string>() { e.Message }, e.Code, HttpContext.TraceIdentifier));
+            return StatusCode(e.Code, new ErrorResponse([e.Message], e.Code, HttpContext.TraceIdentifier));
         }
     }
     
@@ -146,7 +138,7 @@ public class ItemsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult DeleteItem([FromBody] int itemId) // deletes item
     {
-        bool isSuccess = _itemsRepository.DeleteItem(itemId);
+        bool isSuccess = itemsRepository.DeleteItem(itemId);
         return (isSuccess ? Ok() : BadRequest());
     }
     [HttpDelete]
@@ -156,7 +148,7 @@ public class ItemsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult DeleteCategory([FromBody] int categoryId) // deletes category
     {
-        bool isSuccess = _itemsRepository.DeleteCategory(categoryId);
+        bool isSuccess = itemsRepository.DeleteCategory(categoryId);
         return (isSuccess ? Ok() : BadRequest());
     }
 }
