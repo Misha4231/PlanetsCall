@@ -1,0 +1,58 @@
+ul.Header {
+    text-decoration: none;
+    list-style: none;
+    display:inline-flex;
+    padding: 0;
+    margin: 0;
+}
+
+ul.Header li {
+    text-decoration: none;
+    display: flexbox;
+    text-align: center;
+    width: auto;
+    height: fit-content;
+    padding: 0;
+    margin: 0;
+}
+
+
+ul.Header li:hover {
+    background-color: rgb(16, 44, 5);
+}
+
+
+ul.Header li a{
+    padding: 2vh 2vw;
+    width: 100%;
+    color: white;
+    text-decoration:none;
+    font-style: italic;
+}
+
+ul.Header li a:hover{
+    color: white;
+    font-weight: bold;
+}
+
+header.Header {
+    background-color: black;
+    text-decoration: none;
+    color: white;
+}
+
+
+
+button {
+    border: 1px solid green;
+    background-color: rgb(32, 177, 32);
+    color: white;
+    text-decoration:none;
+    font-style: italic;
+}
+
+button *{
+    color: white;
+    text-decoration:none;
+    font-style: italic;
+}
