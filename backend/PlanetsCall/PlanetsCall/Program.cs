@@ -28,9 +28,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        // Specifies the allowed origins
-        policy.WithOrigins((Environment.GetEnvironmentVariable("WEBSITE_DOMAIN") ??
-                            builder.Configuration["WebsiteDomain"])!)
+        policy.SetIsOriginAllowed(_ => true) // Allow any origin (for debugging)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
