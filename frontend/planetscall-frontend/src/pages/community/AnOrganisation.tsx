@@ -61,10 +61,10 @@ const AnOrganisation = () => {
     <div>
       <Header/>
       <section className="blockCode">
-        <h2>Informacje o organizacji {organisation.name}</h2>
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {organisation && (
           <div>
+         <h2>Informacje o organizacji {organisation.name}</h2>
             <h3>{organisation.name}</h3>
             <p>{organisation.description}</p>
             <h4>Members</h4>

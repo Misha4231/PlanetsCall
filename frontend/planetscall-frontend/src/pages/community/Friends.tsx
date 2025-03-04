@@ -9,56 +9,60 @@ const Friends = () => {
   const { user, isAuthenticated, token } = useAuth();
   const [friends, setFriends] = useState<{ username: string }[]>([]);
   const [search, setSearch] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
   const [newFriend, setNewFriend] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated || !token) return;
-  
-    const fetchFriends = async () => {
-      try {
-        setLoading(true);
-        const friendsData = await getFriends(token);
-        console.log('Odebrane dane:', friendsData); 
-  
-        if (!Array.isArray(friendsData)) {
-          throw new Error('Błędny format danych, oczekiwano tablicy w items.');
-        }
-  
-        setFriends(friendsData.sort((a, b) => a.username.localeCompare(b.username)));
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
+    if (!isAuthenticated || !token) return;  
     fetchFriends();
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, page, search]);
   
-
-  const handleAddFriend = async () => {
-    if (!newFriend.trim()) return;
-
+  const fetchFriends = async () => {
+    if (!isAuthenticated || !token) return;
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      await addFriend(token as string, newFriend);
-      setFriends(prev => [...prev, { username: newFriend }].sort((a, b) => a.username.localeCompare(b.username)));
-      setNewFriend('');
-    } catch (err: any) {
+      const data = await getFriends(token, page, search);
+      setFriends(data);
+    } catch (err:any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRemoveFriend = async (username: string) => {
+  const handleAddFriend = async (e: React.FormEvent) => {
+    if (!isAuthenticated || !token) return;
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
     try {
-      setLoading(true);
-      await removeFriend(token as string, username);
-      setFriends(prev => prev.filter(friend => friend.username !== username));
-    } catch (err: any) {
+      await addFriend(token, newFriend);
+      setSuccess('Znajomy został dodany pomyślnie.');
+      setNewFriend('');
+      fetchFriends();
+    } catch (err:any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleRemoveFriend = async (username: string) => {
+    if (!isAuthenticated || !token) return;
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      await removeFriend(token, username);
+      setSuccess('Znajomy został usunięty pomyślnie.');
+      fetchFriends();
+    } catch (err:any) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -68,37 +72,61 @@ const Friends = () => {
   return (
     <div>
       <Header />
-      <h1>Lista znajomych ({friends.length})</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <h1>Twoi Znajomi ({friends.length})</h1>
       
-      <input
-        type="text"
-        placeholder="Szukaj znajomych..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      <div>
+        <h2>Dodaj Znajomego</h2>
+        <form onSubmit={handleAddFriend}>
+          <input
+            type="text"
+            value={newFriend}
+            onChange={(e) => setNewFriend(e.target.value)}
+            placeholder="Wpisz nazwę użytkownika"
+            required
+          />
+          <button type="submit" disabled={loading}>
+            {loading ? 'Dodawanie...' : 'Dodaj Znajomego'}
+          </button>
+        </form>
+        {success && <p style={{ color: 'green' }}>{success}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+      </div>
+ 
+      <div>
+        <h2>Lista Znajomych</h2>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Wyszukaj znajomych"
+        />
+        {loading ? (
+          <p>Ładowanie...</p>
+        ) : friends.length > 0 ? (
+          <ul>
+            {friends.map((friend) => (
+              <li key={friend.username}>
+                  <Link to={`/user/${friend.username}`}>{friend.username}</Link>
+                <button onClick={() => handleRemoveFriend(friend.username)} disabled={loading}>
+                  Usuń
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Brak znajomych.</p>
+        )}
+      </div>
 
-      <ul>
-        {friends
-          .filter(friend => friend.username.toLowerCase().includes(search.toLowerCase()))
-          .map(friend => (
-            <li key={friend.username}>              
-              <Link to={`/user/${friend.username}`}>{friend.username}</Link>
-              <button onClick={() => handleRemoveFriend(friend.username)}>Usuń</button>
-            </li>
-          ))}
-      </ul>
-
-      <h2>Dodaj znajomego</h2>
-      <input
-        type="text"
-        placeholder="Nazwa użytkownika"
-        value={newFriend}
-        onChange={(e) => setNewFriend(e.target.value)}
-      />
-      <button onClick={handleAddFriend}>Dodaj</button>
-
-      {loading && <p>Ładowanie...</p>}
+      <div>
+        <button onClick={() => setPage(page - 1)} disabled={page === 1 || loading}>
+          Poprzednia strona
+        </button>
+        <span>Strona {page}</span>
+        <button onClick={() => setPage(page + 1)} disabled={friends.length === 0 || loading}>
+          Następna strona
+        </button>
+      </div>
     </div>
   );
 };

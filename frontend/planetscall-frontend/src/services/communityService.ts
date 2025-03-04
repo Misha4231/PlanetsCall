@@ -10,12 +10,12 @@ import { authHeader }  from  "./authHeader";
 
 //FRIENDS
 
-export const getFriends = async (authToken: string) => {
+export const getFriends = async (authToken: string, page: number, search: string) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`${authHeader()}api/community/Friends`, {
+  const response = await fetch(`${authHeader()}api/community/Friends?search=${search}&?page=${page}`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -40,17 +40,19 @@ export const addFriend = async (authToken: string,  username: string) => {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({ username }),
     });
-  
-    if (response.status === 401) {
-      throw new Error('Błąd podczas dodawania znajomego:.');
-    }
+
     if (!response.ok) {
-      throw new Error('Nie udało się dodać znajomego');
+      const errorText = await response.text();
+      console.log("BladA: " + errorText);
+      throw new Error(errorText || 'Nie udało się dodać znajomego');
     }
   
-    return await response.json();
+    console.log(username);
+    return await username;
 
 
 }
@@ -65,17 +67,17 @@ export const removeFriend = async (authToken: string,  username: string) => {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
       },
     });
   
-    if (response.status === 401) {
-      throw new Error('Brak autoryzacji. Proszę się zalogować.');
-    }
     if (!response.ok) {
+      const errorText = await response.text();
+      console.log("BladR: " + errorText);
       throw new Error('Nie udało się usunąć znajomego');
     }
   
-    return await response.json();
+    return await true;
 
 
 }
