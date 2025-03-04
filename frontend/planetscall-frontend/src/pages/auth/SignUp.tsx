@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
 import { Link, useNavigate } from 'react-router-dom';
+import { authHeader }  from  "../../services/authHeader";
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -17,8 +18,8 @@ const SignUp: React.FC = () => {
     setSuccess(null);
   
     try {
-      //const response = await fetch('https://localhost:7000/api/Auth/sign-up', {
-      const response = await fetch('https://localhost:7000/api/Auth/development-sign-up', {
+      //const response = await fetch(authHeader + 'api/Auth/sign-up', {
+      const response = await fetch(`${authHeader()}api/Auth/development-sign-up`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

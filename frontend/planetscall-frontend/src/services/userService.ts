@@ -1,11 +1,12 @@
 import { useAuth } from "../context/AuthContext";
+import { authHeader }  from  "./authHeader";
 
 export const getUser  = async (authToken: string) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch('https://localhost:7000/api/Auth/me/min', {
+  const response = await fetch(`${authHeader()}api/Auth/me/min`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -26,7 +27,7 @@ export const getFullUser = async (authToken: string) => {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch('https://localhost:7000/api/Auth/me/full', {
+  const response = await fetch(`${authHeader()}api/Auth/me/full`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -51,7 +52,7 @@ export const updateUserSettings = async (authToken: string, userId: number, form
   }
 
   
-  const response = await fetch(`https://localhost:7000/api/Profiles/${userId}/set-settings`, {
+  const response = await fetch(`${authHeader()}api/Profiles/${userId}/set-settings`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ export const getBadge = async (authToken: string, formData: any) => {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch('https://localhost:7000/api/Profiles/set-settings', {
+  const response = await fetch(`${authHeader()}api/Profiles/set-settings`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -100,7 +101,7 @@ export const getAddAttendance  = async (authToken: string) => {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch('https://localhost:7000/api/Profiles/add-attendance', {
+  const response = await fetch(`${authHeader()}api/Profiles/add-attendance`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -122,7 +123,7 @@ export const getAnotherUser  = async (authToken: string, anotherUser : string) =
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/Profiles/${anotherUser}`, {
+  const response = await fetch(`${authHeader()}api/Profiles/${anotherUser}`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },

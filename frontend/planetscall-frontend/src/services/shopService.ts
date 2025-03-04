@@ -1,7 +1,10 @@
+
+import { authHeader }  from  "./authHeader";
+
 export const getCategories = async (authToken: string) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch('https://localhost:7000/api/Items/categories', {
+  const response = await fetch(`${authHeader()}api/Items/categories`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
@@ -15,7 +18,7 @@ export const getCategories = async (authToken: string) => {
 export const getItemsByCategory = async (authToken: string, categoryId: number, page: number = 1) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch(`https://localhost:7000/api/Items/${categoryId}?page=${page}`, {
+  const response = await fetch(`${authHeader()}api/Items/${categoryId}?page=${page}`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
@@ -31,7 +34,7 @@ export const buyItem = async (authToken: string, itemId: number) => {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/Items/buy/${itemId}`, {
+  const response = await fetch(`${authHeader()}api/Items/buy/${itemId}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -57,7 +60,7 @@ export const addCategory = async (authToken: string, title: string, image: strin
   console.log("Obraz: " + image);
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch('https://localhost:7000/api/Items/categories', {
+  const response = await fetch(`${authHeader()}api/Items/categories`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -84,7 +87,7 @@ return await response.json();
 export const removeCategory = async (authToken: string) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch('https://localhost:7000/api/Items/categories', {
+  const response = await fetch(`${authHeader()}api/Items/categories`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -104,7 +107,7 @@ export const removeCategory = async (authToken: string) => {
 export const addItems = async (authToken: string, categoryId: number, price: number, image: string, rarity: string, title: string) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch('https://localhost:7000//api/Items', {
+  const response = await fetch(`${authHeader()}/api/Items`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -131,7 +134,7 @@ export const addItems = async (authToken: string, categoryId: number, price: num
 export const removeItems = async (authToken: string) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch('https://localhost:7000//api/Items', {
+  const response = await fetch(`${authHeader()}/api/Items`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -163,7 +166,7 @@ export const updteItem = async (
   }
 
   
-  const response = await fetch(`https://localhost:7000/api/Items/${itemId}`, {
+  const response = await fetch(`${authHeader()}api/Items/${itemId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -199,7 +202,7 @@ image: string,
   }
 
   
-  const response = await fetch(`https://localhost:7000/api/Items/category/${categoryId}`, {
+  const response = await fetch(`${authHeader()}api/Items/category/${categoryId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

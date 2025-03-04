@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
 import { Link } from 'react-router-dom';
+import { authHeader }  from  "../../services/authHeader";
 
 const ForgotPassword: React.FC = () => {
   const [uniqueIdentifier, setUniqueIdentifier] = useState('');
@@ -18,7 +19,7 @@ const ForgotPassword: React.FC = () => {
     setSuccess(null);
 
     try {
-      const response = await fetch('https://localhost:7000/api/Auth/forgot-password', {
+      const response = await fetch(`${authHeader()}api/Auth/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +50,7 @@ const ForgotPassword: React.FC = () => {
     }
     
     try {
-      const response = await fetch('https://localhost:7000/api/Auth/forgot-password/change', {
+      const response = await fetch(`${authHeader()}api/Auth/forgot-password/change`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
