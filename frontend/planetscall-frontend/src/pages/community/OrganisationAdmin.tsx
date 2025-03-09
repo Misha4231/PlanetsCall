@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import Header from '../../components/shared/Header'
-import Footer from '../../components/Footer/Footer'
+import Header from '../../components/shared/Header';
+import Footer from '../../components/Footer/Footer';
 import { useAuth } from '../../context/AuthContext';
 import { Member, Organisation } from './communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { getOrganisationData, getOrganisationRoles, getOrganisationUsers, getOrganisationRequests, acceptOrganisationRequest, rejectOrganisationRequest, removeOrganisationUser } from '../../services/communityService';
+import { getOrganisationData, getOrganisationRoles,
+   getOrganisationUsers, getOrganisationRequests,
+    acceptOrganisationRequest, rejectOrganisationRequest,
+     removeOrganisationUser, sentVerificationRequest,
+     deleteOrganisation } from '../../services/communityService';
 
 
 
 
 const OrganisationAdmin = () => {
     const { user, isAuthenticated, token } = useAuth();
-    const [organisation, setOrganisation] = useState<any>();
+    const [organisation, setOrganisation] = useState<Organisation>();
     const [organisationRoles, setOrganisationRoles] = useState<any>(null);
     const [users, setUsers] = useState<Member[]>([]);
     const [requestList, setRequestList] = useState<Member[]>([]);
@@ -20,6 +24,7 @@ const OrganisationAdmin = () => {
     const { organisationUniqueName } = useParams<{ organisationUniqueName: string }>();
 
     const [loading, setLoading] = useState<boolean>(false);
+      const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
@@ -37,7 +42,7 @@ const OrganisationAdmin = () => {
                 setOrganisation(orgData);
 
                 const request = await getOrganisationRequests(token, organisationUniqueName);
-                setUsers(request);
+                setRequestList(request);
 
                 const userData = await getOrganisationUsers(token, organisationUniqueName);
                 setUsers(userData);
@@ -62,15 +67,25 @@ const OrganisationAdmin = () => {
     return (<div>
       <Header/>
       <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>
+      <Footer/>
 
     </div>);   
   }
 
-//   if(organisation?.creatorId!=user?.id){
-//     navigate('/profile/');
-//   } 
+  if(organisation?.creatorId!=user?.id){
+    return (<div>
+      <Header/>
+      <p style={{ color: 'red' }}>Nie masz uprawnień by zarządać organizacją.</p>
+      <Footer/>
+
+    </div>);  
+  } 
 
 const handleAcceptRequest = async (userId: number) =>{
+        if (!isAuthenticated || !token) return;
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
     
         try {
           const authToken = token || '';
@@ -80,14 +95,24 @@ const handleAcceptRequest = async (userId: number) =>{
             return;
           }
             
-          const response = await acceptOrganisationRequest(authToken, organisationUniqueName, userId);
+          await acceptOrganisationRequest(authToken, organisationUniqueName, userId);
+          const updatedUsers = await getOrganisationUsers(token, organisationUniqueName);
+          setUsers(updatedUsers);
+  
+          setSuccess('Prośba zaakceptowana pomyślnie!');
     
         } catch (err: any) {
-          alert(err.message || 'Nie udało się zaakceptować prośby');
+          setError(err.message);
+        } finally {
+          setLoading(false);
         }
 }
 
 const handleDeleteRequest = async (userId: number) =>{
+  if (!isAuthenticated || !token) return;
+  setLoading(true);
+  setError(null);
+  setSuccess(null);
     
     try {
         const authToken = token || '';
@@ -97,13 +122,20 @@ const handleDeleteRequest = async (userId: number) =>{
           return;
         }
           
-        const response = await rejectOrganisationRequest(authToken, organisationUniqueName, userId);
+        await rejectOrganisationRequest(authToken, organisationUniqueName, userId);
+        setSuccess('Prośba odrzucona pomyślnie!');
   
       } catch (err: any) {
-        alert(err.message || 'Nie udało się usunąć prośby');
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
 }
 const handleDeleteUser = async (userId: number) =>{
+      if (!isAuthenticated || !token) return;
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
     
     try {
         const authToken = token || '';
@@ -113,22 +145,92 @@ const handleDeleteUser = async (userId: number) =>{
           return;
         }
           
-        const response = await removeOrganisationUser(authToken, organisationUniqueName, userId);
+        await removeOrganisationUser(authToken, organisationUniqueName, userId);
+        setSuccess('Użytkownik usunięty pomyślnie!');
   
       } catch (err: any) {
-        alert(err.message || 'Nie udało się usunąć użytkownika');
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
 }
+
+const handleSentRequestToVerify = async () =>{
+  if (!isAuthenticated || !token) return;
+  setLoading(true);
+  setError(null);
+  setSuccess(null);
+
+  try {
+    if(!organisationUniqueName) {
+      alert('Nie można usunąc błędne dane użytkownika');
+      return;
+    }
+    const authToken = token || '';
+    await sentVerificationRequest(authToken, organisationUniqueName);
+
+
+  } catch (err: any) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+
+const handleDeleteOrganisation = async () =>{
+  if (!isAuthenticated || !token) return;
+  setLoading(true);
+  setError(null);
+  setSuccess(null);
+
+try {
+    const authToken = token || '';
+
+    if ( !organisationUniqueName) {
+      alert('Nie można usunąc');
+      return;
+    }
+      
+    const response = await deleteOrganisation(authToken, organisationUniqueName);
+    console.log(response);
+    setSuccess('Użytkownik usunięty pomyślnie!');
+    navigate('/community/');
+
+  } catch (err: any) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
   return (
     <div>
         <Header/>
-        <p>{organisation?.isPrivate}</p>
+        {success && <p style={{ color: 'green' }}>{success}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <section className="blockCode">
             
       {loading ? (
           <p>Ładowanie...</p>
         ) : (
             <div>
+              <Link to={`/community/organisation/${organisationUniqueName}/settings`}>Ustawienia</Link>
+            <input
+                type="button"
+                value="Usuń Organizacje"
+                onClick={() => handleDeleteOrganisation()} disabled={loading}
+              />
+                {!organisation?.isVerified && (
+                  <div>
+                    <input
+                        type="button"
+                        value="Wyślij prośbę o weryfikacje organizacji"
+                        onClick={() => handleSentRequestToVerify()} disabled={loading}
+                      />
+                    </div>
+                )}
+
                 {organisation?.isPrivate && (
                     <div>
                         <h3>Prośby do dołączenia</h3>
@@ -140,12 +242,12 @@ const handleDeleteUser = async (userId: number) =>{
                                 <input
                                     type="button"
                                     value="Zaakceptuj"
-                                    onClick={() => handleAcceptRequest(us.id)} 
+                                    onClick={() => handleAcceptRequest(us.id) } disabled={loading}
                                 />
                                 <input
                                     type="button"
                                     value="Odrzuć"
-                                    onClick={() => handleDeleteRequest(us.id)}
+                                    onClick={() => handleDeleteRequest(us.id)}disabled={loading}
                                 />
                                 </li>
                             ))}

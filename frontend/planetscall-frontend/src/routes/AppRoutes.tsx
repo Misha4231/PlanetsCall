@@ -31,6 +31,7 @@ import Organisations from '../pages/community/Organisations';
 import CreateOrganisation from '../pages/community/CreateOrganisation';
 import AnOrganisation from '../pages/community/AnOrganisation';
 import OrganisationAdmin from '../pages/community/OrganisationAdmin';
+import OrganisationSettings from '../pages/community/OrganisationSettings';
 
 const mockUser: User = {
   id: 1,
@@ -128,6 +129,10 @@ const router = createBrowserRouter([
   {
     path: '/community/organisations/create',
     element: <CreateOrganisation/>
+  },
+  {
+    path: '/community/organisation/:organisationUniqueName/settings',
+    element: <OrganisationSettings/>
   },
   {
     path: '/community/settings',

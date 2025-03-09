@@ -350,7 +350,32 @@ export const deleteOrganisation = async (authToken: string, organisationUniqueNa
     throw new Error('Nie udało się usunąć organizacji.');
   }
 
-  return await response.json();
+  const data = await response; 
+  console.log(data);
+
+  return data;
+};
+
+
+export const sentVerificationRequest = async (authToken: string, organisationUniqueName: string ) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+
+  const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/request-verification`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+
+  if (!response.ok) {
+    throw new Error('Nie udało się nadać wysłać żądania.');
+  }
+  const data = await response.json(); 
+
+  return data;
 };
 
 
