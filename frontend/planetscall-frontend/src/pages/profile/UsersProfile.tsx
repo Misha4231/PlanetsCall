@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../../components/shared/Header'
 import { useAuth } from '../../context/AuthContext';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {User} from './types';
 import  {Friend} from "../../types/Friend";
 import { getAddAttendance, getAnotherUser } from '../../services/userService';
@@ -17,6 +17,7 @@ const UsersProfile = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -25,7 +26,7 @@ const UsersProfile = () => {
       if(token == null) return;
       try {
         setLoading(true);
-        setError(null);
+        setError(null);  
         
         
         const userData = await getAnotherUser(token, userName);
@@ -47,6 +48,9 @@ const UsersProfile = () => {
     fetchData();
   }, [userName, token]);
 
+  if(user?.username==userName){
+    navigate('/profile/');
+  }     
 
   const handleAddFriend = async () => {
     if (!token || !anotherUser) return;

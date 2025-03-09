@@ -16,6 +16,5 @@
 
 export const authHeader = () => {
   const apiServer = "https://localhost:7000/";
-  console.log(apiServer);
   return apiServer;
 };

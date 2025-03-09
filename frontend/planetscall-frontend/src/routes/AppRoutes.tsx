@@ -29,8 +29,8 @@ import CommunityMain from '../pages/community/CommunityMain';
 import CommunitySettings from '../pages/community/CommunitySettings';
 import Organisations from '../pages/community/Organisations';
 import CreateOrganisation from '../pages/community/CreateOrganisation';
-import FindOrganisation from '../pages/community/FindOrganisation';
 import AnOrganisation from '../pages/community/AnOrganisation';
+import OrganisationAdmin from '../pages/community/OrganisationAdmin';
 
 const mockUser: User = {
   id: 1,
@@ -118,16 +118,16 @@ const router = createBrowserRouter([
     element: <Organisations/>
   },
   {
+    path: '/community/organisation/:organisationUniqueName/admin',
+    element: <OrganisationAdmin/>
+  },
+  {
     path: '/community/organisation/:organisationUniqueName',
     element: <AnOrganisation/>
   },
   {
     path: '/community/organisations/create',
     element: <CreateOrganisation/>
-  },
-  {
-    path: '/community/organisations/find',
-    element: <FindOrganisation/>
   },
   {
     path: '/community/settings',

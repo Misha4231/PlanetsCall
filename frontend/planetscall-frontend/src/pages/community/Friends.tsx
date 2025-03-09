@@ -60,10 +60,11 @@ const Friends = () => {
     setSuccess(null);
     try {
       await removeFriend(token, username);
-      setSuccess('Znajomy został usunięty pomyślnie.');
-      fetchFriends();
+        setSuccess('Znajomy został usunięty pomyślnie.');
+        fetchFriends();
     } catch (err:any) {
-      setError(err.message);
+      console.log("Wypisuje " + err + err.message + err.text );;
+      setError(err.message)
     } finally {
       setLoading(false);
     }

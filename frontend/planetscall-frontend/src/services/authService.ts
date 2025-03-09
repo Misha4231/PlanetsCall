@@ -20,8 +20,9 @@ export const login = async (uniqueIdentifier: string, password: string) => {
   }
 
   const data = await response.json();
+  //console.log("Dane " + data);
   token = data.accessToken;
-  console.log(token);
+  //console.log(token);
   return {token, user: data.user};
 };
 

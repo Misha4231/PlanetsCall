@@ -1,16 +1,20 @@
+//{/*Wyszukiwarka Organizacja, mozliwosc dolaczenia*/}
 import React, { useEffect, useState } from 'react'
 import Header from '../../components/shared/Header'
-import { searchOrganisations } from '../../services/communityService';
+import { getAnotherOrganisationJoin, getOrganisationRequests, getOrganisationUsers, searchOrganisations } from '../../services/communityService';
 import Footer from '../../components/Footer/Footer';
 import { useAuth } from '../../context/AuthContext';
-import { Organisation, OrganisationsResponse } from './communityTypes';
-import { useNavigate } from 'react-router-dom';
+import { Member, Organisation, OrganisationsResponse } from './communityTypes';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CommunityMain = () => {
   const { user, isAuthenticated, token } = useAuth();
   const [myOrganisations, setMyOrganisations] = useState<Organisation[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [membershipStatus, setMembershipStatus] = useState<{ [key: string]: boolean }>({});
   const [error, setError] = useState<string | null>(null);
+  const [isMember, setIsMember] = useState<boolean>(false);
+  const [sendRequest, setSendRequest] = useState<boolean>(false);
   const [searchPhrase, setSearchPhrase] = useState<string>("");
   const navigate = useNavigate();
   const [pagination, setPagination] = useState({
@@ -19,6 +23,15 @@ const CommunityMain = () => {
     hasPreviousPage: false,
     hasNextPage: false,
   });
+
+  
+  useEffect(() => {
+    if (myOrganisations.length > 0) {
+      myOrganisations.forEach((org) => {
+        checkMembership(org.uniqueName);
+      });
+    }
+  }, [myOrganisations]);
 
   if (loading) {
     return <div>Ładowanie danych użytkownika...</div>;
@@ -52,6 +65,43 @@ const CommunityMain = () => {
       setLoading(false);
     }
   };
+  const handleJoinOrganisation = async (organisationUniqueName: string, isPrivate: boolean) => {
+    if (!isAuthenticated || !token) return;
+  
+    try {
+      if(await getAnotherOrganisationJoin(token, organisationUniqueName)){
+        if (isPrivate) {    
+          setSendRequest(true);    
+          alert('Prośba o dołączenie została wysłana.');
+        } else {
+          alert('Dołączono do organizacji.');
+        }
+      } else{
+        setSendRequest(true);
+        alert('Już wysłałeś prośbę');
+      }
+
+      checkMembership(organisationUniqueName);
+    } catch (err) {
+      console.log('Błąd podczas dołączania do organizacji:', err);
+    }
+  };
+
+  const checkMembership = async (organisationUniqueName: string) => {
+    if (!isAuthenticated || !token) return false;
+  
+    try {
+      const members = await getOrganisationUsers(token, organisationUniqueName);
+      const isMember = members.some((member: Member) => member.id === user?.id);
+      setMembershipStatus((prev) => ({ ...prev, [organisationUniqueName]: isMember }));
+      return isMember;
+    } catch (err) {
+      console.error('Błąd podczas sprawdzania członkostwa:', err);
+      return false;
+    }
+  };
+  
+
 
   return (
     <div>
@@ -82,15 +132,31 @@ const CommunityMain = () => {
             <p>Ładowanie...</p>
           ) : myOrganisations.length > 0 ? (
             <ul>
-              {myOrganisations.map((org) => (
-                <li key={org.uniqueName}>
-                  <h3>{org.name}</h3>
-                  <p>{org.description}</p>
-                  <img src={org.organizationLogo} alt={`Logo ${org.name}`} style={{ width: '100px', height: '100px' }} />
-                  <p>{org.isPrivate ? 'Prywatna' : 'Publiczna'}</p>
-                  <p>Minimalny poziom dołączenia: {org.minimumJoinLevel}</p>
-                </li>
-              ))}
+              {myOrganisations.map((org) => {
+                const isMember = membershipStatus[org.uniqueName] || false;
+
+                {/* Informacja, czy uzytkownik jest w organizacji, jesli nie ma mozliwosc dolaczenia lub wyslania prosby w zalezosni od prywatnosci organizacji */}
+                return (
+                  <li key={org.uniqueName}>
+                    <h3>{org.name}</h3>
+                    <Link to={`/community/organisation/${org.uniqueName}`}>{org.uniqueName}</Link>
+                    <p>{org.description}</p>
+                    <img src={org.organizationLogo} alt={`Logo ${org.name}`} style={{ width: '100px', height: '100px' }} />
+                    <p>{org.isPrivate ? 'Prywatna' : 'Publiczna'}</p>
+                    <p>Minimalny poziom dołączenia: {org.minimumJoinLevel}</p>
+
+                    {isMember ? (
+                      <p>Jesteś już członkiem tej organizacji.</p>
+                    ) : (
+                      <div>
+                        {org.isPrivate ? (sendRequest ? 'Wysłano już prośbę' : <button onClick={() => handleJoinOrganisation(org.uniqueName, org.isPrivate)}>Wyślij prośbę o dołączenie</button>) : 'Dołącz do organizacji'}
+                      
+
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p>Nie znaleziono żadnej organizacji</p>

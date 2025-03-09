@@ -21,12 +21,14 @@ export const getFriends = async (authToken: string, page: number, search: string
     },
   });
 
+  const data = await response.json();
+  const d = data.items;
+  console.log(data + "\n" + d);
   if (!response.ok) {
     throw new Error('Nie udało się pobrać listy znajomych.');
   }
 
-  const data = await response.json();
-  console.log('API zwróciło:', data);
+  //console.log('API zwróciło:', data);
 
   return data.items ?? []; 
 };
@@ -47,11 +49,11 @@ export const addFriend = async (authToken: string,  username: string) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.log("BladA: " + errorText);
+      //console.log("BladA: " + errorText);
       throw new Error(errorText || 'Nie udało się dodać znajomego');
     }
   
-    console.log(username);
+    //console.log(username);
     return await username;
 
 
@@ -71,11 +73,13 @@ export const removeFriend = async (authToken: string,  username: string) => {
       },
     });
   
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.log("BladR: " + errorText);
-      throw new Error('Nie udało się usunąć znajomego');
-    }
+    // const data = await response.json();
+
+    // if (!response.ok ) {
+    //   const errorText = await response.text();
+    //   //console.log("BladR: " + errorText);
+    //   throw new Error('Nie udało się usunąć znajomego');
+    // }
   
     return await true;
 
@@ -90,7 +94,7 @@ export const getMyOrganisations = async (authToken: string, page: number) => {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  console.log(page);
+  //console.log(page);
   const response = await fetch(`${authHeader()}api/community/Organisations/my?page=${page}`, {
     method: 'GET',
     headers: {
@@ -103,31 +107,49 @@ export const getMyOrganisations = async (authToken: string, page: number) => {
   }
 
   const data = await response.json();
-  console.log('API zwróciło:', data);
+  //console.log('API zwróciło:', data);
 
   return data;
 };
+/*
 
-export const getAnotherOrganisationJoin = async (authToken: string, organisationUniqueName: string) => {
-  if (!authToken) {
-    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
-  }
-  
-  const response = await fetch(`${authHeader()}/api/community/Organisations/join/${organisationUniqueName}`, {
-    method: 'GET',
+
+export const getFriends = async (authToken: string, page: number, search: string) => {
+
+  const response = await fetch(`${authHeader()}api/community/Friends?search=${search}&?page=${page}`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać listy organizacji do dołączenia.');
+    throw new Error('Nie udało się pobrać listy znajomych.');
   }
 
   const data = await response.json();
-  console.log('API zwróciło:', data);
+  //console.log('API zwróciło:', data);
 
-  return data;
+  return data.items ?? []; 
+};
+*/
+
+export const getAnotherOrganisationJoin = async (authToken: string, organisationUniqueName: string) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+  const response = await fetch(`${authHeader()}api/community/Organisations/join/${organisationUniqueName}`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'text/plain',
+    },
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+
+  return true;
 };
 
 export const createOrganisation = async (authToken: string, organisationData: any) => {
@@ -165,6 +187,7 @@ export const getOrganisationRequests = async (authToken: string, organisationUni
   if (!response.ok) {
     throw new Error('Nie udało się pobrać listy próśb o dołączenie.');
   }
+  
 
   return await response.json();
 };
@@ -185,7 +208,9 @@ export const acceptOrganisationRequest = async (authToken: string, organisationU
     throw new Error('Nie udało się zaakceptować prośby o dołączenie.');
   }
 
-  return await response.json();
+  const data = await response;
+
+  return data;
 };
 
 export const rejectOrganisationRequest = async (authToken: string, organisationUniqueName: string, userId: number) => {
@@ -201,10 +226,12 @@ export const rejectOrganisationRequest = async (authToken: string, organisationU
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się odrzucić prośby o dołączenie.');
+    throw new Error('Nie udało się zaakceptować prośby o dołączenie.');
   }
 
-  return await response.json();
+  const data = await response;
+
+  return data;
 };
 
 export const getOrganisationUsers = async (authToken: string, organisationUniqueName: string) => {
@@ -241,7 +268,8 @@ export const removeOrganisationUser = async (authToken: string, organisationUniq
     throw new Error('Nie udało się usunąć użytkownika z organizacji.');
   }
 
-  return await response.json();
+  const data = await response;
+  return data;
 };
 
 export const searchOrganisations = async (authToken: string, searchPhrase: string, page = 1) => {
@@ -259,10 +287,12 @@ export const searchOrganisations = async (authToken: string, searchPhrase: strin
 
   if (!response.ok) {
     throw new Error('Nie udało się wyszukać organizacji.');
-  }
+  }  
 
-  console.log(response);
-  return await response.json();
+  const data = await response.json();
+  //console.log(data + "\n");
+  //console.log(response);
+  return data;
 };
 
 export const getOrganisationSettings = async (authToken: string, organisationUniqueName: string) => {
@@ -324,7 +354,12 @@ export const deleteOrganisation = async (authToken: string, organisationUniqueNa
 };
 
 
+
+
 //OrganisationRoles
+
+
+
 
 
 export const getOrganisationData = async (authToken: string, organisationUniqueName: string) => {
@@ -360,7 +395,8 @@ export const getOrganisationRoles = async (authToken: string, organisationName: 
     throw new Error('Nie udało się pobrać ról organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+  return data;
 };
 
 export const createOrganisationRole = async (authToken: string, organisationName: string, roleData: any) => {

@@ -40,7 +40,11 @@ export const getFullUser = async (authToken: string) => {
     throw new Error('Nie udało się pobrać danych użytkownika');
   }
 
-  return await response.json();
+  const data = await response.json();
+  console.log("Dane " + data);
+
+  
+  return await data;
   
 };
 

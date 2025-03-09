@@ -21,7 +21,23 @@ export interface Organisation {
     description: string;
     organizationLogo: string;
     isPrivate: boolean;
+    isVerified: boolean;
     minimumJoinLevel: number;
+    createdAt: string;
+    updatedAt: string;
+    creatorId: number;
+    creator: {
+        id: number;
+        email: string;
+        username: string;
+        isActivated: boolean;
+        isBlocked: boolean;
+    };
+    members?: Member[];
+    roles: any[];
+    instagramLink: string;
+    linkedinLink: string;
+    youtubeLink: string;
 }
 
 export interface OrganisationsResponse {
