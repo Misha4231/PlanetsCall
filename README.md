@@ -33,3 +33,8 @@ lub
 docker compose down -v
 ```
 druga komenda usuwa volumes (czyli wszystkie dane wewnątrz)
+
+!!!UWAGA!!! jeśli projekt jest hostowany w systemie Windows i wyskakuje błąd 
+`no file or directory entrypoint.sh`
+problem wynika z tego powodu, że git dodaje Windowsowskie zakończenie linii(`CR` `LF`) w plikach 
+nawet gzie jest to niedopuszczalne (np. jak w bash script). Da się to naprawić za pomocą `dos2unix`
