@@ -3,6 +3,7 @@ using System;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-    partial class PlatensCallContextModelSnapshot : ModelSnapshot
+    [Migration("20250306194203_FixTasksVerification")]
+    partial class FixTasksVerification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -724,7 +727,7 @@ namespace Data.Migrations
                     b.Property<int>("ExecutorId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("InspectorId")
+                    b.Property<int>("InspectorId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsApproved")
@@ -1221,7 +1224,9 @@ namespace Data.Migrations
 
                     b.HasOne("Data.Models.Users", "Inspector")
                         .WithMany("TasksVerified")
-                        .HasForeignKey("InspectorId");
+                        .HasForeignKey("InspectorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Data.Models.Tasks", "Task")
                         .WithMany("Verifications")

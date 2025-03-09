@@ -10,13 +10,8 @@ public class FileService(IWebHostEnvironment webHostEnvironment)
     // saves base64 file and returns path to the newly created file
     public string SaveFile(string b64File, string directory /*folder name*/, IEnumerable<string> allowedExtensions, int maxWeight)
     {
-        var wwwPath = webHostEnvironment.WebRootPath; // path to wwwroot
-        var path = Path.Combine(wwwPath, directory); // combine path to wwwroot with given folder
-        if (!Directory.Exists(path)) // check if folder exists
-        {
-            Directory.CreateDirectory(path);
-        }
-
+        var path = SafeGetDirectory(directory); // get directory
+        
         if (b64File.Contains(',')) // if representation contains header data
         {
             b64File = b64File.Split(',')[1]; // cut it out
@@ -69,5 +64,46 @@ public class FileService(IWebHostEnvironment webHostEnvironment)
         if (!string.IsNullOrEmpty(from)) DeleteFile(from); // if the old file provided - delete
         return !string.IsNullOrEmpty(to) ? SaveFile(to, directory, allowedExtensions, maxWeight) : // if the new file provided - save
             to;
+    }
+
+    // save file from IFormFile (used for large file upload)
+    public string SaveFile(IFormFile file, string directory, IEnumerable<string> allowedExtensions, int maxWeight)
+    {
+        var extension = Path.GetExtension(file.FileName);
+        if (!allowedExtensions.Contains(extension))
+        {
+            throw new Exception("File type not allowed");
+        }
+        
+        long size = file.Length;
+        if (size > (maxWeight * 1024 * 1024))
+        {
+            throw new Exception("File size exceeds the maximum allowed size");
+        }
+        
+        string name = Guid.NewGuid().ToString() + extension;
+        // construct path
+        var path = SafeGetDirectory(directory);
+        var filePath = Path.Combine(path, name);
+        
+        // write file
+        using FileStream fileStream = new FileStream(filePath, FileMode.Create);
+        file.CopyTo(fileStream);
+        
+        // turn to unix path
+        return Path.Combine(directory, name).Replace("\\", "/");
+    }
+
+    private string SafeGetDirectory(string folderName) // ensures folder is created in wwwroot and returns an absolute path to it
+    {
+        var path = Path.Combine(webHostEnvironment.WebRootPath, folderName); // combine path to wwwroot with given folder
+        
+        // ensure created
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        
+        return path;
     }
 }

@@ -16,7 +16,7 @@ public class HashManager(IConfiguration configuration)
     {
         using (var sha256 = SHA256.Create())
         {
-            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(configuration["SecretKey"] ?? Environment.GetEnvironmentVariable("APPLICATION_SECRET_KEY"))); // hashing bytes from secret key
+            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("APPLICATION_SECRET_KEY") ?? configuration["SecretKey"]!)); // hashing bytes from secret key
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText); 
 
             using (Aes aes = Aes.Create()) // Advanced Encryption Standard 
@@ -43,7 +43,7 @@ public class HashManager(IConfiguration configuration)
         using (var sha256 = SHA256.Create())
         {
             // ensures we have the same key used during encryption
-            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(configuration["SecretKey"] ?? Environment.GetEnvironmentVariable("APPLICATION_SECRET_KEY")));
+            byte[] secretBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("APPLICATION_SECRET_KEY") ?? configuration["SecretKey"]!));
             try
             {
                 // convert back to binary

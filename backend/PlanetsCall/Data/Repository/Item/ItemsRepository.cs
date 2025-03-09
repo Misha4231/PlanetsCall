@@ -6,6 +6,7 @@ using Data.Context;
 using Data.DTO.Global;
 using Data.DTO.Item;
 using Data.Models;
+using Data.Repository.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Data.Repository.Item;
 
-public class ItemsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService)
+public class ItemsRepository(PlatensCallContext context, IConfiguration configuration, FileService fileService, IUsersRepository usersRepository)
     : RepositoryBase(context, configuration), IItemsRepository
 {
     public List<CategoriesListMember> GetCategories() // gets all categories
@@ -167,7 +168,7 @@ public class ItemsRepository(PlatensCallContext context, IConfiguration configur
             throw new CodeException("You already have that item", StatusCodes.Status400BadRequest);
         
         // if everything ok, give item
-        user.Points -= item.Price;
+        usersRepository.UpdateUserPoints(user.Id, -item.Price);
         if (item.Owners != null) item.Owners.Add(user);
 
         Context.SaveChanges();

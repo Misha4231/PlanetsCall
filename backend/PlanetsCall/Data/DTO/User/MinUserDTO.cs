@@ -2,9 +2,9 @@
 
 namespace Data.DTO.User;
 
-public class MinUserDto(Users? user)
+public class MinUserDto(Users user)
 {
-    public int Id { get; set; } = user!.Id;
+    public int Id { get; set; } = user.Id;
     public string? Email { get; set; } = user.Email;
     public string? Username { get; set; } = user.Username;
     public bool IsActivated { get; set; } = user.IsActivated;

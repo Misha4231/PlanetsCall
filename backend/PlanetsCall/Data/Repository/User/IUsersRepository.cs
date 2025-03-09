@@ -20,4 +20,5 @@ public interface IUsersRepository
     void DeleteUser(Users? user);
     void ResetUserData(Users user);
     PaginatedList<MinUserDto> GetUsersPaginated(int page);
+    void UpdateUserPoints(int userId, int points);
 }
