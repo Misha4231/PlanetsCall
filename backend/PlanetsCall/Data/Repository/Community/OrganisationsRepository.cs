@@ -63,6 +63,19 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
         Context.Users.Update(fullUser);
         Context.SaveChanges();
     }
+
+    public bool IsMember(Users user, int organisationId) // check if user is a member of organization
+    {
+        var org = Context.Organizations
+            .Include(o => o.Members)
+            .Include(o => o.Creator)
+            .FirstOrDefault(o => o.Id == organisationId);
+        
+        if (org == null) return false;
+        // either creator or member
+        return user.Id == org.Creator.Id || org.Members.Any(u => u.Id == user.Id);
+    }
+
     public FullOrganisationDto CreateOrganisation(Users user, OrganisationFormDto organisationData) // Creates a new organization and saves it to the database.
     {
         // Check if an organization with the same unique name already exists.

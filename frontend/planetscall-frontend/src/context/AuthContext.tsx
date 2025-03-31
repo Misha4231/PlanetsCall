@@ -4,31 +4,45 @@ import { getUser, login as loginService, logout as logoutService, isAuthenticate
 import { getFullUser, getAddAttendance } from '../services/userService';
 
 
-interface User {
+export type ThemeType = 0 | 1 | 2;
+
+export interface User {
   id: number;
-  username: string;
   email: string;
-  isAdmin: boolean;
-  money : number;
-  level: number;
-  achievements: string[];
-  badges: string[];
-  profile_image: string;
-  description: string;
-  points: number;
-  theme_preference: number;
-  last_login_at: string;
+  username: string;
+  accountType: string; 
+  isActivated: boolean;
+  isBlocked: boolean;
   firstName: string;
   lastName: string;
+  birthDate?: Date;
+  points: number;
+  progress: number;
+  profileImage?: string;
+  createdAt: Date ;
+  updatedAt: Date ;
+  lastLogin?: Date; 
+  isAdmin: boolean;
   preferredLanguage: string;
   isNotifiable: boolean;
   isVisible: boolean;
-  instagramLink: string;
-  linkedinLink: string;
-  youtubeLink: string;
-  cityId: number;
-  countryId: number;
+  description?: string;
+  status?: string;
+  instagramLink?: string;
+  linkedinLink?: string;
+  youtubeLink?: string; 
+  cityId?: number;
+  city?: { 
+    id: number;
+    name: string;
+  };
+  countryId?: number;
+  country?: { 
+    id: number;
+    name: string;
+  };
   mailsSubscribed: boolean;
+  themePreference: ThemeType; 
 }
 
 interface AuthContextType {

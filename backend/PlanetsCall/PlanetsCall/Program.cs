@@ -15,7 +15,6 @@ using PlanetsCall.Services.Caching;
 using PlanetsCall.Services.TaskScheduling;
 using Quartz;
 using Quartz.Impl;
-using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -28,9 +27,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        // Specifies the allowed origins
-        policy.WithOrigins((Environment.GetEnvironmentVariable("WEBSITE_DOMAIN") ??
-                            builder.Configuration["WebsiteDomain"])!)
+        policy.SetIsOriginAllowed(_ => true) // Allow any origin (for debugging)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -41,6 +38,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 
+// register database context
 builder.Services.RegisterDataServices(builder.Configuration);
 
 
@@ -52,6 +50,7 @@ builder.Services.AddStackExchangeRedisCache(options => // connect to redis for c
     options.InstanceName = builder.Configuration["RedisInstanceName"];
 });
 
+// load all services
 builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 builder.Services.AddScoped<DeactivateOrganizationTaskJob>();
 builder.Services.AddScoped<IRedisCacheService, RedisCacheService>();
@@ -64,11 +63,13 @@ builder.Services.AddScoped<IFriendsRepository, FriendsRepository>();
 builder.Services.AddScoped<IOrganisationsRepository, OrganisationsRepository>();
 builder.Services.AddScoped<IVerificationRepository, VerificationRepository>();
 builder.Services.AddScoped<ITasksRepository, TasksRepository>();
+builder.Services.AddScoped<ITasksVerificationRepository, TasksVerificationRepository>();
 builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<JwtTokenManager>();
 builder.Services.AddScoped<FileService>();
 builder.Services.PrepareDatabase();
 
+// Authentication jwt settings
 var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
 var jwtAudience = Environment.GetEnvironmentVariable("WEBSITE_DOMAIN") ?? builder.Configuration.GetSection("Jwt:Audience").Get<string>();
 var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? builder.Configuration.GetSection("Jwt:Key").Get<string>();
@@ -119,14 +120,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// schedule background jobs (tasks activation/deactivation)
 var schedulerFactory = app.Services.GetService<ISchedulerFactory>();
 if (schedulerFactory != null)
 {
     var scheduler = await schedulerFactory.GetScheduler();
     await scheduler.Start();
 }
-
-//app.UseHttpsRedirection();
 
 app.UseCors("AllowReactApp");
 

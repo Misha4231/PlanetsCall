@@ -38,6 +38,19 @@ services:
     volumes:
       - app_data:/var/lib/postgresql/data
 
+  react-app: # frontend app
+    image: eco-fe-app
+    container_name: react-app
+    ports:
+      - "80:80"
+    build: 
+      context: ./frontend/planetscall-frontend
+      dockerfile: Dockerfile
+      target: production
+    depends_on:
+      - api
+
+
 volumes:
   app_data:
   world_db:

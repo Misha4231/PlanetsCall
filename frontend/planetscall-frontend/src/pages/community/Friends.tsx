@@ -14,6 +14,9 @@ const Friends = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [totalFriends, setTotalFriends] = useState<number>(0);
+
+  const FRIENDS_PER_PAGE = 10;
 
   useEffect(() => {
     if (!isAuthenticated || !token) return;  
@@ -27,6 +30,7 @@ const Friends = () => {
     try {
       const data = await getFriends(token, page, search);
       setFriends(data);
+      setTotalFriends(data.totalCount);
     } catch (err:any) {
       setError(err.message);
     } finally {
@@ -70,6 +74,9 @@ const Friends = () => {
     }
   };
 
+  const totalPages = Math.ceil(totalFriends / FRIENDS_PER_PAGE);
+  const showPagination = totalFriends > FRIENDS_PER_PAGE;
+
   return (
     <div>
       <Header />
@@ -100,6 +107,12 @@ const Friends = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Wyszukaj znajomych"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              setPage(1);
+              fetchFriends();
+            }
+          }}
         />
         {loading ? (
           <p>Ładowanie...</p>
@@ -118,16 +131,23 @@ const Friends = () => {
           <p>Brak znajomych.</p>
         )}
       </div>
-
-      <div>
-        <button onClick={() => setPage(page - 1)} disabled={page === 1 || loading}>
-          Poprzednia strona
-        </button>
-        <span>Strona {page}</span>
-        <button onClick={() => setPage(page + 1)} disabled={friends.length === 0 || loading}>
-          Następna strona
-        </button>
-      </div>
+      {showPagination && (
+        <div>
+          <button 
+            onClick={() => setPage(page - 1)} 
+            disabled={page === 1 || loading}
+          >
+            Poprzednia strona
+          </button>
+          <span>Strona {page} z {totalPages}</span>
+          <button 
+            onClick={() => setPage(page + 1)} 
+            disabled={page === totalPages || loading}
+          >
+            Następna strona
+          </button>
+        </div>
+      )}
     </div>
   );
 };

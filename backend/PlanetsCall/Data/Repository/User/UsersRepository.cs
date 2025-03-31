@@ -222,4 +222,19 @@ public class UsersRepository(
         
         return new PaginatedList<MinUserDto>(res, page, totalPages);
     }
+
+    public void UpdateUserPoints(int userId, int points)
+    {
+        var user = GetUserById(userId);
+        if (user is null || user.Points == 0) return;
+        
+        int pointsPerLevel = Configuration.GetSection("Settings:PointsPerLevel").Get<int>();
+        user.Points += points;
+        if (user.Points < 0) user.Points = 0;
+        
+        uint level = (uint)user.Points / (uint)pointsPerLevel;
+        user.Progress = level;
+        
+        Context.Users.Update(user);
+    }
 }

@@ -724,14 +724,13 @@ namespace Data.Migrations
                     b.Property<int>("ExecutorId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("InspectorId")
+                    b.Property<int?>("InspectorId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
 
@@ -1222,9 +1221,7 @@ namespace Data.Migrations
 
                     b.HasOne("Data.Models.Users", "Inspector")
                         .WithMany("TasksVerified")
-                        .HasForeignKey("InspectorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InspectorId");
 
                     b.HasOne("Data.Models.Tasks", "Task")
                         .WithMany("Verifications")

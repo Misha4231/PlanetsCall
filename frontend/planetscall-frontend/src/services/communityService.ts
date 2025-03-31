@@ -361,7 +361,7 @@ export const sentVerificationRequest = async (authToken: string, organisationUni
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
-
+  
   const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/request-verification`, {
     method: 'POST',
     headers: {

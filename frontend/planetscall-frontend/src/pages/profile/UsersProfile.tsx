@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import Header from '../../components/shared/Header'
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import {User} from './types';
 import  {Friend} from "../../types/Friend";
 import { getAddAttendance, getAnotherUser } from '../../services/userService';
 import { getFriends, addFriend, removeFriend  } from '../../services/communityService';

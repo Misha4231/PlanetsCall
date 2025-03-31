@@ -13,6 +13,9 @@ const Header: React.FC = () => {
   const isProfilePage = location.pathname.startsWith('/profile');
   const isCommunityPage = location.pathname.startsWith('/community');
   const isShopPage = location.pathname.startsWith('/shop');
+  const isAdminPage = location.pathname.startsWith('/admin');
+
+
 
   return (
     <header className='Header'>
@@ -48,8 +51,17 @@ const Header: React.FC = () => {
             ) : (
               <li><Link to="/shop">Sklep</Link></li>
             )}
-
-            {user?.isAdmin && <li><Link to="/admin">Panel Administracyjny</Link></li>}
+            
+            {user?.isAdmin && (
+              <>
+              <li><Link to="/admin">Panel Administracyjny</Link></li>
+              {isAdminPage &&  (
+                <>
+                  <li><Link to="/admin/organisations">Admin - Organizacje</Link></li>
+                </>
+              )}
+              </>
+            )}
 
             <li><button onClick={logout}>Wyloguj</button></li>
             </>

@@ -32,11 +32,11 @@ public class Organisations
     public int MinimumJoinLevel { get; set; }
 
     public int? CreatorId { get; set; }
-    public Users? Creator { get; set; }
+    public required Users Creator { get; set; }
     
     public ICollection<OrganisationRoles>? Roles { get; set; }
     public ICollection<Tasks>? TasksCreatedCollection { get; set; }
     public ICollection<Users>? Requests { get; set; }
-    public List<Users>? Members { get; set; }
+    public required List<Users> Members { get; set; }
     public OrganizationVerificationRequests? VerificationRequest { get; set; }
 }

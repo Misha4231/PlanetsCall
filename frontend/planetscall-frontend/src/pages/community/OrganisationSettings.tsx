@@ -67,14 +67,14 @@ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isAuthenticated || !organisationUniqueName) {
-        alert('You must be logged in and have an organisation selected to update settings.');
+        alert('Musisz być zalogowany.');
         return;
     }
 
     try {
         setLoading(true);
         await updateOrganisationSettings(token!, organisationUniqueName, formData);
-        setSuccess('Organisation settings updated successfully!');
+        setSuccess('Pomyślnie zaaktulizowane dane.');
         setError(null);
     } catch (err: any) {
         setError(err.message || 'Failed to update organisation settings.');
@@ -205,7 +205,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     />
                 </div>
                 <button type="submit" disabled={loading}>
-                    {loading ? 'Saving...' : 'Save Changes'}
+                    {loading ? 'Zapisywanie...' : 'Zapisano'}
                 </button>
             </form>
 

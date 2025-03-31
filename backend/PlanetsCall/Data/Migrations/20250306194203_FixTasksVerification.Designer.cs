@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(PlatensCallContext))]
-    [Migration("20250304185624_Init")]
-    partial class Init
+    [Migration("20250306194203_FixTasksVerification")]
+    partial class FixTasksVerification
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -734,7 +734,6 @@ namespace Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
 

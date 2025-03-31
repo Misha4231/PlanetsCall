@@ -9,6 +9,7 @@ public interface IOrganisationsRepository
 {
     PaginatedList<MinOrganisationDto> GetUserOrganisations(Users user, int page);
     void JoinOrganization(Users? user, string organisationUniqueName);
+    bool IsMember(Users user, int organisationId);
     FullOrganisationDto CreateOrganisation(Users user, OrganisationFormDto organisationData);
     List<MinUserDto> GetRequests(Users user, string organisationUniqueName);
     void AcceptRequest(Users user, string organisationUniqueName, int requestUserId);

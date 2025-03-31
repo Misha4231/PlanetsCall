@@ -2,8 +2,6 @@
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using DotNetEnv;
-using DotNetEnv;
 
 namespace Data;
 
