@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { authHeader }  from  "../../services/authHeader";
 
 const ChangePassword: React.FC = () => {
 
@@ -20,7 +21,7 @@ const ChangePassword: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://localhost:7000/api/Auth/forgot-password/change', {
+      const response = await fetch(`${authHeader()}api/Auth/forgot-password/change`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

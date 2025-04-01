@@ -1,5 +1,6 @@
 import React, { useEffect, useState }  from 'react';
 import { useNavigate, useLocation  } from 'react-router-dom';
+import { authHeader }  from  "../../services/authHeader";
 
 const ActivateAccount = () => {
   const location = useLocation();
@@ -21,7 +22,7 @@ const ActivateAccount = () => {
   
     try {
       const encodedCode = encodeURIComponent(activationCode);
-      const response = await fetch('https://localhost:7000/api/Auth/activate', {
+      const response = await fetch(`${authHeader()}api/Auth/activate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: activationCode }),

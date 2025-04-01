@@ -1,9 +1,9 @@
 import { error } from "console";
-
+import { authHeader }  from  "./authHeader";
 let token = "";
 
 export const login = async (uniqueIdentifier: string, password: string) => {
-  const response = await fetch('https://localhost:7000/api/Auth/sign-in', {
+  const response = await fetch(`${authHeader()}api/Auth/sign-in`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -20,8 +20,9 @@ export const login = async (uniqueIdentifier: string, password: string) => {
   }
 
   const data = await response.json();
+  //console.log("Dane " + data);
   token = data.accessToken;
-  console.log(token);
+  //console.log(token);
   return {token, user: data.user};
 };
 
@@ -34,7 +35,7 @@ export const getUser = async (authToken: string) => {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch('https://localhost:7000/api/Auth/me/min', {
+  const response = await fetch(`${authHeader()}api/Auth/me/min`, {
     headers: {
       'Authorization': `Bearer ${authToken}`,
     },

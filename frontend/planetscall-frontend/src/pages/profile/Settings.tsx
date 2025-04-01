@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { updateUserSettings } from '../../services/userService';
 import Header from '../../components/shared/Header';
+import { convertImageToBase64, convertBase64ToImageUrl } from '../../services/imageConvert';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -24,7 +25,8 @@ const Settings: React.FC = () => {
     themePreference: 0,
     mailsSubscribed: false,
   });
-  
+
+  const [previewImage, setPreviewImage] = useState<string>('');  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,7 +36,7 @@ const Settings: React.FC = () => {
         username: user.username || '',
         firstName: user.firstName || '',
         lastName: user.lastName || '',
-        profileImage: user.profile_image || '',
+        profileImage: user.profileImage || '',
         preferredLanguage: user.preferredLanguage || '',
         isNotifiable: user.isNotifiable ?? false,
         isVisible: user.isVisible ?? false,
@@ -44,11 +46,28 @@ const Settings: React.FC = () => {
         youtubeLink: user.youtubeLink || '',
         cityId: user.cityId || 0,
         countryId: user.countryId || 0,
-        themePreference: user.theme_preference ?? 0,
+        themePreference: user.themePreference ?? 0,
         mailsSubscribed: user.mailsSubscribed ?? false,
       });
+      if (user.profileImage) {
+        setPreviewImage(convertBase64ToImageUrl(user.profileImage));
+      }
     }
   }, [user]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const base64Image = await convertImageToBase64(file);
+      setFormData(prev => ({ ...prev, profileImage: base64Image }));
+      setPreviewImage(base64Image);
+    } catch (error) {
+      console.error('Error converting image:', error);
+      alert('Wystąpił błąd podczas przetwarzania zdjęcia');
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -119,7 +138,7 @@ const Settings: React.FC = () => {
           />
         </div>
         <div>
-          <label>Username:</label>
+          <label>Nazwa użytkownika:</label>
           <input
             type="text"
             name="username"
@@ -128,7 +147,7 @@ const Settings: React.FC = () => {
           />
         </div>
         <div>
-          <label>First Name:</label>
+          <label>Imię:</label>
           <input
             type="text"
             name="firstName"
@@ -137,7 +156,7 @@ const Settings: React.FC = () => {
           />
         </div>
         <div>
-          <label>Last Name:</label>
+          <label>Nazwisko:</label>
           <input
             type="text"
             name="lastName"
@@ -146,16 +165,24 @@ const Settings: React.FC = () => {
           />
         </div>
         <div>
-          <label>Profile Image (URL):</label>
+          <label>Zdjęcie Profilowe</label>
+          {previewImage && (
+            <div style={{ margin: '10px 0' }}>
+              <img 
+                src={previewImage} 
+                alt="Podgląd zdjęcia profilowego" 
+                style={{ maxWidth: '200px', maxHeight: '200px' }}
+              />
+            </div>
+          )}
           <input
-            type="text"
-            name="profileImage"
-            value={formData.profileImage}
-            onChange={handleInputChange}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
           />
         </div>
         <div>
-          <label>Preferred Language:</label>
+          <label>Preferowany Język:</label>
           <select
             name="preferredLanguage"
             value={formData.preferredLanguage}
@@ -173,7 +200,7 @@ const Settings: React.FC = () => {
               checked={formData.isNotifiable}
               onChange={handleInputChange}
             />
-            Receive notifications
+            Powiadomienia
           </label>
         </div>
         <div>
@@ -184,11 +211,11 @@ const Settings: React.FC = () => {
               checked={formData.isVisible}
               onChange={handleInputChange}
             />
-            Make profile visible
+            Widoczny profil
           </label>
         </div>
         <div>
-          <label>Description:</label>
+          <label>Opis:</label>
           <textarea
             name="description"
             value={formData.description}
@@ -223,7 +250,7 @@ const Settings: React.FC = () => {
           />
         </div>
         <div>
-          <label>City:</label>
+          <label>Miasto:</label>
           <input
             type="number"
             name="cityId"
@@ -232,7 +259,7 @@ const Settings: React.FC = () => {
           />
         </div>
         <div>
-          <label>Country:</label>
+          <label>Kraj:</label>
           <input
             type="number"
             name="countryId"
@@ -241,14 +268,15 @@ const Settings: React.FC = () => {
           />
         </div>
         <div>
-          <label>Theme Preference:</label>
+          <label>Motyw:</label>
           <select
             name="themePreference"
             value={formData.themePreference}
             onChange={handleInputChange}
           >
-            <option value={0}>Light</option>
-            <option value={1}>Dark</option>
+          <option value={0}>Ciemny</option>
+          <option value={1}>Jasny</option>
+          <option value={2}>Mieszany</option>
           </select>
         </div>
         <div>
@@ -259,11 +287,11 @@ const Settings: React.FC = () => {
               checked={formData.mailsSubscribed}
               onChange={handleInputChange}
             />
-            Subscribe to mails
+            Subskrypcja do otrzymywania emaili
           </label>
         </div>
 
-        <button type="submit">Save Changes</button>
+        <button type="submit">Zapisz Zmiany</button>
       </form>
     </div>
   );

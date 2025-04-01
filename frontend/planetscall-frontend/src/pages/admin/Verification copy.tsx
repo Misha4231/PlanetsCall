@@ -264,12 +264,27 @@ const Verification = () => {
                             {tasks.map((task) => (
                                 <li key={task.id}>
                                     <div>
-                                        <Link to={`/admin/organisations/task/${task.id}`}><h4>{task.title}</h4></Link>
-                                        
+                                        <h4>{task.title}</h4>
                                         <p>{task.description}</p>
                                         <p>Punkty: {task.reward}</p>
                                         <p>Typ: {getTypeName(task.type)}</p>
                                         <p>Status: {task.isActive ? 'Aktywne' : 'Nieaktywne'}</p>
+                                        <p>Utworzono: {new Date(task.createAt).toLocaleDateString()}</p>
+                                    </div>
+                                    <div>
+                                        <button
+                                            onClick={() => task.id && handleTaskAction(task.id, 'activate')}
+                                            disabled={loading || task.isActive}
+                                        >
+                                            Aktywuj
+                                        </button>
+                                        <button
+                                            onClick={() => task.id && handleTaskAction(task.id, 'delete')}
+                                            disabled={loading}
+                                            style={{ backgroundColor: '#ff4444' }}
+                                        >
+                                            Usuń
+                                        </button>
                                     </div>
                                 </li>
                             ))}

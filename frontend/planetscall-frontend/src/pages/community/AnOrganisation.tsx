@@ -1,16 +1,16 @@
-// AnOrganisation.tsx
+//{/* Dana Organizacja i jej dane*/}
 import React, { useEffect, useState } from 'react';
 import { getOrganisationData, getOrganisationUsers } from '../../services/communityService';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
 import { tokenToString } from 'typescript';
-import { Member } from './communityTypes';
+import { Member, Organisation } from './communityTypes';
 
 const AnOrganisation = () => {
   const { user, isAuthenticated, token, loadingUser } = useAuth();
-  const [organisation, setOrganisation] = useState<any>(null);
+  const [organisation, setOrganisation] = useState<Organisation>();
   const [loading, setLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<Member[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,8 @@ const AnOrganisation = () => {
           setOrganisation(orgData);
           const userData = await getOrganisationUsers(token, organisationUniqueName);
           setUsers(userData);
-          console.log(users);
+          //console.log(users);     
+          setLoading(false);
           setError(null);
         } catch (err: any) {
           setError(err.message);
@@ -41,13 +42,15 @@ const AnOrganisation = () => {
         }
       };
       fetchData();
-    }
+    } 
     
   }, [token, organisationUniqueName]);
+
 
   if (loadingUser) {
     return <div>Ładowanie danych użytkownika...</div>;
   }  
+
   
   if (!isAuthenticated) {
     return (<div>
@@ -61,27 +64,34 @@ const AnOrganisation = () => {
     <div>
       <Header/>
       <section className="blockCode">
-        <h2>Informacje o organizacji {organisation.name}</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {organisation && (
-          <div>
-            <h3>{organisation.name}</h3>
-            <p>{organisation.description}</p>
-            <h4>Members</h4>
-                {loading ? (
-              <p>Ładowanie...</p>
-            ) : users.length > 0 ? (
-              <ul>
-                {users.map(member => (
-                  <li key={member.id}>{member.username}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>            
-                Nie należysz do żadnych organizacji.</p>
+      {loading ? (
+          <p>Ładowanie...</p>
+        ) : (
+          <>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {organisation && (
+              <div>
+                <h2>Informacje o organizacji {organisation.name}</h2>
+                <h3>{organisation.name}</h3>
+                {organisation?.creatorId==user?.id && (
+                  <Link to={`/community/organisation/${organisation.uniqueName}/admin`}>Zarządzaj</Link>
+                )}
+                <p>{organisation.description}</p>
+                <h4>Members</h4>
+                {users.length > 0 ? (
+                  <ul>
+                    {users.map((member) => (
+                      <li key={member.id}>
+                        <Link to={`/user/${member.username}`}>{member.username}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Nie należysz do żadnych organizacji.</p>
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
       </section>
       <Footer/>

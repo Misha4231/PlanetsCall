@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../../components/shared/Header'
 import { useAuth } from '../../context/AuthContext';
-import { Link, useParams } from 'react-router-dom';
-import {User} from './types';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import  {Friend} from "../../types/Friend";
 import { getAddAttendance, getAnotherUser } from '../../services/userService';
 import { getFriends, addFriend, removeFriend  } from '../../services/communityService';
@@ -11,93 +10,112 @@ import Footer from '../../components/Footer/Footer';
 const UsersProfile = () => {
   const { userName } = useParams<{ userName: string }>();
   const { user, isAuthenticated, token } = useAuth();  
-  const [anotherUser, setAnotherU] = useState<Friend  | null>(null);
+  const [anotherUser, setAnotherUser] = useState<Friend | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [isFriend, setIsFriend] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
+
 
   useEffect(() => {
-    const fetchAttendance = async () => {
+    const fetchData  = async () => {
       if (!userName) return;
+      if(token == null) return;
       try {
-        const authToken = token || '';
-        const userData = await getAnotherUser(authToken, userName);
-        setAnotherU(userData);
-        //console.log('Attendance Data:', anotherUser);       
+        setLoading(true);
+        setError(null);  
+        
+        
+        const userData = await getAnotherUser(token, userName);
+        setAnotherUser(userData);
 
-        const friendsData = await getFriends(authToken);
-        setFriends(friendsData);
-        console.log(friends);
+        
+        const friendsData = await getFriends(token, 1, '');
 
         const isAlreadyFriend = friendsData.some((friend: Friend) => friend.username === userName);
         setIsFriend(isAlreadyFriend);
-        
-       //console.log(friendsData[0].username);
+
       } catch (err: any) {
         console.error('Error fetching attendance:', err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchAttendance();
+    fetchData();
   }, [userName, token]);
 
+  if(user?.username==userName){
+    navigate('/profile/');
+  }     
 
   const handleAddFriend = async () => {
     if (!token || !anotherUser) return;
     try {
-      await addFriend(token, anotherUser.username);
-      alert('Friend added!');
-    } catch (err) {
-      console.error(err);
-      alert('Failed to add friend.');
-    }
-  };
-  
-  const handleRemoveFriend = async () => {
-    if (!token || !anotherUser) return;
-
-    try {
       setLoading(true);
-      await removeFriend(token, anotherUser.username);
-      setIsFriend(false); 
-      setFriends(prev => prev.filter((friend: Friend) => friend.username !== anotherUser.username));
-      alert('Friend removed!');
+      setError(null);
+      setSuccess(null);
+
+      await addFriend(token, anotherUser.username);
+      setIsFriend(true);
+      setSuccess('Znajomy został dodany pomyślnie.');
     } catch (err: any) {
       setError(err.message);
-      alert('Failed to remove friend.');
     } finally {
       setLoading(false);
     }
   };
-  
+
+  const handleRemoveFriend = async () => {
+    if (!token || !anotherUser) return;
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
+
+      await removeFriend(token, anotherUser.username);
+      setIsFriend(false);
+      setSuccess('Znajomy został usunięty pomyślnie.');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
-      <Header/>
+      <Header />
       <h3>Inny użytkownik</h3>
-      {!isFriend && isAuthenticated ?(
-        <button onClick={handleAddFriend}>Dodaj do Znajomych</button>
-      ): (
-        <button onClick={handleRemoveFriend} disabled={loading}>
-          {loading ? 'Usuwanie...' : 'Usuń znajomego'}
-        </button>
+      {isAuthenticated && (
+        <>
+          {!isFriend ? (
+            <button onClick={handleAddFriend} disabled={loading}>
+              {loading ? 'Dodawanie...' : 'Dodaj do Znajomych'}
+            </button>
+          ) : (
+            <button onClick={handleRemoveFriend} disabled={loading}>
+              {loading ? 'Usuwanie...' : 'Usuń znajomego'}
+            </button>
           )}
+        </>
+      )}
+      {success && <p style={{ color: 'green' }}>{success}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <main>
         <h3>Username: {anotherUser?.username}</h3>
         <h3>Email: {anotherUser?.email}</h3>
-        <div className="profileImg">
-          {/* //<img className="profileImg" src={anotherUser?.profileImage} alt="User profile" /> */}
-        </div>
+        <div className="profileImg"></div>
         <div className="name">
           <h3>{anotherUser?.username}</h3>
-          {/* <p>{anotherUser?.description}</p> */}
         </div>
         <div className="stats">
           <p><strong>Points:</strong> {anotherUser?.points}</p>
         </div>
       </main>
-      <Footer/>
+      <Footer />
     </div>
   )
 }

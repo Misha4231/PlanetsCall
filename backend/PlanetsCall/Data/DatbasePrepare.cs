@@ -30,10 +30,12 @@ public static class DatabasePrepare
                     {
                         Username = adminUsername,
                         Password = password,
-                        Email = "",
+                        Email = "admin@admin.com",
                         PreferredLanguage = "en",
                         AccountType = 1,
-                        Status = "online"
+                        Status = "online",
+                        IsAdmin = true,
+                        IsActivated = true
                     });
                 }
             }

@@ -10,7 +10,6 @@ import App from '../App';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import NotFound from '../pages/NotFound/NotFound';
 import Shop from '../pages/shop/Shop';
-import { User } from "../pages/profile/types";
 
 import SignIn from '../pages/auth/SignIn';
 import SignUp from '../pages/auth/SignUp';
@@ -29,20 +28,15 @@ import CommunityMain from '../pages/community/CommunityMain';
 import CommunitySettings from '../pages/community/CommunitySettings';
 import Organisations from '../pages/community/Organisations';
 import CreateOrganisation from '../pages/community/CreateOrganisation';
-import FindOrganisation from '../pages/community/FindOrganisation';
 import AnOrganisation from '../pages/community/AnOrganisation';
-
-const mockUser: User = {
-  id: 1,
-  email: "example@example.com",
-  username: "John Doe",
-  profile_image: "https://example.com/profile.jpg",
-  points: 100,
-  description: "Passionate learner",
-  theme_preference: 0,
-  created_at: "2023-01-01",
-  last_login_at: "2023-12-01",
-};
+import OrganisationAdmin from '../pages/community/OrganisationAdmin';
+import OrganisationSettings from '../pages/community/OrganisationSettings';
+import TaskList from '../pages/tasks/TaskList';
+import TaskDetails from '../pages/tasks/TaskDetails';
+import AdminMain from '../pages/admin/AdminMain';
+import Verification from '../pages/admin/Verification';
+import Task from '../pages/admin/Task';
+import TaskSettings from '../pages/admin/TaskSettings';
 
 
 const router = createBrowserRouter([
@@ -118,6 +112,10 @@ const router = createBrowserRouter([
     element: <Organisations/>
   },
   {
+    path: '/community/organisation/:organisationUniqueName/admin',
+    element: <OrganisationAdmin/>
+  },
+  {
     path: '/community/organisation/:organisationUniqueName',
     element: <AnOrganisation/>
   },
@@ -126,8 +124,8 @@ const router = createBrowserRouter([
     element: <CreateOrganisation/>
   },
   {
-    path: '/community/organisations/find',
-    element: <FindOrganisation/>
+    path: '/community/organisation/:organisationUniqueName/settings',
+    element: <OrganisationSettings/>
   },
   {
     path: '/community/settings',
@@ -137,6 +135,32 @@ const router = createBrowserRouter([
   {
     path: '/shop',
     element: <Shop />
+  },
+  {
+    path: '/tasks',
+    element: <TaskList />
+  },
+  {
+    path: '/tasks/:id',
+    element: <TaskDetails />
+  },
+
+  
+  {
+    path: '/admin',
+    element: <AdminMain />
+  },
+  {
+    path: '/admin/organisations',
+    element: <Verification />
+  },
+  {
+    path: '/admin/organisations/task/:taskId',
+    element: <Task />
+  },
+  {
+    path: '/admin/organisations/task/:taskId/settings',
+    element: <TaskSettings />
   },
 ]);
 

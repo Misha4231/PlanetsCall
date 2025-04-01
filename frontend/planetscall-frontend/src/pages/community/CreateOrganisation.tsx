@@ -1,3 +1,4 @@
+//{/*Mozliwosc stworzenia organizacji*/}
 import React, { useState } from 'react'
 import Header from '../../components/shared/Header'
 import { useAuth } from '../../context/AuthContext';
@@ -96,7 +97,7 @@ const CreateOrganisation = () => {
                 <h3>Stwórz Organizacje</h3>
                 <ul>
                   <li><Link to="/community/organisations">Twoje Organizacje</Link></li>
-                  <li><Link to="/community/organisations/find">Znajdź Organizacje</Link></li>
+                  <li><Link to="/community/">Znajdź Organizacje</Link></li>
                 </ul>
         
                 {/* Komunikat w razie błędu */}

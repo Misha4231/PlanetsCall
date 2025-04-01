@@ -1,3 +1,5 @@
+
+import { authHeader }  from  "./authHeader";
 /*Podzial
 
   - FRIENDS,
@@ -8,23 +10,25 @@
 
 //FRIENDS
 
-export const getFriends = async (authToken: string) => {
+export const getFriends = async (authToken: string, page: number, search: string) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Friends`, {
+  const response = await fetch(`${authHeader()}api/community/Friends?search=${search}&?page=${page}`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
   });
 
+  const data = await response.json();
+  const d = data.items;
+  console.log(data + "\n" + d);
   if (!response.ok) {
     throw new Error('Nie udało się pobrać listy znajomych.');
   }
 
-  const data = await response.json();
-  console.log('API zwróciło:', data);
+  //console.log('API zwróciło:', data);
 
   return data.items ?? []; 
 };
@@ -34,21 +38,23 @@ export const addFriend = async (authToken: string,  username: string) => {
       throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
     }
   
-    const response = await fetch(`https://localhost:7000/api/community/Friends/${username}`, {
+    const response = await fetch(`${authHeader()}api/community/Friends/${username}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({ username }),
     });
-  
-    if (response.status === 401) {
-      throw new Error('Błąd podczas dodawania znajomego:.');
-    }
+
     if (!response.ok) {
-      throw new Error('Nie udało się dodać znajomego');
+      const errorText = await response.text();
+      //console.log("BladA: " + errorText);
+      throw new Error(errorText || 'Nie udało się dodać znajomego');
     }
   
-    return await response.json();
+    //console.log(username);
+    return await username;
 
 
 }
@@ -59,21 +65,23 @@ export const removeFriend = async (authToken: string,  username: string) => {
       throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
     }
   
-    const response = await fetch(`https://localhost:7000/api/community/Friends/${username}`, {
+    const response = await fetch(`${authHeader()}api/community/Friends/${username}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
       },
     });
   
-    if (response.status === 401) {
-      throw new Error('Brak autoryzacji. Proszę się zalogować.');
-    }
-    if (!response.ok) {
-      throw new Error('Nie udało się usunąć znajomego');
-    }
+    // const data = await response.json();
+
+    // if (!response.ok ) {
+    //   const errorText = await response.text();
+    //   //console.log("BladR: " + errorText);
+    //   throw new Error('Nie udało się usunąć znajomego');
+    // }
   
-    return await response.json();
+    return await true;
 
 
 }
@@ -86,8 +94,8 @@ export const getMyOrganisations = async (authToken: string, page: number) => {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  console.log(page);
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/my?page=${page}`, {
+  //console.log(page);
+  const response = await fetch(`${authHeader()}api/community/Organisations/my?page=${page}`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -99,31 +107,49 @@ export const getMyOrganisations = async (authToken: string, page: number) => {
   }
 
   const data = await response.json();
-  console.log('API zwróciło:', data);
+  //console.log('API zwróciło:', data);
 
   return data;
 };
+/*
 
-export const getAnotherOrganisationJoin = async (authToken: string, organisationUniqueName: string) => {
-  if (!authToken) {
-    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
-  }
-  
-  const response = await fetch(`https://localhost:7000//api/community/Organisations/join/${organisationUniqueName}`, {
-    method: 'GET',
+
+export const getFriends = async (authToken: string, page: number, search: string) => {
+
+  const response = await fetch(`${authHeader()}api/community/Friends?search=${search}&?page=${page}`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać listy organizacji do dołączenia.');
+    throw new Error('Nie udało się pobrać listy znajomych.');
   }
 
   const data = await response.json();
-  console.log('API zwróciło:', data);
+  //console.log('API zwróciło:', data);
 
-  return data;
+  return data.items ?? []; 
+};
+*/
+
+export const getAnotherOrganisationJoin = async (authToken: string, organisationUniqueName: string) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+  const response = await fetch(`${authHeader()}api/community/Organisations/join/${organisationUniqueName}`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'text/plain',
+    },
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+
+  return true;
 };
 
 export const createOrganisation = async (authToken: string, organisationData: any) => {
@@ -131,7 +157,7 @@ export const createOrganisation = async (authToken: string, organisationData: an
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${authToken}`,
@@ -152,7 +178,7 @@ export const getOrganisationRequests = async (authToken: string, organisationUni
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/${organisationUniqueName}/requests`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/requests`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -161,6 +187,7 @@ export const getOrganisationRequests = async (authToken: string, organisationUni
   if (!response.ok) {
     throw new Error('Nie udało się pobrać listy próśb o dołączenie.');
   }
+  
 
   return await response.json();
 };
@@ -170,7 +197,7 @@ export const acceptOrganisationRequest = async (authToken: string, organisationU
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/${organisationUniqueName}/requests/${userId}`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/requests/${userId}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -181,7 +208,9 @@ export const acceptOrganisationRequest = async (authToken: string, organisationU
     throw new Error('Nie udało się zaakceptować prośby o dołączenie.');
   }
 
-  return await response.json();
+  const data = await response;
+
+  return data;
 };
 
 export const rejectOrganisationRequest = async (authToken: string, organisationUniqueName: string, userId: number) => {
@@ -189,7 +218,7 @@ export const rejectOrganisationRequest = async (authToken: string, organisationU
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/${organisationUniqueName}/requests/${userId}`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/requests/${userId}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -197,10 +226,12 @@ export const rejectOrganisationRequest = async (authToken: string, organisationU
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się odrzucić prośby o dołączenie.');
+    throw new Error('Nie udało się zaakceptować prośby o dołączenie.');
   }
 
-  return await response.json();
+  const data = await response;
+
+  return data;
 };
 
 export const getOrganisationUsers = async (authToken: string, organisationUniqueName: string) => {
@@ -208,7 +239,7 @@ export const getOrganisationUsers = async (authToken: string, organisationUnique
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/${organisationUniqueName}/users`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/users`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -226,7 +257,7 @@ export const removeOrganisationUser = async (authToken: string, organisationUniq
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/${organisationUniqueName}/users/${userId}`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/users/${userId}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -237,7 +268,8 @@ export const removeOrganisationUser = async (authToken: string, organisationUniq
     throw new Error('Nie udało się usunąć użytkownika z organizacji.');
   }
 
-  return await response.json();
+  const data = await response;
+  return data;
 };
 
 export const searchOrganisations = async (authToken: string, searchPhrase: string, page = 1) => {
@@ -245,7 +277,7 @@ export const searchOrganisations = async (authToken: string, searchPhrase: strin
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
   //searchPhrase = "zielony";
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/search/${searchPhrase}?page=${page}`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/search/${searchPhrase}?page=${page}`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -255,10 +287,12 @@ export const searchOrganisations = async (authToken: string, searchPhrase: strin
 
   if (!response.ok) {
     throw new Error('Nie udało się wyszukać organizacji.');
-  }
+  }  
 
-  console.log(response);
-  return await response.json();
+  const data = await response.json();
+  //console.log(data + "\n");
+  //console.log(response);
+  return data;
 };
 
 export const getOrganisationSettings = async (authToken: string, organisationUniqueName: string) => {
@@ -266,7 +300,7 @@ export const getOrganisationSettings = async (authToken: string, organisationUni
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/settings/${organisationUniqueName}`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/settings/${organisationUniqueName}`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -284,7 +318,7 @@ export const updateOrganisationSettings = async (authToken: string, organisation
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/settings/${organisationUniqueName}`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/settings/${organisationUniqueName}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${authToken}`,
@@ -305,7 +339,7 @@ export const deleteOrganisation = async (authToken: string, organisationUniqueNa
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/${organisationUniqueName}`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -316,11 +350,41 @@ export const deleteOrganisation = async (authToken: string, organisationUniqueNa
     throw new Error('Nie udało się usunąć organizacji.');
   }
 
-  return await response.json();
+  const data = await response; 
+  console.log(data);
+
+  return data;
 };
 
 
+export const sentVerificationRequest = async (authToken: string, organisationUniqueName: string ) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+  
+  const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/request-verification`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+
+  if (!response.ok) {
+    throw new Error('Nie udało się nadać wysłać żądania.');
+  }
+  const data = await response.json(); 
+
+  return data;
+};
+
+
+
+
 //OrganisationRoles
+
+
+
 
 
 export const getOrganisationData = async (authToken: string, organisationUniqueName: string) => {
@@ -328,7 +392,7 @@ export const getOrganisationData = async (authToken: string, organisationUniqueN
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/Organisations/settings/${organisationUniqueName}`, {
+  const response = await fetch(`${authHeader()}api/community/Organisations/settings/${organisationUniqueName}`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -346,7 +410,7 @@ export const getOrganisationRoles = async (authToken: string, organisationName: 
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/organisations/${organisationName}/roles`, {
+  const response = await fetch(`${authHeader()}api/community/organisations/${organisationName}/roles`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -356,7 +420,8 @@ export const getOrganisationRoles = async (authToken: string, organisationName: 
     throw new Error('Nie udało się pobrać ról organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+  return data;
 };
 
 export const createOrganisationRole = async (authToken: string, organisationName: string, roleData: any) => {
@@ -364,7 +429,7 @@ export const createOrganisationRole = async (authToken: string, organisationName
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/organisations/${organisationName}/roles`, {
+  const response = await fetch(`${authHeader()}api/community/organisations/${organisationName}/roles`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${authToken}`,
@@ -385,7 +450,7 @@ export const updateOrganisationRole = async (authToken: string, organisationName
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/organisations/${organisationName}/roles/${roleId}`, {
+  const response = await fetch(`${authHeader()}api/community/organisations/${organisationName}/roles/${roleId}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${authToken}`,
@@ -406,7 +471,7 @@ export const deleteOrganisationRole = async (authToken: string, organisationName
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/organisations/${organisationName}/roles/${roleId}`, {
+  const response = await fetch(`${authHeader()}api/community/organisations/${organisationName}/roles/${roleId}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -425,7 +490,7 @@ export const grantOrganisationRole = async (authToken: string, organisationName:
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/organisations/${organisationName}/roles/${roleId}/grant/${userId}`, {
+  const response = await fetch(`${authHeader()}api/community/organisations/${organisationName}/roles/${roleId}/grant/${userId}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -444,7 +509,7 @@ export const revokeOrganisationRole = async (authToken: string, organisationName
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
-  const response = await fetch(`https://localhost:7000/api/community/organisations/${organisationName}/roles/${roleId}/revoke/${userId}`, {
+  const response = await fetch(`${authHeader()}api/community/organisations/${organisationName}/roles/${roleId}/revoke/${userId}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${authToken}`,

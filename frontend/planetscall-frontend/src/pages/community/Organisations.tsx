@@ -1,3 +1,4 @@
+//{/*Organmizacje użytkownika*/}
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/shared/Header';
 import { useAuth } from '../../context/AuthContext';
@@ -54,7 +55,7 @@ const Organisations: React.FC = () => {
     }
   };
 
-  console.log(myOrganisations);
+  //console.log(myOrganisations);
 
   return (
     <div>
@@ -63,7 +64,7 @@ const Organisations: React.FC = () => {
         <h3>Twoje Organizacje</h3>
         <ul>
           <li><Link to="/community/organisations/create">Stwórz Organizacje</Link></li>
-          <li><Link to="/community/organisations/find">Znajdź Organizacje</Link></li>
+          <li><Link to="/community/">Znajdź Organizacje</Link></li>
         </ul>
 
         {/* Komunikat w razie błędu */}
@@ -76,6 +77,7 @@ const Organisations: React.FC = () => {
           <ul>
             {myOrganisations.map(org => (
               <li key={org.uniqueName}>
+                 <Link to={`/community/organisation/${org.uniqueName}`}>{org.uniqueName}</Link>
                 <h3>{org.name}</h3>
                 <p>{org.description}</p>
                 <img src={org.organizationLogo} alt={`Logo ${org.name}`} style={{ width: '100px', height: '100px' }} />

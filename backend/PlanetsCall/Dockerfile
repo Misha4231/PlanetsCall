@@ -21,7 +21,7 @@ COPY PlanetsCall/. ./PlanetsCall/
 RUN apt-get update && apt-get install -y postgresql-client && apt-get install -y curl
 
 # Run migrations
-RUN dotnet publish -c Debug -o PlanetsCall/out
+RUN dotnet publish -c Debug -o PlanetsCall/out /p:EnvironmentName=Development
 
 # Copy entrypoint script
 COPY ./entrypoint.sh ./
