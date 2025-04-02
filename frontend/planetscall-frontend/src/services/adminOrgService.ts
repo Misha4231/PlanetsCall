@@ -207,9 +207,10 @@ export const activateTemplateTask = async (authToken: string, id: number) => {
   }
 
   
-  const data = await response.json();
-  
-  return data;
+  const data = await response;
+  console.log(data)
+  const d = data.json();
+  return d;
 };
 
 export const getOrganizationTasks = async (authToken: string, organizationName: string) => {

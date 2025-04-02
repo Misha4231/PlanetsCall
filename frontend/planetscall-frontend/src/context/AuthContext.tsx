@@ -59,10 +59,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoading] = useState(true);
+  //const [token, setToken] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(() => sessionStorage.getItem('authToken'));
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem('authToken');
+    //const storedToken = token;
     //console.log(storedToken);
     if (storedToken) {
       setLoading(true);

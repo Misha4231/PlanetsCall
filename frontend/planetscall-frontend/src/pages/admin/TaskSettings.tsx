@@ -13,10 +13,15 @@ const TaskSettings = () => {
     const [task, setTask] = useState<TaskTemplate>();
     const { taskId } = useParams<{ taskId: string }>();
     const [formData, setFormData] = useState<Partial<TaskTemplateUpdate>>({});
-    
     const navigate = useNavigate();
 
 
+/*
+  useEffect(() => {
+    if (user) {
+    }
+  }, [user]);
+*/
     
     useEffect(() => {
         if (token && user?.isAdmin && taskId) {
@@ -25,6 +30,13 @@ const TaskSettings = () => {
                     setLoading(true);
                     const taskData = await getTemplateTaskById(token, taskId);
                     setTask(taskData);
+                    setFormData({
+                      title: taskData.title || '',
+                      description: taskData.description || '',
+                      reward: taskData.reward || 0,
+                      type: taskData.type ?? 0,
+                      isGroup: taskData.isGroup ?? false,
+                    });
                     setError(null);
                 } catch (err: any) {
                     setError(err.message);
@@ -66,7 +78,8 @@ const handleSubmit = async (e: React.FormEvent) => {
     try {
         setLoading(true);
         await updateTemplateTask(token!, taskId, formData);
-        setSuccess('Pomyślnie zaaktulizowane dane.');
+        sessionStorage.setItem('successInfo', "Pomyślnie zaaktulizowane dane.");
+        navigate(`/admin/organisations/task/${taskId}`); 
         setError(null);
     } catch (err: any) {
         setError(err.message || 'Failed to update organisation settings.');
@@ -123,7 +136,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                             <input
                                 type="text"
                                 name="title"
-                                value={formData.title || ''}
+                                value={formData.title}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -131,7 +144,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                             <label>Opis:</label>
                             <textarea
                                 name="description"
-                                value={formData.description || ''}
+                                value={formData.description}
                                 onChange={handleInputChange}
                             />
                         </div>

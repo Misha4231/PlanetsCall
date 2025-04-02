@@ -4,7 +4,7 @@ import { useNavigate, useLocation, Link  } from 'react-router-dom';
 
 import Header from '../../components/shared/Header';
 import { ThemeType, useAuth } from '../../context/AuthContext';
-import { convertBase64ToImageUrl } from '../../services/imageConvert';
+import { convertBase64ToImageUrl, convertImageToBase64 } from '../../services/imageConvert';
 
 
 
@@ -12,7 +12,7 @@ import { convertBase64ToImageUrl } from '../../services/imageConvert';
 const Profile :React.FC = () => {
   // const [user, setUser] = useState<User | null>(null);
   // const [error, setError] = useState<string | null>(null);
-
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
   const { user, isAuthenticated, loadingUser } = useAuth();
   const navigate = useNavigate();
   
@@ -54,6 +54,7 @@ const Profile :React.FC = () => {
   };
 
 
+
   return (
     <div className="profile"> 
     
@@ -63,14 +64,12 @@ const Profile :React.FC = () => {
         <h3>{user.username}</h3>
         {user.isAdmin === true && (<h5>Admin</h5> )}
         <div className="profileImg">
-          {/* <img 
+          {user.profileImage}
+           <img 
                 className="profile-image" 
-                src={user.profileImage && convertBase64ToImageUrl(user.profileImage)} 
-                alt={`Profil ${user.username}`} 
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/default-profile.png';
-                }}
-              /> */}
+                src={user.profileImage} 
+                alt={`Profilowe użytkownika ${user.username}`}
+              /> 
         </div>
         <div className="name">
           <p>{user.description}</p>

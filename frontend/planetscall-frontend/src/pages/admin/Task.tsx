@@ -9,14 +9,14 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 const Task = () => {
     const { user, isAuthenticated, token } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
-    const [success, setSuccess] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(sessionStorage.getItem('successInfo'));
     const [error, setError] = useState<string | null>(null);
     const [task, setTask] = useState<TaskTemplate>();
     const { taskId } = useParams<{ taskId: string }>();
     
     const navigate = useNavigate();
 
-
+    sessionStorage.setItem('successInfo', "");
     
     useEffect(() => {
         if (token && user?.isAdmin && taskId) {
@@ -98,6 +98,7 @@ const Task = () => {
             ) : (
             <>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
+                {success && <p style={{ color: 'green' }}>{success}</p>}
                 {task && (
                 <div>
                     <h2>{task.title}</h2>
