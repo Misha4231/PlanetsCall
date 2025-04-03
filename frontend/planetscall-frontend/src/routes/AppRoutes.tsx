@@ -37,6 +37,7 @@ import AdminMain from '../pages/admin/AdminMain';
 import Verification from '../pages/admin/Verification';
 import Task from '../pages/admin/Task';
 import TaskSettings from '../pages/admin/TaskSettings';
+import OrganisationTaskManagement from '../pages/community/OrganisationTaskManagement';
 
 
 const router = createBrowserRouter([
@@ -126,6 +127,10 @@ const router = createBrowserRouter([
   {
     path: '/community/organisation/:organisationUniqueName/settings',
     element: <OrganisationSettings/>
+  },
+  {
+    path: '/community/organisation/:organisationUniqueName/settings/tasks',
+    element: <OrganisationTaskManagement/>
   },
   {
     path: '/community/settings',

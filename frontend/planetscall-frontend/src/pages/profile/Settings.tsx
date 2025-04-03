@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { updateUserSettings } from '../../services/userService';
 import Header from '../../components/shared/Header';
-import { convertImageToBase64, convertBase64ToImageUrl } from '../../services/imageConvert';
+import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -50,7 +50,7 @@ const Settings: React.FC = () => {
         mailsSubscribed: user.mailsSubscribed ?? false,
       });
       if (user.profileImage) {
-        setPreviewImage(convertBase64ToImageUrl(user.profileImage));
+        setPreviewImage(imageUrl());
       }
     }
   }, [user]);

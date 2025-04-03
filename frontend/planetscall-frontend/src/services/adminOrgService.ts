@@ -27,6 +27,15 @@ export interface TaskTemplateUpdate {
   isGroup: boolean;
 }
 
+export interface OrganizationTask {
+  id: number;
+  title: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  expiresAt: string | null;
+}
+
 
 // VERIFICATIONS
 export const getOrganisationVerifications = async (authToken: string ) => {

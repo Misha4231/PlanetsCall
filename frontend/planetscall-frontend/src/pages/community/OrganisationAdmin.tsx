@@ -216,6 +216,7 @@ try {
         ) : (
             <div>
               <Link to={`/community/organisation/${organisationUniqueName}/settings`}>Ustawienia</Link>
+              <Link to={`/community/organisation/${organisationUniqueName}/settings/tasks`}>Zadania</Link>
             <input
                 type="button"
                 value="Usuń Organizacje"

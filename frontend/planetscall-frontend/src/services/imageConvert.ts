@@ -7,6 +7,7 @@ export const convertImageToBase64 = (file: File): Promise<string> => {
   });
 };
 
-export const convertBase64ToImageUrl = (base64String: string): string => {
-  return base64String;
+export const imageUrl = () => {
+  const linkToImage = "https://localhost:7000/";
+  return linkToImage;
 };

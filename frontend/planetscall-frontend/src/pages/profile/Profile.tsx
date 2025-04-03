@@ -4,7 +4,7 @@ import { useNavigate, useLocation, Link  } from 'react-router-dom';
 
 import Header from '../../components/shared/Header';
 import { ThemeType, useAuth } from '../../context/AuthContext';
-import { convertBase64ToImageUrl, convertImageToBase64 } from '../../services/imageConvert';
+import { imageUrl, convertImageToBase64 } from '../../services/imageConvert';
 
 
 
@@ -55,6 +55,7 @@ const Profile :React.FC = () => {
 
 
 
+
   return (
     <div className="profile"> 
     
@@ -64,10 +65,9 @@ const Profile :React.FC = () => {
         <h3>{user.username}</h3>
         {user.isAdmin === true && (<h5>Admin</h5> )}
         <div className="profileImg">
-          {user.profileImage}
            <img 
                 className="profile-image" 
-                src={user.profileImage} 
+                src={imageUrl()+user.profileImage} 
                 alt={`Profilowe użytkownika ${user.username}`}
               /> 
         </div>
