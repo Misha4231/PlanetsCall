@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { authHeader }  from  "../../services/authHeader";
+import Header from '../../components/shared/Header';
+import Footer from '../../components/Footer/Footer';
 
 const ChangePassword: React.FC = () => {
 
@@ -8,6 +10,7 @@ const ChangePassword: React.FC = () => {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,7 +47,13 @@ const ChangePassword: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="app-container">
+    <Header/>
+    <section className="blockCode">
+    {loading ? (
+        <p>Ładowanie...</p>
+      ) : (
+        <>
       <form onSubmit={handleSubmit}>
         <h1>Zmiana hasła</h1>
         <p>Wprowadź kod potwierdzenia:</p>
@@ -72,6 +81,11 @@ const ChangePassword: React.FC = () => {
         {success && <p style={{ color: 'green' }}>{success}</p>}
         <button type="submit">Zmień hasło</button>
       </form>
+
+    </>
+    )}
+    </section>
+    <Footer/>
       
     </div>
   )

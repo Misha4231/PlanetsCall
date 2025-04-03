@@ -162,7 +162,7 @@ const Verification = () => {
   };
 
     return (
-        <div>
+        <div className="app-container">
             <Header/>
             <section className="blockCode">
                 <h2>Weryfikacja organizacji</h2>

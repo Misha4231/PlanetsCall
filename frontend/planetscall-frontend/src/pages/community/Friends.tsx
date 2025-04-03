@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import  {Friend} from "./communityTypes";
 import { getFriends, addFriend, removeFriend } from '../../services/communityService';
+import Footer from '../../components/Footer/Footer';
 
 const Friends = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -78,8 +79,9 @@ const Friends = () => {
   const showPagination = totalFriends > FRIENDS_PER_PAGE;
 
   return (
-    <div>
+    <div className="app-container">
       <Header />
+      <section className="blockCode">
       <h1>Twoi Znajomi ({friends.length})</h1>
       
       <div>
@@ -148,6 +150,8 @@ const Friends = () => {
           </button>
         </div>
       )}
+      </section>
+      <Footer/>
     </div>
   );
 };

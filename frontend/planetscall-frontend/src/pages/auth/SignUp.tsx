@@ -10,6 +10,8 @@ const SignUp: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -59,49 +61,57 @@ const SignUp: React.FC = () => {
   
 
   return (
-    <div>
+    <div className="app-container">
       <Header />
-      <form onSubmit={handleSignUp}>
-        <h1>Zarejestruj się</h1>
-        <div>
-          <label>Nazwa użytkownika:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Hasło:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {success && <p style={{ color: 'green' }}>{success}</p>}
-        <button type="submit">Zarejestruj się</button>
-      </form>
-          <ul>
-            <li>
-              <Link to="/auth/sign-in">Zaloguj się</Link>
-            </li>
-            <li>
-              <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
-            </li>
-          </ul>
+      <section className="blockCode">
+      {loading ? (
+          <p>Ładowanie...</p>
+        ) : (
+          <>
+        <form onSubmit={handleSignUp}>
+          <h1>Zarejestruj się</h1>
+          <div>
+            <label>Nazwa użytkownika:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label>Email:</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label>Hasło:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {success && <p style={{ color: 'green' }}>{success}</p>}
+          <button type="submit">Zarejestruj się</button>
+        </form>
+            <ul>
+              <li>
+                <Link to="/auth/sign-in">Zaloguj się</Link>
+              </li>
+              <li>
+                <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
+              </li>
+            </ul>
+          </>
+        )}
+      </section>
       <Footer />
     </div>
   );

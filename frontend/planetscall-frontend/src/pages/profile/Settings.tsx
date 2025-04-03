@@ -5,6 +5,7 @@ import { updateUserSettings } from '../../services/userService';
 import Header from '../../components/shared/Header';
 import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
 import '../../stylePage/profile.css';
+import Footer from '../../components/Footer/Footer';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -125,175 +126,187 @@ const Settings: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="app-container dark-theme">
       <Header/>
-      <h1>Ustawienia Profilu</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Nazwa użytkownika:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Imię:</label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Nazwisko:</label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Zdjęcie Profilowe</label>
-          {previewImage && (
-            <div style={{ margin: '10px 0' }}>
-              <img 
-                src={previewImage} 
-                alt="Podgląd zdjęcia profilowego" 
-                style={{ maxWidth: '200px', maxHeight: '200px' }}
-              />
-            </div>
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-          />
-        </div>
-        <div>
-          <label>Preferowany Język:</label>
-          <select
-            name="preferredLanguage"
-            value={formData.preferredLanguage}
-            onChange={handleInputChange}
-          >
-            <option value="pl">Polski</option>
-            <option value="en">Angielski</option>
-          </select>
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="isNotifiable"
-              checked={formData.isNotifiable}
-              onChange={handleInputChange}
-            />
-            Powiadomienia
-          </label>
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="isVisible"
-              checked={formData.isVisible}
-              onChange={handleInputChange}
-            />
-            Widoczny profil
-          </label>
-        </div>
-        <div>
-          <label>Opis:</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Instagram Link:</label>
-          <input
-            type="text"
-            name="instagramLink"
-            value={formData.instagramLink}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>LinkedIn Link:</label>
-          <input
-            type="text"
-            name="linkedinLink"
-            value={formData.linkedinLink}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Youtube Link:</label>
-          <input
-            type="text"
-            name="youtubeLink"
-            value={formData.youtubeLink}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Miasto:</label>
-          <input
-            type="number"
-            name="cityId"
-            value={formData.cityId}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Kraj:</label>
-          <input
-            type="number"
-            name="countryId"
-            value={formData.countryId}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Motyw:</label>
-          <select
-            name="themePreference"
-            value={formData.themePreference}
-            onChange={handleInputChange}
-          >
-          <option value={0}>Ciemny</option>
-          <option value={1}>Jasny</option>
-          <option value={2}>Mieszany</option>
-          </select>
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="mailsSubscribed"
-              checked={formData.mailsSubscribed}
-              onChange={handleInputChange}
-            />
-            Subskrypcja do otrzymywania emaili
-          </label>
-        </div>
+      <section className="blockCode profile-container">
+      <div className="profile-content">
+        <h1 className="settings-title">Ustawienia Profilu</h1>
+        <form onSubmit={handleSubmit} className="settings-form">
+          <div className="form-grid two-columns">
+            <div className="form-column">
+              <div className="form-group full-width">
+                <label className="form-label">Zdjęcie Profilowe:</label>
+                {previewImage && (
+                  <div className="image-preview">
+                    <img 
+                      src={previewImage} 
+                      alt="Podgląd zdjęcia profilowego" 
+                      className="preview-image"
+                    />
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="form-input"
+                />
+              </div>
 
-        <button type="submit">Zapisz Zmiany</button>
-      </form>
+              <div className="form-group">
+                <label className="form-label">Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Nazwa użytkownika:</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Imię:</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Nazwisko:</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
+              </div>
+            </div>
+
+            <div className="form-column">
+              <div className="form-group">
+                <label className="form-label">Miasto ID:</label>
+                <input
+                  type="number"
+                  name="cityId"
+                  value={formData.cityId}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Kraj ID:</label>
+                <input
+                  type="number"
+                  name="countryId"
+                  value={formData.countryId}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Preferowany Język:</label>
+                <select
+                  name="preferredLanguage"
+                  value={formData.preferredLanguage}
+                  onChange={handleInputChange}
+                  className="form-input"
+                >
+                  <option value="pl">Polski</option>
+                  <option value="en">Angielski</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Motyw:</label>
+                <select
+                  name="themePreference"
+                  value={formData.themePreference}
+                  onChange={handleInputChange}
+                  className="form-input"
+                >
+                  <option value={0}>Ciemny</option>
+                  <option value={1}>Jasny</option>
+                  <option value={2}>Mieszany</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-group full-width checkbox-group-container">
+            <div className="checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="isNotifiable"
+                  checked={formData.isNotifiable}
+                  onChange={handleInputChange}
+                  className="checkbox-input"
+                />
+                <span>Powiadomienia</span>
+              </label>
+            </div>
+
+            <div className="checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="isVisible"
+                  checked={formData.isVisible}
+                  onChange={handleInputChange}
+                  className="checkbox-input"
+                />
+                <span>Widoczny profil</span>
+              </label>
+            </div>
+
+            <div className="checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="mailsSubscribed"
+                  checked={formData.mailsSubscribed}
+                  onChange={handleInputChange}
+                  className="checkbox-input"
+                />
+                <span>Subskrypcja email</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <button type="submit" className="save-button">
+              Zapisz Zmiany
+            </button>
+            <button 
+              type="button" 
+              className="cancel-button"
+              onClick={() => navigate('/profile')}
+            >
+              Anuluj
+            </button>
+          </div>
+        </form>
+      </div>
+      </section>
+      <Footer/>
     </div>
   );
 };

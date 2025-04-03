@@ -1,10 +1,13 @@
 import React, { useEffect, useState }  from 'react';
 import { useNavigate, useLocation  } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
+import Header from '../../components/shared/Header';
+import Footer from '../../components/Footer/Footer';
 
 const ActivateAccount = () => {
   const location = useLocation();
   const [activationCode, setActivationCode] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -43,7 +46,14 @@ const ActivateAccount = () => {
   
 
   return (
-    <div>
+    <div className="app-container">
+      <Header/>
+      <section className="blockCode">
+      {loading ? (
+          <p>Ładowanie...</p>
+        ) : (
+          <>
+
       <h1>Aktywuj Konto</h1>
       <form onSubmit={handleActivation}>
         <label>Kod aktywacyjny:</label>
@@ -57,6 +67,10 @@ const ActivateAccount = () => {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit">Aktywuj</button>
       </form>
+          </>
+        )}
+      </section>
+      <Footer/>
       
     </div>
   )

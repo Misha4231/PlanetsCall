@@ -118,7 +118,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   
 
   return (
-    <div>
+    <div className="app-container">
       <Header/>
 
       <section className="blockCode">        

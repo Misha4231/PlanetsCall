@@ -115,8 +115,13 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
 
   return (
-    <div>
+    <div className="app-container">
         <Header/>
+      <section className="blockCode">
+      {loading ? (
+          <p>Ładowanie...</p>
+        ) : (
+            <>
 
         <h1>Organisation Settings</h1>
             {success && <p style={{ color: 'green' }}>{success}</p>}
@@ -209,6 +214,9 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </button>
             </form>
 
+        </>
+        )}
+        </section>
         <Footer/>
     </div>
   )

@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../../components/shared/Header'
 import { getAddAttendance } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
+import Footer from '../../components/Footer/Footer';
 
 const Statistics = () => {
   const { user, isAuthenticated, token } = useAuth();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchAttendance = async () => {
@@ -22,8 +24,20 @@ const Statistics = () => {
 
 
   return (
-    <div>
+    <div className="app-container">
       <Header/>
+      <section className="blockCode">
+      {loading ? (
+          <p>Ładowanie...</p>
+        ) : (
+          <>
+
+
+
+          </>
+        )}
+      </section>
+      <Footer/>
       
     </div>
   )

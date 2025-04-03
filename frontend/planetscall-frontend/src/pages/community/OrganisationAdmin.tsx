@@ -205,7 +205,7 @@ try {
 }
 
   return (
-    <div>
+    <div className="app-container">
         <Header/>
         {success && <p style={{ color: 'green' }}>{success}</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}

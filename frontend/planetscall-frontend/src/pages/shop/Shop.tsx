@@ -14,6 +14,7 @@ import {
 import { getFullUser, getUser } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 import Header from '../../components/shared/Header';
+import Footer from '../../components/Footer/Footer';
 
 const Shop: React.FC = () => {  
   const { token, isAuthenticated } = useAuth();
@@ -136,7 +137,7 @@ const Shop: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="app-container">
       <Header/>
       <h1>Sklep</h1>
       {isAuthenticated && token ? (
@@ -197,6 +198,7 @@ const Shop: React.FC = () => {
       ) : (
         <p>Proszę się zalogować, aby zobaczyć sklep.</p>
       )}
+      <Footer/>
     </div>
   );
 };

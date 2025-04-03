@@ -128,18 +128,18 @@ useEffect(() => {
 
 
 return (
-    <div>
+  <div className="app-container">
       <Header/>
+      <section className="blockCode">
+      {loading ? (
+          <p>Ładowanie...</p>
+        ) : (
+          <>
 
         {success && <p style={{ color: 'green' }}>{success}</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <section className="blockCode">
             <h4>Użytkownicy</h4>
-            {loading ? (
-              <p>Ładowanie...</p>
-            ) : error ? (
-              <p style={{ color: 'red' }}>{error}</p>
-            ) : users.length > 0 ? (
+            {users.length > 0 ? (
               <ul>
                 {users.map((us) => (
                   <li key={us.id}>
@@ -197,8 +197,10 @@ return (
               </button>
             )}
           </div>
-        </section>
-      <Footer/>      
+          </>
+        )}
+      </section>
+      <Footer/> 
     </div>
   )
 }

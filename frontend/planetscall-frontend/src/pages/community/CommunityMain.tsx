@@ -104,11 +104,15 @@ const CommunityMain = () => {
 
 
   return (
-    <div>
+    <div className="app-container">
       <Header/>
 
         
         <section className="blockCode">
+      {loading ? (
+          <p>Ładowanie...</p>
+        ) : (
+          <>
           <h3>Organizacje</h3>
 
           {/* Pole tekstowe do wprowadzenia frazy wyszukiwania */}
@@ -128,9 +132,7 @@ const CommunityMain = () => {
           {error && <p style={{ color: 'red' }}>{error}</p>}
 
           {/* Lista organizacji przy użyciu słowa-frazy */}
-          {loading ? (
-            <p>Ładowanie...</p>
-          ) : myOrganisations.length > 0 ? (
+          { myOrganisations.length > 0 ? (
             <ul>
               {myOrganisations.map((org) => {
                 const isMember = membershipStatus[org.uniqueName] || false;
@@ -161,6 +163,8 @@ const CommunityMain = () => {
           ) : (
             <p>Nie znaleziono żadnej organizacji</p>
           )}
+          </>
+        )}
         </section>
 
       <Footer/>

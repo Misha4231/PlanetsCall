@@ -4,6 +4,7 @@ import Header from '../../components/shared/Header'
 import { useAuth } from '../../context/AuthContext';
 import { createOrganisation } from '../../services/communityService';
 import { Link } from 'react-router-dom';
+import Footer from '../../components/Footer/Footer';
 
 
 const CreateOrganisation = () => {
@@ -90,9 +91,13 @@ const CreateOrganisation = () => {
   };
 
   return (
-    <div>
+    <div className="app-container">
       <Header />
       <section className="codeBlock">
+      {loading ? (
+          <p>Ładowanie...</p>
+        ) : (
+          <>
         
                 <h3>Stwórz Organizacje</h3>
                 <ul>
@@ -206,8 +211,10 @@ const CreateOrganisation = () => {
             {loading ? 'Tworzenie...' : 'Stwórz organizację'}
           </button>
         </form>
-        
+          </>
+        )}
       </section>
+      <Footer/>
     </div>
   )
 }

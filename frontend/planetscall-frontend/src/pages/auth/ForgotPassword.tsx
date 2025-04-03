@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
 import { Link } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
+import Footer from '../../components/Footer/Footer';
 
 const ForgotPassword: React.FC = () => {
   const [uniqueIdentifier, setUniqueIdentifier] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [code, setCode] = useState('');
   const [isPasswordChange, setIsPasswordChange] = useState(false);
@@ -78,62 +80,71 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="app-container">
       <Header />
-      {!isCodeSent ? (
-        <form onSubmit={handleSubmit}>
-          <h1>Zapomniałeś hasła?</h1>
-          <p>Wprowadź nazwę użytkownika lub e-mail:</p>
-          <input
-            type="text"
-            value={uniqueIdentifier}
-            onChange={(e) => setUniqueIdentifier(e.target.value)}
-            required
-          />
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
-          <button type="submit">Wyślij kod</button>
-        </form>
-       ) : (
-        <form onSubmit={handlePasswordChange}>
-          
-          <h1>Potwierdź kod</h1>
-          <p>Wprowadź kod, który otrzymałeś na mail:</p>
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            required
-          />
-          <h1>Zmień hasło</h1>
-          <p>Wprowadź nowe hasło:</p>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-          <p>Potwierdź nowe hasło:</p>
-          <input
-            type="password"
-            value={passwordConfirmation}
-            onChange={(e) => setPasswordConfirmation(e.target.value)}
-            required
-          />
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
-          <button type="submit">Zmień hasło</button>
-        </form>
-      ) 
-      }
-      <ul>
-        <li>
-          <Link to="/auth/sign-up">Zarejestruj się</Link>
-        </li>
-        <li>
-          <Link to="/auth/sign-in">Zaloguj się</Link>
-        </li>
-      </ul>
+      <section className="blockCode">
+        {loading ? (
+            <p>Ładowanie...</p>
+          ) : (
+            <>
+        {!isCodeSent ? (
+          <form onSubmit={handleSubmit}>
+            <h1>Zapomniałeś hasła?</h1>
+            <p>Wprowadź nazwę użytkownika lub e-mail:</p>
+            <input
+              type="text"
+              value={uniqueIdentifier}
+              onChange={(e) => setUniqueIdentifier(e.target.value)}
+              required
+            />
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {success && <p style={{ color: 'green' }}>{success}</p>}
+            <button type="submit">Wyślij kod</button>
+          </form>
+        ) : (
+          <form onSubmit={handlePasswordChange}>
+            
+            <h1>Potwierdź kod</h1>
+            <p>Wprowadź kod, który otrzymałeś na mail:</p>
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              required
+            />
+            <h1>Zmień hasło</h1>
+            <p>Wprowadź nowe hasło:</p>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+            <p>Potwierdź nowe hasło:</p>
+            <input
+              type="password"
+              value={passwordConfirmation}
+              onChange={(e) => setPasswordConfirmation(e.target.value)}
+              required
+            />
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {success && <p style={{ color: 'green' }}>{success}</p>}
+            <button type="submit">Zmień hasło</button>
+          </form>
+        ) 
+        }
+        <ul>
+          <li>
+            <Link to="/auth/sign-up">Zarejestruj się</Link>
+          </li>
+          <li>
+            <Link to="/auth/sign-in">Zaloguj się</Link>
+          </li>
+        </ul>
+            </>
+          )}
+      </section>
+      <Footer/>
     </div>
   );
 };

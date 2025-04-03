@@ -86,35 +86,43 @@ const UsersProfile = () => {
   };
 
   return (
-    <div>
+    <div className="app-container">
       <Header />
-      <h3>Inny użytkownik</h3>
-      {isAuthenticated && (
-        <>
-          {!isFriend ? (
-            <button onClick={handleAddFriend} disabled={loading}>
-              {loading ? 'Dodawanie...' : 'Dodaj do Znajomych'}
-            </button>
-          ) : (
-            <button onClick={handleRemoveFriend} disabled={loading}>
-              {loading ? 'Usuwanie...' : 'Usuń znajomego'}
-            </button>
-          )}
-        </>
-      )}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <main>
-        <h3>Username: {anotherUser?.username}</h3>
-        <h3>Email: {anotherUser?.email}</h3>
-        <div className="profileImg"></div>
-        <div className="name">
-          <h3>{anotherUser?.username}</h3>
-        </div>
-        <div className="stats">
-          <p><strong>Points:</strong> {anotherUser?.points}</p>
-        </div>
-      </main>
+      <section className="blockCode">
+      {loading ? (
+          <p>Ładowanie...</p>
+        ) : (
+          <>
+        <h3>Inny użytkownik</h3>
+        {isAuthenticated && (
+          <>
+            {!isFriend ? (
+              <button onClick={handleAddFriend} disabled={loading}>
+                {loading ? 'Dodawanie...' : 'Dodaj do Znajomych'}
+              </button>
+            ) : (
+              <button onClick={handleRemoveFriend} disabled={loading}>
+                {loading ? 'Usuwanie...' : 'Usuń znajomego'}
+              </button>
+            )}
+          </>
+        )}
+        {success && <p style={{ color: 'green' }}>{success}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <main>
+          <h3>Username: {anotherUser?.username}</h3>
+          <h3>Email: {anotherUser?.email}</h3>
+          <div className="profileImg"></div>
+          <div className="name">
+            <h3>{anotherUser?.username}</h3>
+          </div>
+          <div className="stats">
+            <p><strong>Points:</strong> {anotherUser?.points}</p>
+          </div>
+        </main>
+          </>
+        )}
+      </section>
       <Footer />
     </div>
   )

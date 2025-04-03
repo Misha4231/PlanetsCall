@@ -89,7 +89,7 @@ const Task = () => {
       };
 
   return (
-    <div>
+    <div className="app-container">
       <Header/>
 
       <section className="blockCode">        

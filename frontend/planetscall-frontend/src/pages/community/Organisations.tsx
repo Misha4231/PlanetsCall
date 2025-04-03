@@ -59,7 +59,7 @@ const Organisations: React.FC = () => {
   //console.log(myOrganisations);
 
   return (
-    <div>
+    <div className="app-container">
       <Header />
       <section className="blockCode">
         <h3>Twoje Organizacje</h3>
