@@ -5,7 +5,7 @@ import { getOrganisationVerifications, sentResponseToOrganisationVerification, c
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-const TaskSettings = () => {
+const AdminTaskSettings = () => {
     const { user, isAuthenticated, token } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
     const [success, setSuccess] = useState<string | null>(null);
@@ -195,4 +195,4 @@ const handleSubmit = async (e: React.FormEvent) => {
   )
 }
 
-export default TaskSettings
+export default AdminTaskSettings

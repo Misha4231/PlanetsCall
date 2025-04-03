@@ -22,8 +22,6 @@ const Settings: React.FC = () => {
     instagramLink: '',
     linkedinLink: '',
     youtubeLink: '',
-    cityId: 0,
-    countryId: 0,
     themePreference: 0,
     mailsSubscribed: false,
   });
@@ -46,8 +44,6 @@ const Settings: React.FC = () => {
         instagramLink: user.instagramLink || '',
         linkedinLink: user.linkedinLink || '',
         youtubeLink: user.youtubeLink || '',
-        cityId: user.cityId || 0,
-        countryId: user.countryId || 0,
         themePreference: user.themePreference ?? 0,
         mailsSubscribed: user.mailsSubscribed ?? false,
       });
@@ -199,28 +195,6 @@ const Settings: React.FC = () => {
             </div>
 
             <div className="form-column">
-              <div className="form-group">
-                <label className="form-label">Miasto ID:</label>
-                <input
-                  type="number"
-                  name="cityId"
-                  value={formData.cityId}
-                  onChange={handleInputChange}
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Kraj ID:</label>
-                <input
-                  type="number"
-                  name="countryId"
-                  value={formData.countryId}
-                  onChange={handleInputChange}
-                  className="form-input"
-                />
-              </div>
-
               <div className="form-group">
                 <label className="form-label">Preferowany Język:</label>
                 <select

@@ -3,10 +3,10 @@ import Footer from '../../components/Footer/Footer'
 import Header from '../../components/shared/Header'
 import { getOrganisationVerifications, sentResponseToOrganisationVerification, createTemplateTask, getAllTemplateTasks, activateTemplateTask, deleteTemplateTask, TaskTemplate, TaskType, getTemplateTaskById  } from '../../services/adminOrgService';
 import { useAuth } from '../../context/AuthContext';
-import { Organisation } from '../../pages/community/communityTypes';
+import { Organisation } from '../community/communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-const Task = () => {
+const AdminTaskInfo = () => {
     const { user, isAuthenticated, token } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
     const [success, setSuccess] = useState<string | null>(sessionStorage.getItem('successInfo'));
@@ -133,4 +133,4 @@ const Task = () => {
   )
 }
 
-export default Task
+export default AdminTaskInfo

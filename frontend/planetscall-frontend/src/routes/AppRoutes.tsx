@@ -34,10 +34,15 @@ import OrganisationSettings from '../pages/community/OrganisationSettings';
 import TaskList from '../pages/tasks/TaskList';
 import TaskDetails from '../pages/tasks/TaskDetails';
 import AdminMain from '../pages/admin/AdminMain';
-import Verification from '../pages/admin/Verification';
-import Task from '../pages/admin/Task';
-import TaskSettings from '../pages/admin/TaskSettings';
+import Verification from '../pages/admin/AdminOrganisations';
+import Task from '../pages/admin/AdminTaskInfo';
+import TaskSettings from '../pages/admin/AdminTaskSettings';
 import OrganisationTaskManagement from '../pages/community/OrganisationTaskManagement';
+import AdminOrganisations from '../pages/admin/AdminOrganisations';
+import AdminUsers from '../pages/admin/AdminUsers';
+import AdminTasks from '../pages/admin/AdminTasks';
+import AdminTaskInfo from '../pages/admin/AdminTaskInfo';
+import AdminTaskSettings from '../pages/admin/AdminTaskSettings';
 
 
 const router = createBrowserRouter([
@@ -146,7 +151,7 @@ const router = createBrowserRouter([
     element: <TaskList />
   },
   {
-    path: '/tasks/:id',
+    path: '/task/:taskId',
     element: <TaskDetails />
   },
 
@@ -157,15 +162,23 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin/organisations',
-    element: <Verification />
+    element: <AdminOrganisations />
+  },
+  {
+    path: '/admin/users',
+    element: <AdminUsers />
+  },
+  {
+    path: '/admin/tasks',
+    element: <AdminTasks />
   },
   {
     path: '/admin/organisations/task/:taskId',
-    element: <Task />
+    element: <AdminTaskInfo />
   },
   {
     path: '/admin/organisations/task/:taskId/settings',
-    element: <TaskSettings />
+    element: <AdminTaskSettings />
   },
 ]);
 

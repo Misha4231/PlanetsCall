@@ -65,6 +65,27 @@ useEffect(() => {
     );   
   }
 
+  /*
+  <div className="form-group full-width">
+                <label className="form-label">Zdjęcie Profilowe:</label>
+                {previewImage && (
+                  <div className="image-preview">
+                    <img 
+                      src={previewImage} 
+                      alt="Podgląd zdjęcia profilowego" 
+                      className="preview-image"
+                    />
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="form-input"
+                />
+              </div>
+               */
+
   return (
     <div className="app-container dark-theme">
       <Header/>

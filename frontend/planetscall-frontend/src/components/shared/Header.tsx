@@ -27,12 +27,10 @@ const Header: React.FC = () => {
               >
                 <Link to="/profile">Profil</Link>
                 <ul className={`dropdown-menu ${activeDropdown === 'profile' ? 'show' : ''}`}>
-                  <li><Link to="/profile/level">Lewel</Link></li>
-                  <li><Link to="/profile/achievements">Osiągnięcia</Link></li>
                   <li><Link to="/profile/statistics">Statystyka</Link></li>
+                  <li><Link to="/profile/settings">Ustawienia</Link></li>
                 </ul>
               </li>
-              
               <li 
                 className="nav-item dropdown"
                 onMouseEnter={() => toggleDropdown('community')}
@@ -45,6 +43,8 @@ const Header: React.FC = () => {
                   <li><Link to="/community/settings">Ustawienia społeczności</Link></li>
                 </ul>
               </li>
+
+              <li className="nav-item"><Link to="/tasks">Zadania</Link></li>
               
               <li className="nav-item"><Link to="/shop">Sklep</Link></li>
               
@@ -57,6 +57,8 @@ const Header: React.FC = () => {
                   <Link to="/admin">Panel Administracyjny</Link>
                   <ul className={`dropdown-menu ${activeDropdown === 'admin' ? 'show' : ''}`}>
                     <li><Link to="/admin/organisations">Organizacje</Link></li>
+                    <li><Link to="/admin/users">Użytkownicy</Link></li>
+                    <li><Link to="/admin/tasks">Zadania</Link></li>
                   </ul>
                 </li>
               )}
@@ -68,7 +70,10 @@ const Header: React.FC = () => {
           )}
           
           {!isAuthenticated && (
-            <li className="nav-item"><Link to="/auth/sign-in">Zaloguj się</Link></li>
+            <>
+              <li className="nav-item"><Link to="/auth/sign-in">Zaloguj się</Link></li>
+              <li className="nav-item"><Link to="/auth/sign-up">Zajerestruj się</Link></li>
+            </>
           )}
         </ul>
       </nav>
