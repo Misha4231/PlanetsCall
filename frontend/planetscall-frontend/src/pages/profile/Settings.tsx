@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { updateUserSettings } from '../../services/userService';
 import Header from '../../components/shared/Header';
 import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
+import '../../stylePage/profile.css';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();

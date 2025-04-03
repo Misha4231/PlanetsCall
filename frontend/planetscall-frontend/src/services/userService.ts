@@ -107,14 +107,11 @@ export const getAddAttendance  = async (authToken: string) => {
   }
 
   const response = await fetch(`${authHeader()}api/Profiles/add-attendance`, {
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
   });
-
-  if (response.status === 401) {
-    throw new Error('Brak autoryzacji. Proszę się zalogować.');
-  }
   if (!response.ok) {
     throw new Error('Nie udało się pobrać danych użytkownika');
   }

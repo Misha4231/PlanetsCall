@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Home from '../pages/home/Home';
+import '../stylePage/styles.css';
 
 import { createBrowserRouter, Link, RouterProvider, useNavigate } from 'react-router-dom';
 
-import App from '../App';
 //import NotFound from '../pages/NotFound/NotFound';
 
 //PROFILE LINKS
@@ -43,7 +43,7 @@ import OrganisationTaskManagement from '../pages/community/OrganisationTaskManag
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <Home />,
     /*errorElement: <NotFound/>*/
   },
 

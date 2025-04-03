@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getMyOrganisations } from '../../services/communityService';
 import { Link } from 'react-router-dom';
 import { Organisation, OrganisationsResponse } from './communityTypes';
+import Footer from '../../components/Footer/Footer';
 
 const Organisations: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -91,6 +92,7 @@ const Organisations: React.FC = () => {
             Nie należysz do żadnych organizacji.</p>
         )}
       </section>
+      <Footer/>
     </div>
   );
 };
