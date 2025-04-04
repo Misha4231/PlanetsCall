@@ -3,6 +3,7 @@ import Header from '../../components/shared/Header';
 import { Link } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
 import Footer from '../../components/Footer/Footer';
+import '../../stylePage/auth.css'
 
 const ForgotPassword: React.FC = () => {
   const [uniqueIdentifier, setUniqueIdentifier] = useState('');
@@ -80,71 +81,98 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <div className="app-container">
+    <div className="app-container dark-theme">
       <Header />
-      <section className="blockCode">
+      <section className="blockCode auth">
         {loading ? (
-            <p>Ładowanie...</p>
-          ) : (
-            <>
-        {!isCodeSent ? (
-          <form onSubmit={handleSubmit}>
-            <h1>Zapomniałeś hasła?</h1>
-            <p>Wprowadź nazwę użytkownika lub e-mail:</p>
-            <input
-              type="text"
-              value={uniqueIdentifier}
-              onChange={(e) => setUniqueIdentifier(e.target.value)}
-              required
-            />
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-            <button type="submit">Wyślij kod</button>
-          </form>
+          <p className="loading-text">Ładowanie...</p>
         ) : (
-          <form onSubmit={handlePasswordChange}>
+          <>
+            {!isCodeSent ? (
+              <form onSubmit={handleSubmit} className="auth-form">
+                <h1>Zapomniałeś hasła?</h1>
+                <div className="instruction-text">
+                  <p>Wprowadź nazwę użytkownika lub e-mail</p>
+                </div>
+                
+                <div className="input-group">
+                  <label>Nazwa użytkownika lub e-mail:</label>
+                  <input
+                    type="text"
+                    value={uniqueIdentifier}
+                    onChange={(e) => setUniqueIdentifier(e.target.value)}
+                    placeholder="Wprowadź swoją nazwę użytkownika lub email"
+                    required
+                  />
+                </div>
+                
+                {error && <div className="error-message">{error}</div>}
+                {success && <div className="success-message">{success}</div>}
+                
+                <button type="submit" className="submit-button">Wyślij kod</button>
+              </form>
+            ) : (
+              <form onSubmit={handlePasswordChange} className="auth-form">
+                <h1>Resetowanie hasła</h1>
+                
+                <div className="input-group">
+                  <label>Kod weryfikacyjny:</label>
+                  <input
+                    type="text"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    placeholder="Wprowadź kod z emaila"
+                    required
+                  />
+                </div>
+                
+                <div className="input-group">
+                  <label>Nowe hasło:</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Wprowadź nowe hasło"
+                    required
+                  />
+                </div>
+                
+                <div className="input-group">
+                  <label>Potwierdź nowe hasło:</label>
+                  <input
+                    type="password"
+                    value={passwordConfirmation}
+                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                    placeholder="Powtórz nowe hasło"
+                    required
+                  />
+                </div>
+                
+                {error && <div className="error-message">{error}</div>}
+                {success && <div className="success-message">{success}</div>}
+                
+                <button type="submit" className="submit-button">Zmień hasło</button>
+              </form>
+            )}
             
-            <h1>Potwierdź kod</h1>
-            <p>Wprowadź kod, który otrzymałeś na mail:</p>
-            <input
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              required
-            />
-            <h1>Zmień hasło</h1>
-            <p>Wprowadź nowe hasło:</p>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
-            <p>Potwierdź nowe hasło:</p>
-            <input
-              type="password"
-              value={passwordConfirmation}
-              onChange={(e) => setPasswordConfirmation(e.target.value)}
-              required
-            />
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-            <button type="submit">Zmień hasło</button>
-          </form>
-        ) 
-        }
-        <ul>
-          <li>
-            <Link to="/auth/sign-up">Zarejestruj się</Link>
-          </li>
-          <li>
-            <Link to="/auth/sign-in">Zaloguj się</Link>
-          </li>
-        </ul>
-            </>
-          )}
+            <div className="auth-links">
+              <ul>
+                <li>
+                  <Link to="/auth/sign-up">
+                    <i className="fas fa-user-plus"></i> Zarejestruj się
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/auth/sign-in">
+                    <i className="fas fa-sign-in-alt"></i> Zaloguj się
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </>
+        )}
       </section>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

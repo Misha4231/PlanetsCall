@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { getUser, login as loginService, logout as logoutService, isAuthenticated } from '../services/authService';
 import { getFullUser, getAddAttendance } from '../services/userService';
+import { useNavigate } from 'react-router-dom';
 
 
 export type ThemeType = 0 | 1 | 2;
@@ -61,6 +62,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [loadingUser, setLoading] = useState(true);
   const [token, setToken] = useState<string | null>(() => sessionStorage.getItem('authToken'));
 
+
   useEffect(() => {
     const storedToken = sessionStorage.getItem('authToken');
     //console.log(storedToken);
@@ -95,8 +97,8 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
       const fullUserData = await getFullUser(newToken);
       setUser(fullUserData);
-    } catch (error) {
-      throw new Error('Błąd logowania');
+    } catch (error: any) {
+      throw new Error(error || 'Błąd logowania');
     }
   };
 
@@ -117,6 +119,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 export { AuthProvider, AuthContext };
 
 export const useAuth = (): AuthContextType => {
+  const navigate = useNavigate();  
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");

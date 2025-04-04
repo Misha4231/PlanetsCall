@@ -16,9 +16,9 @@ export const login = async (uniqueIdentifier: string, password: string) => {
 
   if (!response.ok) {
     const errorData = await response.json();  
-    throw new Error(errorData.message || 'Błąd logowania');
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd logowania');
   }
-
+  
   const data = await response.json();
   //console.log("Dane " + data);
   token = data.accessToken;
@@ -54,5 +54,7 @@ export const getUser = async (authToken: string) => {
 export const isAuthenticated = () => {
   return !!token;
 };
+
+
 
 

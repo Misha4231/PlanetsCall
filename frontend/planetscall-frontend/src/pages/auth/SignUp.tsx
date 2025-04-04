@@ -3,6 +3,7 @@ import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
 import { Link, useNavigate } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
+import '../../stylePage/auth.css'
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -61,54 +62,74 @@ const SignUp: React.FC = () => {
   
 
   return (
-    <div className="app-container">
+    <div className="app-container dark-theme">
       <Header />
-      <section className="blockCode">
-      {loading ? (
-          <p>Ładowanie...</p>
+      <section className="blockCode auth">
+        {loading ? (
+          <p className="loading-text">Ładowanie...</p>
         ) : (
           <>
-        <form onSubmit={handleSignUp}>
-          <h1>Zarejestruj się</h1>
-          <div>
-            <label>Nazwa użytkownika:</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>Hasło:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
-          <button type="submit">Zarejestruj się</button>
-        </form>
-            <ul>
-              <li>
-                <Link to="/auth/sign-in">Zaloguj się</Link>
-              </li>
-              <li>
-                <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
-              </li>
-            </ul>
+            <form onSubmit={handleSignUp}>
+              <h1>Zarejestruj się</h1>
+              
+              {error && (
+                <div className="error-message">
+                  {error}
+                </div>
+              )}
+              
+              {success && (
+                <div className="success-message">
+                  {success}
+                </div>
+              )}
+              
+              <div className="input-group">
+                <label>Nazwa użytkownika:</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Wprowadź nazwę użytkownika"
+                  required
+                />
+              </div>
+              
+              <div className="input-group">
+                <label>Email:</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Wprowadź adres email"
+                  required
+                />
+              </div>
+              
+              <div className="input-group">
+                <label>Hasło:</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Wprowadź hasło"
+                  required
+                />
+              </div>
+              
+              <button type="submit">Zarejestruj się</button>
+            </form>
+            
+            <div className="links-container">
+              <ul>
+                <li>
+                  <Link to="/auth/sign-in">Zaloguj się</Link>
+                </li>
+                <li>
+                  <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
+                </li>
+              </ul>
+            </div>
           </>
         )}
       </section>

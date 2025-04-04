@@ -4,6 +4,7 @@ import Footer from '../../components/Footer/Footer';
 import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../../services/authService'; 
 import { useAuth } from '../../context/AuthContext';
+import '../../stylePage/auth.css'
 
 const SignIn = () => {
   const { login: loginUser, isAuthenticated } = useAuth();
@@ -24,7 +25,6 @@ const SignIn = () => {
       console.log("Zalogowano");
       navigate('/profile'); 
     } catch (err: any) {
-      console.error(err);
       setError(err.message || 'Błąd logowania. Sprawdź dane i spróbuj ponownie.');
     }
   };
@@ -38,47 +38,52 @@ const SignIn = () => {
   }
 
   return (
-    <div className="app-container">
+    <div className="app-container dark-theme ">
       <Header />
-      <section className="blockCode">
-      {loading ? (
-          <p>Ładowanie...</p>
+      <section className="blockCode auth">
+        {loading ? (
+          <p className="loading-text">Ładowanie...</p>
         ) : (
           <>
-
-        <form onSubmit={handleSubmit}>
-          <h1>Zaloguj się</h1>
-          <div>
-            <label>Email lub Nazwa użytkownika:</label>
-            <input
-              type="text"
-              value={uniqueIdentifier}  
-              onChange={(e) => setUniqueIdentifier(e.target.value)}
-              placeholder="Podaj email lub nazwę użytkownika"
-              required
-            />
-          </div>
-          <div>
-            <label>Hasło:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Podaj hasło"
-              required
-            />
-          </div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <button type="submit">Zaloguj się</button>
-        </form>
-        <ul>
-          <li>
-            <Link to="/auth/sign-up">Zarejestruj się</Link>
-          </li>
-          <li>
-            <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
-          </li>
-        </ul>
+            <form onSubmit={handleSubmit}>
+              <h1>Zaloguj się</h1>
+              {error && <p className="error-message">{error}</p>}
+              
+              <div className="input-group">
+                <label>Email lub Nazwa użytkownika:</label>
+                <input
+                  type="text"
+                  value={uniqueIdentifier}  
+                  onChange={(e) => setUniqueIdentifier(e.target.value)}
+                  placeholder="Podaj email lub nazwę użytkownika"
+                  required
+                />
+              </div>
+              
+              <div className="input-group">
+                <label>Hasło:</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Podaj hasło"
+                  required
+                />
+              </div>
+              
+              <button type="submit">Zaloguj się</button>
+            </form>
+            
+            <div className="links-container">
+              <ul>
+                <li>
+                  <Link to="/auth/sign-up">Zarejestruj się</Link>
+                </li>
+                <li>
+                  <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
+                </li>
+              </ul>
+            </div>
           </>
         )}
       </section>
