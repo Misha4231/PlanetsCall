@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/shared/Header';
 import { useAuth } from '../../context/AuthContext';
-import { Organisation } from '../../pages/community/communityTypes';
+import { Organisation } from '../community/communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { 
   getOrganizationTasks,

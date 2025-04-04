@@ -110,7 +110,7 @@ useEffect(() => {
             <div className="profile-info">
               <div className="username-section">
                 <h2>{user.username}</h2>
-                {user.isAdmin && <span className="admin-badge">Admin</span>}
+                {user.isAdmin && <span className="admin-badge"><i className="fas fa-crown"></i>Admin</span>}
                 <Link to="/profile/settings" className="settings-link">
                   <button className="edit-button">Edytuj profil</button>
                 </Link>

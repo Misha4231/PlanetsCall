@@ -6,7 +6,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
 import { tokenToString } from 'typescript';
-import { Member, Organisation } from './communityTypes';
+import { Member, Organisation } from '../community/communityTypes';
 
 const AnOrganisation = () => {
   const { user, isAuthenticated, token, loadingUser } = useAuth();

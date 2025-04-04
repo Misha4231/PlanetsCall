@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Header from '../../components/shared/Header'
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import  {Friend} from "./communityTypes";
+import  {Friend} from "../community/communityTypes";
 import { getFriends, addFriend, removeFriend } from '../../services/communityService';
 import Footer from '../../components/Footer/Footer';
 

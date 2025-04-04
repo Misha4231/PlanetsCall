@@ -4,7 +4,7 @@ import Header from '../../components/shared/Header';
 import { useAuth } from '../../context/AuthContext';
 import { getMyOrganisations } from '../../services/communityService';
 import { Link } from 'react-router-dom';
-import { Organisation, OrganisationsResponse } from './communityTypes';
+import { Organisation, OrganisationsResponse } from '../community/communityTypes';
 import Footer from '../../components/Footer/Footer';
 
 const Organisations: React.FC = () => {

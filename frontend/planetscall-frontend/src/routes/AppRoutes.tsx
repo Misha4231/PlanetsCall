@@ -15,7 +15,7 @@ import SignIn from '../pages/auth/SignIn';
 import SignUp from '../pages/auth/SignUp';
 
 import Profile from '../pages/profile/Profile';
-import UserProfile from '../pages/profile/UsersProfile';
+import UserProfile from '../pages/people/UsersProfile';
 import Statistics from '../pages/profile/Statistics';
 import Achievements from '../pages/profile/Achievements';
 import LevelTree from '../pages/profile/LevelTree';
@@ -23,26 +23,27 @@ import ChangePassword from '../pages/auth/ChangePassword';
 import ForgotPassword from '../pages/auth/ForgotPassword';
 import ActivateAccount from '../pages/auth/ActivateAccount';
 import Settings from '../pages/profile/Settings';
-import Friends from '../pages/community/Friends';
+import Friends from '../pages/people/Friends';
 import CommunityMain from '../pages/community/CommunityMain';
 import CommunitySettings from '../pages/community/CommunitySettings';
-import Organisations from '../pages/community/Organisations';
-import CreateOrganisation from '../pages/community/CreateOrganisation';
-import AnOrganisation from '../pages/community/AnOrganisation';
-import OrganisationAdmin from '../pages/community/OrganisationAdmin';
-import OrganisationSettings from '../pages/community/OrganisationSettings';
+import Organisations from '../pages/organisations/Organisations';
+import CreateOrganisation from '../pages/organisations/CreateOrganisation';
+import AnOrganisation from '../pages/organisations/AnOrganisation';
+import OrganisationAdmin from '../pages/organisations/OrganisationAdmin';
+import OrganisationSettings from '../pages/organisations/OrganisationSettings';
 import TaskList from '../pages/tasks/TaskList';
 import TaskDetails from '../pages/tasks/TaskDetails';
 import AdminMain from '../pages/admin/AdminMain';
 import Verification from '../pages/admin/AdminOrganisations';
 import Task from '../pages/admin/AdminTaskInfo';
 import TaskSettings from '../pages/admin/AdminTaskSettings';
-import OrganisationTaskManagement from '../pages/community/OrganisationTaskManagement';
+import OrganisationTaskManagement from '../pages/organisations/OrganisationTaskManagement';
 import AdminOrganisations from '../pages/admin/AdminOrganisations';
 import AdminUsers from '../pages/admin/AdminUsers';
 import AdminTasks from '../pages/admin/AdminTasks';
 import AdminTaskInfo from '../pages/admin/AdminTaskInfo';
 import AdminTaskSettings from '../pages/admin/AdminTaskSettings';
+import People from '../pages/people/People';
 
 
 const router = createBrowserRouter([
@@ -96,10 +97,6 @@ const router = createBrowserRouter([
     element: <Statistics />
   },
   {
-    path: '/user/:userName',
-    element: <UserProfile />
-  },
-  {
     path: '/profile/level-tree',
     element: <LevelTree/>
   },
@@ -110,9 +107,19 @@ const router = createBrowserRouter([
     element: <CommunityMain />
   },
   {
+    path: '/community/users',
+    element: <People />
+  },
+  {
     path: '/community/friends',
     element: <Friends/>
   },
+  {
+    path: '/user/:userName',
+    element: <UserProfile />
+  },
+
+
   {
     path: '/community/organisations',
     element: <Organisations/>
