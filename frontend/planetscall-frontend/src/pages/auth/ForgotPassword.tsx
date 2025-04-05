@@ -3,7 +3,7 @@ import Header from '../../components/shared/Header';
 import { Link } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
 import Footer from '../../components/Footer/Footer';
-import '../../stylePage/auth.css'
+import authStyles from '../../stylePage/auth.module.css';
 
 const ForgotPassword: React.FC = () => {
   const [uniqueIdentifier, setUniqueIdentifier] = useState('');
@@ -82,97 +82,101 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className="app-container dark-theme">
-      <Header />
-      <section className="blockCode auth">
-        {loading ? (
-          <p className="loading-text">Ładowanie...</p>
-        ) : (
-          <>
-            {!isCodeSent ? (
-              <form onSubmit={handleSubmit} className="auth-form">
-                <h1>Zapomniałeś hasła?</h1>
-                <div className="instruction-text">
-                  <p>Wprowadź nazwę użytkownika lub e-mail</p>
-                </div>
-                
-                <div className="input-group">
-                  <label>Nazwa użytkownika lub e-mail:</label>
-                  <input
-                    type="text"
-                    value={uniqueIdentifier}
-                    onChange={(e) => setUniqueIdentifier(e.target.value)}
-                    placeholder="Wprowadź swoją nazwę użytkownika lub email"
-                    required
-                  />
-                </div>
-                
-                {error && <div className="error-message">{error}</div>}
-                {success && <div className="success-message">{success}</div>}
-                
-                <button type="submit" className="submit-button">Wyślij kod</button>
-              </form>
-            ) : (
-              <form onSubmit={handlePasswordChange} className="auth-form">
-                <h1>Resetowanie hasła</h1>
-                
-                <div className="input-group">
-                  <label>Kod weryfikacyjny:</label>
-                  <input
-                    type="text"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    placeholder="Wprowadź kod z emaila"
-                    required
-                  />
-                </div>
-                
-                <div className="input-group">
-                  <label>Nowe hasło:</label>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Wprowadź nowe hasło"
-                    required
-                  />
-                </div>
-                
-                <div className="input-group">
-                  <label>Potwierdź nowe hasło:</label>
-                  <input
-                    type="password"
-                    value={passwordConfirmation}
-                    onChange={(e) => setPasswordConfirmation(e.target.value)}
-                    placeholder="Powtórz nowe hasło"
-                    required
-                  />
-                </div>
-                
-                {error && <div className="error-message">{error}</div>}
-                {success && <div className="success-message">{success}</div>}
-                
-                <button type="submit" className="submit-button">Zmień hasło</button>
-              </form>
-            )}
-            
-            <div className="auth-links">
-              <ul>
-                <li>
-                  <Link to="/auth/sign-up">
-                    <i className="fas fa-user-plus"></i> Zarejestruj się
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/auth/sign-in">
-                    <i className="fas fa-sign-in-alt"></i> Zaloguj się
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </>
-        )}
-      </section>
-      <Footer />
+    <Header />
+    <section className={`${authStyles.blockCode} ${authStyles.auth}`}>
+      {loading ? (
+        <p className={authStyles.loadingText}>Ładowanie...</p>
+      ) : (
+        <>
+          {!isCodeSent ? (
+            <form onSubmit={handleSubmit} className={authStyles.form}>
+              <h1 className={authStyles.title}>Zapomniałeś hasła?</h1>
+              <div className={authStyles.instructionText}>
+                <p>Wprowadź nazwę użytkownika lub e-mail</p>
+              </div>
+              
+              <div className={authStyles.inputGroup}>
+                <label className={authStyles.label}>Nazwa użytkownika lub e-mail:</label>
+                <input
+                  type="text"
+                  value={uniqueIdentifier}
+                  onChange={(e) => setUniqueIdentifier(e.target.value)}
+                  placeholder="Wprowadź swoją nazwę użytkownika lub email"
+                  required
+                  className={authStyles.input}
+                />
+              </div>
+              
+              {error && <div className={authStyles.errorMessage}>{error}</div>}
+              {success && <div className={authStyles.successMessage}>{success}</div>}
+              
+              <button type="submit" className={authStyles.submitButton}>Wyślij kod</button>
+            </form>
+          ) : (
+            <form onSubmit={handlePasswordChange} className={authStyles.form}>
+              <h1 className={authStyles.title}>Resetowanie hasła</h1>
+              
+              <div className={authStyles.inputGroup}>
+                <label className={authStyles.label}>Kod weryfikacyjny:</label>
+                <input
+                  type="text"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="Wprowadź kod z emaila"
+                  required
+                  className={authStyles.input}
+                />
+              </div>
+              
+              <div className={authStyles.inputGroup}>
+                <label className={authStyles.label}>Nowe hasło:</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Wprowadź nowe hasło"
+                  required
+                  className={authStyles.input}
+                />
+              </div>
+              
+              <div className={authStyles.inputGroup}>
+                <label className={authStyles.label}>Potwierdź nowe hasło:</label>
+                <input
+                  type="password"
+                  value={passwordConfirmation}
+                  onChange={(e) => setPasswordConfirmation(e.target.value)}
+                  placeholder="Powtórz nowe hasło"
+                  required
+                  className={authStyles.input}
+                />
+              </div>
+              
+              {error && <div className={authStyles.errorMessage}>{error}</div>}
+              {success && <div className={authStyles.successMessage}>{success}</div>}
+              
+              <button type="submit" className={authStyles.submitButton}>Zmień hasło</button>
+            </form>
+          )}
+          
+          <div className={authStyles.authLinks}>
+            <ul className={authStyles.linksList}>
+              <li className={authStyles.linkItem}>
+                <Link to="/auth/sign-up" className={authStyles.link}>
+                  <i className="fas fa-user-plus"></i> Zarejestruj się
+                </Link>
+              </li>
+              <li className={authStyles.linkItem}>
+                <Link to="/auth/sign-in" className={authStyles.link}>
+                  <i className="fas fa-sign-in-alt"></i> Zaloguj się
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </>
+      )}
+    </section>
+    <Footer />
     </div>
   );
 };

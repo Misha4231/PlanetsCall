@@ -40,7 +40,8 @@ const Header: React.FC = () => {
                 <ul className={`dropdown-menu ${activeDropdown === 'community' ? 'show' : ''}`}>
                 <li><Link to="/community/users">Ludzie</Link></li>
                   <li><Link to="/community/friends">Znajomi</Link></li>
-                  <li><Link to="/community/organisations">Organizacje</Link></li>
+                  <li><Link to="/community/organisations/search">Organizacje</Link></li>
+                  <li><Link to="/community/organisations">Moje Organizacje</Link></li>
                 </ul>
               </li>
 

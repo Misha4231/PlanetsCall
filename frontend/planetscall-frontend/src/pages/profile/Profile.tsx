@@ -5,7 +5,7 @@ import Header from '../../components/shared/Header';
 import { useAuth } from '../../context/AuthContext';
 import { imageUrl } from '../../services/imageConvert';
 import { getFriends } from '../../services/communityService';
-import '../../stylePage/profile.css';
+import styles from '../../stylePage/profile.module.css';
 
 const Profile: React.FC = () => {
   const { user, isAuthenticated, loadingUser, token } = useAuth();
@@ -65,131 +65,135 @@ useEffect(() => {
     );   
   }
 
-  /*
-  <div className="form-group full-width">
-                <label className="form-label">Zdjęcie Profilowe:</label>
-                {previewImage && (
-                  <div className="image-preview">
-                    <img 
-                      src={previewImage} 
-                      alt="Podgląd zdjęcia profilowego" 
-                      className="preview-image"
-                    />
-                  </div>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="form-input"
-                />
-              </div>
-               */
-
   return (
     <div className="app-container dark-theme">
-      <Header/>
-      <section className="blockCode profile-container">
-      {loading ? (
+      <Header />
+      <section className={styles.profileContainer}>
+        {loading ? (
           <p>Ładowanie...</p>
         ) : (
-        <div className="profile-content">
-          <div className="profile-header">
-            <div className="profile-avatar">
-              <img 
-                src={imageUrl() + user.profileImage} 
-                alt={`Profilowe ${user.username}`}
-                className="avatar-image"
-              />
-              <div className="avatar-controls">
-                <button className="edit-button">Zmień awatar</button>
-                <button className="edit-button">Zarządzaj itemami</button>
-              </div>
-            </div>
-            
-            <div className="profile-info">
-              <div className="username-section">
-                <h2>{user.username}</h2>
-                {user.isAdmin && <span className="admin-badge"><i className="fas fa-crown"></i>Admin</span>}
-                <Link to="/profile/settings" className="settings-link">
-                  <button className="edit-button">Edytuj profil</button>
-                </Link>
-              </div>
-              
-              {(user.firstName || user.lastName) && (
-                <p className="user-name">
-                  {user.firstName} {user.lastName}
-                </p>
-              )}
-              
-              <div className="quick-stats">
-                <div className="stat-item">
-                  <span className="stat-label">Punkty:</span>
-                  <span className="stat-value">{user.points}</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Liczba Znajomych:</span>
-                  <span className="stat-value">{totalFriends}</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Ostatnie logowanie:</span>
-                  <span className="stat-value">{formatLastLogin(user.lastLogin)}</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Postęp:</span>
-                  <span className="stat-value">{user.progress}%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="profile-details">
-            <div className="detail-section">
-              <h3>Opis</h3>
-              <div className="detail-content">
-                {user.description ? (
-                  <p>{user.description}</p>
+          <div className={styles.profileContent}>
+            <div className={styles.profileHeader}>
+              <div className={styles.profileAvatar}>
+                {user.profileImage ? (
+                  <img
+                    src={imageUrl() + user.profileImage}
+                    alt={`Profilowe ${user.username}`}
+                    className={styles.avatarImage}
+                  />
                 ) : (
-                  <p className="no-data">Nie dodano jeszcze opisu.</p>
+                  <div className={styles.avatarPlaceholder}>
+                    <i className="fas fa-user"></i>
+                  </div>
                 )}
+                <div className={styles.avatarControls}>
+                  <button className={styles.editButton}>Zmień awatar</button>
+                  <button className={styles.editButton}>Zarządzaj itemami</button>
+                </div>
+              </div>
+
+              <div className={styles.profileInfo}>
+                <div className={styles.usernameSection}>
+                  <h2>{user.username}</h2>
+                  {user.isAdmin && (
+                    <span className={styles.adminBadge}>
+                      <i className="fas fa-crown"></i>Admin
+                    </span>
+                  )}
+                  <Link to="/profile/settings" className={styles.settingsLink}>
+                    <button className={styles.editButton}>Edytuj profil</button>
+                  </Link>
+                </div>
+
+                {(user.firstName || user.lastName) && (
+                  <p className={styles.userName}>
+                    {user.firstName} {user.lastName}
+                  </p>
+                )}
+
+                <div className={styles.quickStats}>
+                  <div className={styles.statItem}>
+                    <span className={styles.statLabel}>Punkty:</span>
+                    <span className={styles.statValue}>{user.points}</span>
+                  </div>
+                  <div className={styles.statItem}>
+                    <span className={styles.statLabel}>Liczba Znajomych:</span>
+                    <span className={styles.statValue}>{totalFriends}</span>
+                  </div>
+                  <div className={styles.statItem}>
+                    <span className={styles.statLabel}>Ostatnie logowanie:</span>
+                    <span className={styles.statValue}>{formatLastLogin(user.lastLogin)}</span>
+                  </div>
+                  <div className={styles.statItem}>
+                    <span className={styles.statLabel}>Postęp:</span>
+                    <span className={styles.statValue}>{user.progress}%</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {(user.instagramLink || user.linkedinLink || user.youtubeLink) && (
-              <div className="detail-section">
-                <h3>Linki</h3>
-                <div className="social-links">
-                  <ul>
-                    {user.instagramLink && (
-                      <li>
-                        <a href={user.instagramLink} className="social-link" target="_blank" rel="noopener noreferrer">
-                          <i className="fab fa-instagram"></i> Instagram
-                        </a>
-                      </li>
-                    )}
-                    {user.linkedinLink && (
-                      <li>
-                        <a href={user.linkedinLink} className="social-link" target="_blank" rel="noopener noreferrer">
-                          <i className="fab fa-linkedin"></i> LinkedIn
-                        </a>
-                      </li>
-                    )}
-                    {user.youtubeLink && (
-                      <li>
-                        <a href={user.youtubeLink} className="social-link" target="_blank" rel="noopener noreferrer">
-                          <i className="fab fa-youtube"></i> YouTube
-                        </a>
-                      </li>
-                    )}
-                  </ul>
+            <div className={styles.profileDetails}>
+              <div className={styles.detailSection}>
+                <h3>Opis</h3>
+                <div className={styles.detailContent}>
+                  {user.description ? (
+                    <p>{user.description}</p>
+                  ) : (
+                    <p className={styles.noData}>Nie dodano jeszcze opisu.</p>
+                  )}
                 </div>
               </div>
-            )}
+
+              {(user.instagramLink || user.linkedinLink || user.youtubeLink) && (
+                <div className={styles.detailSection}>
+                  <h3>Linki</h3>
+                  <div className={styles.socialLinks}>
+                    <ul>
+                      {user.instagramLink && (
+                        <li>
+                          <a
+                            href={user.instagramLink}
+                            className={styles.socialLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="fab fa-instagram"></i> Instagram
+                          </a>
+                        </li>
+                      )}
+                      {user.linkedinLink && (
+                        <li>
+                          <a
+                            href={user.linkedinLink}
+                            className={styles.socialLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="fab fa-linkedin"></i> LinkedIn
+                          </a>
+                        </li>
+                      )}
+                      {user.youtubeLink && (
+                        <li>
+                          <a
+                            href={user.youtubeLink}
+                            className={styles.socialLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="fab fa-youtube"></i> YouTube
+                          </a>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>          
         )}
       </section>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

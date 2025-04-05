@@ -4,7 +4,7 @@ import Footer from '../../components/Footer/Footer';
 import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../../services/authService'; 
 import { useAuth } from '../../context/AuthContext';
-import '../../stylePage/auth.css'
+import authStyles from '../../stylePage/auth.module.css';
 
 const SignIn = () => {
   const { login: loginUser, isAuthenticated } = useAuth();
@@ -40,54 +40,56 @@ const SignIn = () => {
   return (
     <div className="app-container dark-theme ">
       <Header />
-      <section className="blockCode auth">
-        {loading ? (
-          <p className="loading-text">Ładowanie...</p>
-        ) : (
-          <>
-            <form onSubmit={handleSubmit}>
-              <h1>Zaloguj się</h1>
-              {error && <p className="error-message">{error}</p>}
+        <section className={`${authStyles.blockCode} ${authStyles.auth}`}>
+          {loading ? (
+            <p className={authStyles.loadingText}>Ładowanie...</p>
+          ) : (
+            <>
+              <form onSubmit={handleSubmit} className={authStyles.form}>
+                <h1 className={authStyles.title}>Zaloguj się</h1>
+                {error && <p className={authStyles.errorMessage}>{error}</p>}
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Email lub Nazwa użytkownika:</label>
+                  <input
+                    type="text"
+                    value={uniqueIdentifier}
+                    onChange={(e) => setUniqueIdentifier(e.target.value)}
+                    placeholder="Podaj email lub nazwę użytkownika"
+                    required
+                    className={authStyles.input}
+                  />
+                </div>
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Hasło:</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Podaj hasło"
+                    required
+                    className={authStyles.input}
+                  />
+                </div>
+                
+                <button type="submit" className={authStyles.submitButton}>Zaloguj się</button>
+              </form>
               
-              <div className="input-group">
-                <label>Email lub Nazwa użytkownika:</label>
-                <input
-                  type="text"
-                  value={uniqueIdentifier}  
-                  onChange={(e) => setUniqueIdentifier(e.target.value)}
-                  placeholder="Podaj email lub nazwę użytkownika"
-                  required
-                />
+              <div className={authStyles.linksContainer}>
+                <ul className={authStyles.linksList}>
+                  <li className={authStyles.linkItem}>
+                    <Link to="/auth/sign-up" className={authStyles.link}>Zarejestruj się</Link>
+                  </li>
+                  <li className={authStyles.linkItem}>
+                    <Link to="/auth/forgot-password" className={authStyles.link}>Nie pamiętam hasła</Link>
+                  </li>
+                </ul>
               </div>
-              
-              <div className="input-group">
-                <label>Hasło:</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Podaj hasło"
-                  required
-                />
-              </div>
-              
-              <button type="submit">Zaloguj się</button>
-            </form>
-            
-            <div className="links-container">
-              <ul>
-                <li>
-                  <Link to="/auth/sign-up">Zarejestruj się</Link>
-                </li>
-                <li>
-                  <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
-                </li>
-              </ul>
-            </div>
-          </>
-        )}
-      </section>
-      <Footer />
+            </>
+          )}
+        </section>
+        <Footer />
     </div>
   );
 };

@@ -8,7 +8,7 @@ import { createBrowserRouter, Link, RouterProvider, useNavigate } from 'react-ro
 
 //PROFILE LINKS
 import { AuthProvider, useAuth } from '../context/AuthContext';
-import NotFound from '../pages/NotFound/NotFound';
+import NotFound from '../pages/Additional/NotFound';
 import Shop from '../pages/shop/Shop';
 
 import SignIn from '../pages/auth/SignIn';
@@ -44,6 +44,7 @@ import AdminTasks from '../pages/admin/AdminTasks';
 import AdminTaskInfo from '../pages/admin/AdminTaskInfo';
 import AdminTaskSettings from '../pages/admin/AdminTaskSettings';
 import People from '../pages/people/People';
+import SearchOrganisation from '../pages/organisations/SearchOrganisation';
 
 
 const router = createBrowserRouter([
@@ -107,6 +108,12 @@ const router = createBrowserRouter([
     element: <CommunityMain />
   },
   {
+    path: '/community/settings',
+    element: <CommunitySettings/>
+  },
+
+  
+  {
     path: '/community/users',
     element: <People />
   },
@@ -120,10 +127,9 @@ const router = createBrowserRouter([
   },
 
 
-  {
-    path: '/community/organisations',
-    element: <Organisations/>
-  },
+
+
+
   {
     path: '/community/organisation/:organisationUniqueName/admin',
     element: <OrganisationAdmin/>
@@ -137,16 +143,20 @@ const router = createBrowserRouter([
     element: <CreateOrganisation/>
   },
   {
+    path: '/community/organisations',
+    element: <Organisations/>
+  },
+  {
+    path: '/community/organisations/search',
+    element: <SearchOrganisation/>
+  },
+  {
     path: '/community/organisation/:organisationUniqueName/settings',
     element: <OrganisationSettings/>
   },
   {
     path: '/community/organisation/:organisationUniqueName/settings/tasks',
     element: <OrganisationTaskManagement/>
-  },
-  {
-    path: '/community/settings',
-    element: <CommunitySettings/>
   },
   
   {

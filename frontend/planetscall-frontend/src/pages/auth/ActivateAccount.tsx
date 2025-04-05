@@ -3,6 +3,7 @@ import { useNavigate, useLocation  } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
+import authStyles from '../../stylePage/auth.module.css';
 
 const ActivateAccount = () => {
   const location = useLocation();
@@ -47,30 +48,30 @@ const ActivateAccount = () => {
 
   return (
     <div className="app-container">
-      <Header/>
-      <section className="blockCode">
+    <Header/>
+    <section className={authStyles.blockCode}>
       {loading ? (
-          <p>Ładowanie...</p>
-        ) : (
-          <>
-
-      <h1>Aktywuj Konto</h1>
-      <form onSubmit={handleActivation}>
-        <label>Kod aktywacyjny:</label>
-        <input
-          type="text"
-          value={activationCode}
-          onChange={(e) => setActivationCode(e.target.value)}
-          placeholder="Wprowadź kod aktywacyjny"
-          required
-        />
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Aktywuj</button>
-      </form>
-          </>
-        )}
-      </section>
-      <Footer/>
+        <p className={authStyles.loadingText}>Ładowanie...</p>
+      ) : (
+        <>
+          <h1 className={authStyles.title}>Aktywuj Konto</h1>
+          <form onSubmit={handleActivation} className={authStyles.form}>
+            <label className={authStyles.label}>Kod aktywacyjny:</label>
+            <input
+              type="text"
+              value={activationCode}
+              onChange={(e) => setActivationCode(e.target.value)}
+              placeholder="Wprowadź kod aktywacyjny"
+              required
+              className={authStyles.input}
+            />
+            {error && <p className={authStyles.errorMessage}>{error}</p>}
+            <button type="submit" className={authStyles.submitButton}>Aktywuj</button>
+          </form>
+        </>
+      )}
+    </section>
+    <Footer/>
       
     </div>
   )

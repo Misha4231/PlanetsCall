@@ -3,7 +3,7 @@ import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
 import { Link, useNavigate } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
-import '../../stylePage/auth.css'
+import authStyles from '../../stylePage/auth.module.css';
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -64,76 +64,79 @@ const SignUp: React.FC = () => {
   return (
     <div className="app-container dark-theme">
       <Header />
-      <section className="blockCode auth">
-        {loading ? (
-          <p className="loading-text">Ładowanie...</p>
-        ) : (
-          <>
-            <form onSubmit={handleSignUp}>
-              <h1>Zarejestruj się</h1>
-              
-              {error && (
-                <div className="error-message">
-                  {error}
+        <section className={`${authStyles.blockCode} ${authStyles.auth}`}>
+          {loading ? (
+            <p className={authStyles.loadingText}>Ładowanie...</p>
+          ) : (
+            <>
+              <form onSubmit={handleSignUp} className={authStyles.form}>
+                <h1 className={authStyles.title}>Zarejestruj się</h1>
+                
+                {error && (
+                  <div className={authStyles.errorMessage}>
+                    {error}
+                  </div>
+                )}
+                
+                {success && (
+                  <div className={authStyles.successMessage}>
+                    {success}
+                  </div>
+                )}
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Nazwa użytkownika:</label>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Wprowadź nazwę użytkownika"
+                    required
+                    className={authStyles.input}
+                  />
                 </div>
-              )}
-              
-              {success && (
-                <div className="success-message">
-                  {success}
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Email:</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Wprowadź adres email"
+                    required
+                    className={authStyles.input}
+                  />
                 </div>
-              )}
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Hasło:</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Wprowadź hasło"
+                    required
+                    className={authStyles.input}
+                  />
+                </div>
+                
+                <button type="submit" className={authStyles.submitButton}>Zarejestruj się</button>
+              </form>
               
-              <div className="input-group">
-                <label>Nazwa użytkownika:</label>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Wprowadź nazwę użytkownika"
-                  required
-                />
+              <div className={authStyles.linksContainer}>
+                <ul className={authStyles.linksList}>
+                  <li className={authStyles.linkItem}>
+                    <Link to="/auth/sign-in" className={authStyles.link}>Zaloguj się</Link>
+                  </li>
+                  <li className={authStyles.linkItem}>
+                    <Link to="/auth/forgot-password" className={authStyles.link}>Nie pamiętam hasła</Link>
+                  </li>
+                </ul>
               </div>
-              
-              <div className="input-group">
-                <label>Email:</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Wprowadź adres email"
-                  required
-                />
-              </div>
-              
-              <div className="input-group">
-                <label>Hasło:</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Wprowadź hasło"
-                  required
-                />
-              </div>
-              
-              <button type="submit">Zarejestruj się</button>
-            </form>
-            
-            <div className="links-container">
-              <ul>
-                <li>
-                  <Link to="/auth/sign-in">Zaloguj się</Link>
-                </li>
-                <li>
-                  <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
-                </li>
-              </ul>
-            </div>
-          </>
-        )}
-      </section>
-      <Footer />
+            </>
+          )}
+        </section>
+        <Footer />
     </div>
   );
 };

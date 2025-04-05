@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { authHeader }  from  "../../services/authHeader";
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
-import '../../stylePage/auth.css'
+import authStyles from '../../stylePage/auth.module.css';
 
 const ChangePassword: React.FC = () => {
 
@@ -50,69 +50,72 @@ const ChangePassword: React.FC = () => {
   return (
     <div className="app-container dark-theme">
       <Header />
-      <section className="blockCode auth">
-        {loading ? (
-          <p className="loading-text">Ładowanie...</p>
-        ) : (
-          <>
-            <form onSubmit={handleSubmit}>
-              <h1>Zmiana hasła</h1>
-              
-              <div className="instruction-text">
-                <p>Wprowadź kod potwierdzenia i nowe hasło</p>
-              </div>
-              
-              <div className="input-group">
-                <label>Kod potwierdzenia:</label>
-                <input
-                  type="text"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="Wprowadź kod z emaila"
-                  required
-                />
-              </div>
-              
-              <div className="input-group">
-                <label>Nowe hasło:</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Wprowadź nowe hasło"
-                  required
-                />
-              </div>
-              
-              <div className="input-group">
-                <label>Potwierdź nowe hasło:</label>
-                <input
-                  type="password"
-                  value={passwordConfirmation}
-                  onChange={(e) => setPasswordConfirmation(e.target.value)}
-                  placeholder="Powtórz nowe hasło"
-                  required
-                />
-              </div>
-              
-              {error && (
-                <div className="error-message">
-                  {error}
+        <section className={`${authStyles.blockCode} ${authStyles.auth}`}>
+          {loading ? (
+            <p className={authStyles.loadingText}>Ładowanie...</p>
+          ) : (
+            <>
+              <form onSubmit={handleSubmit} className={authStyles.form}>
+                <h1 className={authStyles.title}>Zmiana hasła</h1>
+                
+                <div className={authStyles.instructionText}>
+                  <p>Wprowadź kod potwierdzenia i nowe hasło</p>
                 </div>
-              )}
-              
-              {success && (
-                <div className="success-message">
-                  {success}
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Kod potwierdzenia:</label>
+                  <input
+                    type="text"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    placeholder="Wprowadź kod z emaila"
+                    required
+                    className={authStyles.input}
+                  />
                 </div>
-              )}
-              
-              <button type="submit">Zmień hasło</button>
-            </form>
-          </>
-        )}
-      </section>
-      <Footer />
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Nowe hasło:</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Wprowadź nowe hasło"
+                    required
+                    className={authStyles.input}
+                  />
+                </div>
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Potwierdź nowe hasło:</label>
+                  <input
+                    type="password"
+                    value={passwordConfirmation}
+                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                    placeholder="Powtórz nowe hasło"
+                    required
+                    className={authStyles.input}
+                  />
+                </div>
+                
+                {error && (
+                  <div className={authStyles.errorMessage}>
+                    {error}
+                  </div>
+                )}
+                
+                {success && (
+                  <div className={authStyles.successMessage}>
+                    {success}
+                  </div>
+                )}
+                
+                <button type="submit" className={authStyles.submitButton}>Zmień hasło</button>
+              </form>
+            </>
+          )}
+        </section>
+        <Footer />
     </div>
   );
 };

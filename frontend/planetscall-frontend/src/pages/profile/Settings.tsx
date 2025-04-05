@@ -4,11 +4,12 @@ import { useAuth } from '../../context/AuthContext';
 import { updateUserSettings } from '../../services/userService';
 import Header from '../../components/shared/Header';
 import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
-import '../../stylePage/profile.css';
 import Footer from '../../components/Footer/Footer';
+import styles from '../../stylePage/profile.module.css';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();
+    const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -124,161 +125,220 @@ const Settings: React.FC = () => {
   return (
     <div className="app-container dark-theme">
       <Header/>
-      <section className="blockCode profile-container">
-      <div className="profile-content">
-        <h1 className="settings-title">Ustawienia Profilu</h1>
-        <form onSubmit={handleSubmit} className="settings-form">
-          <div className="form-grid two-columns">
-            <div className="form-column">
-              <div className="form-group full-width">
-                <label className="form-label">Zdjęcie Profilowe:</label>
-                {previewImage && (
-                  <div className="image-preview">
-                    <img 
-                      src={previewImage} 
-                      alt="Podgląd zdjęcia profilowego" 
-                      className="preview-image"
+      <section className={`${styles.profileContainer} app-container dark-theme`}>
+        {loading ? (
+          <p className={styles.loadingText}>Ładowanie...</p>
+        ) : (
+          <div className={styles.profileContent}>
+            <h1 className={styles.settingsTitle}>Ustawienia Profilu</h1>
+            <form onSubmit={handleSubmit} className={styles.settingsForm}>
+              <div className={styles.formGrid}>
+                <div className={styles.formColumn}>
+                  <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                    <label className={styles.formLabel}>Zdjęcie Profilowe:</label>
+                    <div className={styles.imageUploadContainer}>
+                      {previewImage && (
+                        <div className={styles.imagePreview}>
+                          <img 
+                            src={previewImage} 
+                            alt="Podgląd zdjęcia profilowego" 
+                            className={styles.previewImage}
+                          />
+                        </div>
+                      )}
+                      <label className={styles.fileInputLabel}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className={styles.fileInput}
+                        />
+                        <span className={styles.fileInputButton}>Wybierz zdjęcie</span>
+                        {previewImage && (
+                          <span className={styles.fileName}>{previewImage || "Wybrane zdjęcie"}</span>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Email:</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className={styles.formInput}
+                      placeholder="Wprowadź email"
                     />
                   </div>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="form-input"
-                />
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Nazwa użytkownika:</label>
+                    <input
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      className={styles.formInput}
+                      placeholder="Wprowadź nazwę użytkownika"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Imię:</label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      className={styles.formInput}
+                      placeholder="Wprowadź imię"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Nazwisko:</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      className={styles.formInput}
+                      placeholder="Wprowadź nazwisko"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formColumn}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Preferowany Język:</label>
+                    <select
+                      name="preferredLanguage"
+                      value={formData.preferredLanguage}
+                      onChange={handleInputChange}
+                      className={styles.formSelect}
+                    >
+                      <option value="pl">Polski</option>
+                      <option value="en">Angielski</option>
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Motyw:</label>
+                    <select
+                      name="themePreference"
+                      value={formData.themePreference}
+                      onChange={handleInputChange}
+                      className={styles.formSelect}
+                    >
+                      <option value={0}>Ciemny</option>
+                      <option value={1}>Jasny</option>
+                      <option value={2}>Mieszany</option>
+                    </select>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Opis profilu:</label>
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      className={styles.formTextarea}
+                      placeholder="Dodaj opis swojego profilu"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Email:</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="form-input"
-                />
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>Preferencje</h3>
+                <div className={styles.checkboxGroupContainer}>
+                  <div className={styles.checkboxGroup}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="isNotifiable"
+                        checked={formData.isNotifiable}
+                        onChange={handleInputChange}
+                        className={styles.checkboxInput}
+                      />
+                      <span className={styles.checkboxCustom}></span>
+                      <span className={styles.checkboxText}>Powiadomienia</span>
+                    </label>
+                  </div>
+
+                  <div className={styles.checkboxGroup}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="isVisible"
+                        checked={formData.isVisible}
+                        onChange={handleInputChange}
+                        className={styles.checkboxInput}
+                      />
+                      <span className={styles.checkboxCustom}></span>
+                      <span className={styles.checkboxText}>Widoczny profil</span>
+                    </label>
+                  </div>
+
+                  <div className={styles.checkboxGroup}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="mailsSubscribed"
+                        checked={formData.mailsSubscribed}
+                        onChange={handleInputChange}
+                        className={styles.checkboxInput}
+                      />
+                      <span className={styles.checkboxCustom}></span>
+                      <span className={styles.checkboxText}>Subskrypcja email</span>
+                    </label>
+                  </div>
+                </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Nazwa użytkownika:</label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  className="form-input"
-                />
+              <div className={styles.socialLinksSection}>
+                <h3 className={styles.sectionTitle}>Linki społecznościowe</h3>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Instagram:</label>
+                  <input
+                    type="url"
+                    name="instagramLink"
+                    value={formData.instagramLink}
+                    onChange={handleInputChange}
+                    className={styles.formInput}
+                    placeholder="https://instagram.com/twojprofil"
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>LinkedIn:</label>
+                  <input
+                    type="url"
+                    name="linkedinLink"
+                    value={formData.linkedinLink}
+                    onChange={handleInputChange}
+                    className={styles.formInput}
+                    placeholder="https://linkedin.com/in/twojprofil"
+                  />
+                </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Imię:</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Nazwisko:</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className="form-input"
-                />
-              </div>
-            </div>
-
-            <div className="form-column">
-              <div className="form-group">
-                <label className="form-label">Preferowany Język:</label>
-                <select
-                  name="preferredLanguage"
-                  value={formData.preferredLanguage}
-                  onChange={handleInputChange}
-                  className="form-input"
+              <div className={styles.formActions}>
+                <button type="submit" className={styles.primaryButton}>
+                  <i className="fas fa-save"></i> Zapisz Zmiany
+                </button>
+                <button 
+                  type="button" 
+                  className={styles.secondaryButton}
+                  onClick={() => navigate('/profile')}
                 >
-                  <option value="pl">Polski</option>
-                  <option value="en">Angielski</option>
-                </select>
+                  <i className="fas fa-times"></i> Anuluj
+                </button>
               </div>
-
-              <div className="form-group">
-                <label className="form-label">Motyw:</label>
-                <select
-                  name="themePreference"
-                  value={formData.themePreference}
-                  onChange={handleInputChange}
-                  className="form-input"
-                >
-                  <option value={0}>Ciemny</option>
-                  <option value={1}>Jasny</option>
-                  <option value={2}>Mieszany</option>
-                </select>
-              </div>
-            </div>
+            </form>
           </div>
-
-          <div className="form-group full-width checkbox-group-container">
-            <div className="checkbox-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="isNotifiable"
-                  checked={formData.isNotifiable}
-                  onChange={handleInputChange}
-                  className="checkbox-input"
-                />
-                <span>Powiadomienia</span>
-              </label>
-            </div>
-
-            <div className="checkbox-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="isVisible"
-                  checked={formData.isVisible}
-                  onChange={handleInputChange}
-                  className="checkbox-input"
-                />
-                <span>Widoczny profil</span>
-              </label>
-            </div>
-
-            <div className="checkbox-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="mailsSubscribed"
-                  checked={formData.mailsSubscribed}
-                  onChange={handleInputChange}
-                  className="checkbox-input"
-                />
-                <span>Subskrypcja email</span>
-              </label>
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <button type="submit" className="save-button">
-              Zapisz Zmiany
-            </button>
-            <button 
-              type="button" 
-              className="cancel-button"
-              onClick={() => navigate('/profile')}
-            >
-              Anuluj
-            </button>
-          </div>
-        </form>
-      </div>
+        )}
       </section>
       <Footer/>
     </div>
