@@ -4,11 +4,13 @@ import Footer from '../../components/Footer/Footer';
 import { useAuth } from '../../context/AuthContext';
 import { Member, Organisation } from '../community/communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import styles from '../../stylePage/organisation/organisationAdmin.module.css';
 import { getOrganisationData, getOrganisationRoles,
    getOrganisationUsers, getOrganisationRequests,
     acceptOrganisationRequest, rejectOrganisationRequest,
      removeOrganisationUser, sentVerificationRequest,
      deleteOrganisation } from '../../services/communityService';
+import { imageUrl } from '../../services/imageConvert';
 
 
 
@@ -22,6 +24,7 @@ const OrganisationAdmin = () => {
 
 
     const { organisationUniqueName } = useParams<{ organisationUniqueName: string }>();
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     const [loading, setLoading] = useState<boolean>(false);
       const [success, setSuccess] = useState<string | null>(null);
@@ -180,6 +183,7 @@ const handleSentRequestToVerify = async () =>{
 
 const handleDeleteOrganisation = async () =>{
   if (!isAuthenticated || !token) return;
+  setShowDeleteConfirmation(false);
   setLoading(true);
   setError(null);
   setSuccess(null);
@@ -194,7 +198,7 @@ try {
       
     const response = await deleteOrganisation(authToken, organisationUniqueName);
     console.log(response);
-    setSuccess('Użytkownik usunięty pomyślnie!');
+    setSuccess('Organizacja usunięta pomyślnie!');
     navigate('/community/');
 
   } catch (err: any) {
@@ -204,89 +208,169 @@ try {
   }
 }
 
-  return (
-    <div className="app-container">
-        <Header/>
-        {success && <p style={{ color: 'green' }}>{success}</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <section className="blockCode">
-            
-      {loading ? (
-          <p>Ładowanie...</p>
-        ) : (
-            <div>
-              <Link to={`/community/organisation/${organisationUniqueName}/settings`}>Ustawienia</Link>
-              <Link to={`/community/organisation/${organisationUniqueName}/settings/tasks`}>Zadania</Link>
-            <input
-                type="button"
-                value="Usuń Organizacje"
-                onClick={() => handleDeleteOrganisation()} disabled={loading}
-              />
-                {!organisation?.isVerified && (
-                  <div>
-                    <input
-                        type="button"
-                        value="Wyślij prośbę o weryfikacje organizacji"
-                        onClick={() => handleSentRequestToVerify()} disabled={loading}
-                      />
-                    </div>
-                )}
-
-                {organisation?.isPrivate && (
-                    <div>
-                        <h3>Prośby do dołączenia</h3>
-                        {requestList.length > 0 ? (
-                            <ul>
-                            {requestList.map((us) => (
-                                <li key={us.id}>
-                                {us.username}
-                                <input
-                                    type="button"
-                                    value="Zaakceptuj"
-                                    onClick={() => handleAcceptRequest(us.id) } disabled={loading}
-                                />
-                                <input
-                                    type="button"
-                                    value="Odrzuć"
-                                    onClick={() => handleDeleteRequest(us.id)}disabled={loading}
-                                />
-                                </li>
-                            ))}
-                            </ul>
-                        ) : (
-                            <p>Nie ma żadnych próśb.</p>
-                        )}
-                        <hr/>
-                        <h4>Members</h4>
-                            {users.length > 0 ? (
-                                <ul>
-                                {users.map((member) => (
-                                    <li key={member.id}>
-                                    <Link to={`/user/${member.username}`}>{member.username}</Link>
-                                    {member.id==user?.id ?(<div>(ty)</div>) :
-                                    (<div>                                        
-                                        <input
-                                            type="button"
-                                            value="Usuń"
-                                            onClick={() => handleDeleteUser(member.id)} 
-                                        />
-                                    </div>)}
-                                    </li>
-                                ))}
-                                </ul>
-                            ) : (
-                                <p>Nie należysz do żadnych organizacji.</p>
-                            )}
-                    </div>
-                )}
-
-            </div>
-        )}
-        </section>
-        <Footer/>
+return (
+  <div className="app-container dark-theme">
+    <Header />
+    <section className={styles.adminContainer}>
+      {success && <div className={styles.successMessage}>{success}</div>}
+      {error && <div className={styles.errorMessage}>{error}</div>}
       
-    </div>
-  )
+      {loading ? (
+        <div className={styles.loading}>Ładowanie...</div>
+      ) : (
+        <div className={styles.adminContent}>
+          <div className={styles.adminHeader}>
+            <h1>Zarządzanie organizacją</h1>
+            <button
+              className={styles.dangerButton}
+              onClick={() => setShowDeleteConfirmation(true)}
+              disabled={loading}
+            >
+              Usuń Organizację
+            </button>
+          </div>
+
+          <div className={styles.adminNav}>
+            <Link 
+              to={`/community/organisation/${organisationUniqueName}/settings`}
+              className={styles.adminNavLink}
+            >
+              Ustawienia
+            </Link>
+            <Link 
+              to={`/community/organisation/${organisationUniqueName}/settings/tasks`}
+              className={styles.adminNavLink}
+            >
+              Zadania
+            </Link>
+          </div>
+
+          {!organisation?.isVerified && (
+            <button
+              className={styles.primaryButton}
+              onClick={() => handleSentRequestToVerify()}
+              disabled={loading}
+            >
+              Wyślij prośbę o weryfikację organizacji
+            </button>
+          )}
+
+          {organisation?.isPrivate && (
+            <>
+              <h3 className={styles.sectionTitle}>Prośby o dołączenie</h3>
+              {requestList.length > 0 ? (
+                <ul className={styles.requestList}>
+                  {requestList.map((us) => (
+                    <li key={us.id} className={styles.requestItem}>
+                      <div className={styles.userInfo}>
+                        <div className={styles.userAvatar}>
+                          {us.profileImage ? (
+                            <img src={us.profileImage} alt={us.username} />
+                          ) : (
+                            <i className="fas fa-user"></i>
+                          )}
+                        </div>
+                        <span className={styles.username}>{us.username}</span>
+                      </div>
+                      <div className={styles.actions}>
+                        <button
+                          className={`${styles.actionButton} ${styles.acceptButton}`}
+                          onClick={() => handleAcceptRequest(us.id)}
+                          disabled={loading}
+                        >
+                          Zaakceptuj
+                        </button>
+                        <button
+                          className={`${styles.actionButton} ${styles.rejectButton}`}
+                          onClick={() => handleDeleteRequest(us.id)}
+                          disabled={loading}
+                        >
+                          Odrzuć
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className={styles.noItems}>Nie ma żadnych próśb.</div>
+              )}
+              <div className={styles.divider}></div>
+            </>
+          )}
+
+          <h3 className={styles.sectionTitle}>Członkowie ({users.length})</h3>
+          {users.length > 0 ? (
+            <ul className={styles.memberList}>
+              {users.map((member) => (
+                <li key={member.id} className={styles.memberItem}>
+                  <div className={styles.userInfo}>
+                    <div className={styles.userAvatar}>
+                      {member.profileImage ? (
+                        <img src={imageUrl() + member.profileImage} alt={"Profilowe: " + member.username} />
+                      ) : (
+                        <i className="fas fa-user"></i>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+                      <Link 
+                        to={`/user/${member.username}`} 
+                        className={styles.username}
+                      >
+                        {member.username}
+                      </Link>
+                      {member.id === user?.id && (
+                        <span className={styles.youTag}>Ty</span>
+                      )}
+                    </div>
+                  </div>
+                  {member.id !== user?.id && (
+                    <div className={styles.actions}>
+                      <button
+                        className={`${styles.actionButton} ${styles.removeButton}`}
+                        onClick={() => handleDeleteUser(member.id)}
+                        disabled={loading}
+                      >
+                        Usuń
+                      </button>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className={styles.noItems}>Brak członków w organizacji.</div>
+          )}
+        </div>
+      )}
+    </section>
+
+    {showDeleteConfirmation && (
+      <div className={styles.modalOverlay}>
+        <div className={styles.modalContent}>
+          <h2 className={styles.modalTitle}>Potwierdzenie usunięcia</h2>
+          <p>Czy na pewno chcesz usunąć organizację {organisation?.name}? Tej akcji nie można cofnąć.</p>
+          <div className={styles.modalButtons}>
+            <button
+              className={`${styles.actionButton} ${styles.modalCancelButton}`}
+              onClick={() => setShowDeleteConfirmation(false)}
+            >
+              Anuluj
+            </button>
+            <button
+              className={`${styles.actionButton} ${styles.dangerButton}`}
+              onClick={handleDeleteOrganisation}
+              disabled={loading}
+            >
+              {loading ? 'Usuwanie...' : 'Usuń organizację'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <Footer />
+  </div>
+);
 }
 
 export default OrganisationAdmin

@@ -11,12 +11,14 @@ const SignIn = () => {
   const [uniqueIdentifier, setUniqueIdentifier] = useState(''); 
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingUser, setLoadingUser] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null); 
   const navigate = useNavigate();  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoadingUser(true);
 
 
     try {
@@ -26,6 +28,8 @@ const SignIn = () => {
       navigate('/profile'); 
     } catch (err: any) {
       setError(err.message || 'Błąd logowania. Sprawdź dane i spróbuj ponownie.');
+    } finally {
+      setLoadingUser(false);
     }
   };
 
@@ -73,7 +77,13 @@ const SignIn = () => {
                   />
                 </div>
                 
-                <button type="submit" className={authStyles.submitButton}>Zaloguj się</button>
+                <button type="submit" className={authStyles.submitButton} disabled={loadingUser}>
+                {loadingUser ? (
+                  <span className={authStyles.buttonLoader}></span>
+                ) : (
+                  'Zaloguj się'
+                )}
+                </button>
               </form>
               
               <div className={authStyles.linksContainer}>
