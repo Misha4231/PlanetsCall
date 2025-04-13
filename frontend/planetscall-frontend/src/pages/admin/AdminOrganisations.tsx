@@ -5,6 +5,8 @@ import { getOrganisationVerifications, sentResponseToOrganisationVerification, c
 import { useAuth } from '../../context/AuthContext';
 import { Organisation } from '../community/communityTypes';
 import { Link, useNavigate } from 'react-router-dom';
+import styles from '../../stylePage/admin/admin.module.css';
+
 
 const AdminOrganisations = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -73,43 +75,67 @@ const AdminOrganisations = () => {
     };
 
     return (
-        <div className="app-container">
-            <Header/>
-            <section className="blockCode">
-                <h2>Weryfikacja organizacji</h2>
-                {loading ? (
-                    <p>Ładowanie...</p>
-                ) : error ? (
-                    <p style={{ color: 'red' }}>{error}</p>
-                ) : organisation.length > 0 ? (
-                    <ul>
-                        {organisation.map((org) => (
-                            <li key={org.id}>
-                                <Link to={`/community/organisation/${org.uniqueName}`}>{org.name}</Link>
-                                <button
-                                    onClick={() => handleSentResponse(org.uniqueName, "reject")}
-                                    disabled={loading}
-                                >
-                                    Odrzuć
-                                </button>
-                                <button
-                                    onClick={() => handleSentResponse(org.uniqueName, "approve")}
-                                    disabled={loading}
-                                >
-                                    Zaakceptuj
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>Brak żądań do zaakceptowania.</p>
-                )}
-                
-                {success && <p style={{ color: 'green' }}>{success}</p>}
-            </section>            
-            <Footer/>
+        <div className="app-container dark-theme">
+          <Header />
+          <section className={styles.adminContainer}>
+            <div className={styles.adminContent}>
+              <h1 className={styles.adminTitle}>Weryfikacja organizacji</h1>
+                  <Link 
+                    to={`/admin/`} 
+                    className={styles.adminBackButton}
+                  >
+                    <i className="fas fa-arrow-left"></i> Powrót
+                  </Link>
+              
+              {loading ? (
+                <p>Ładowanie...</p>
+              ) : error ? (
+                <div className={`${styles.adminMessage} ${styles.adminError}`}>{error}</div>
+              ) : organisation.length > 0 ? (
+                <ul className={styles.adminList}>
+                  {organisation.map((org) => (
+                    <li key={org.id} className={styles.adminListItem}>
+                      <div className={styles.adminListItemContent}>
+                        <Link 
+                          to={`/community/organisation/${org.uniqueName}`} 
+                          className={styles.adminListItemLink}
+                        >
+                          {org.name}
+                        </Link>
+                        <span>@{org.uniqueName}</span>
+                      </div>
+                      <div className={styles.adminButtonGroup}>
+                        <button
+                          onClick={() => handleSentResponse(org.uniqueName, "reject")}
+                          disabled={loading}
+                          className={`${styles.adminButton} ${styles.adminButtonDanger}`}
+                        >
+                          <i className="fas fa-times"></i> Odrzuć
+                        </button>
+                        <button
+                          onClick={() => handleSentResponse(org.uniqueName, "approve")}
+                          disabled={loading}
+                          className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
+                        >
+                          <i className="fas fa-check"></i> Zaakceptuj
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className={styles.adminEmpty}>
+                  <i className="fas fa-folder-open"></i>
+                  <p>Brak żądań do zaakceptowania.</p>
+                </div>
+              )}
+              
+              {success && <div className={`${styles.adminMessage} ${styles.adminSuccess}`}>{success}</div>}
+            </div>
+          </section>
+          <Footer />
         </div>
-    )
-}
+      );
+};
 
 export default AdminOrganisations

@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getTaskById, uploadTaskProof, Task } from '../../services/taskService';
 import Footer from '../../components/Footer/Footer';
 import { TaskType } from '../../services/adminOrgService';
+import styles from '../../stylePage/task/task.module.css';
 
 const TaskDetails = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -67,40 +68,75 @@ const TaskDetails = () => {
   };
 
   return (
-    <div className="app-container">
+    <div className="app-container dark-theme">
       <Header />
-      <section className="blockCode">
-        {loading ? (
-          <p>Ładowanie...</p>
-        ) : (
-          <>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {uploadSuccess && <p style={{ color: 'green' }}>Dowód wykonania zadania został przesłany!</p>}
-            
-            {task && (
-              <div>
-                <h2>{task.title}</h2>
-                <p>{task.description}</p>
-                <p>Nagroda: {task.reward} punktów</p>
-                <p>Typ: {getTaskTypeName(task.type)}</p>
-                <p>{task.isGroup ? 'Zadanie grupowe' : 'Zadanie indywidualne'}</p>
-                
-                <div style={{ marginTop: '20px' }}>
-                  <h3>Prześlij dowód wykonania:</h3>
-                  <input type="file" onChange={handleFileChange} accept="image/*,video/*" />
-                  {selectedFile && (
-                    <div>
-                      <p>Wybrany plik: {selectedFile.name}</p>
-                      <button onClick={handleSubmitProof} disabled={loading}>
+      <section className={styles.taskContainer}>
+        <div className={styles.taskContent}>
+          {loading ? (
+            <p>Ładowanie...</p>
+          ) : (
+            <>
+              {error && <div className={`${styles.taskMessage} ${styles.taskError}`}>{error}</div>}
+              {uploadSuccess && (
+                <div className={`${styles.taskMessage} ${styles.taskSuccess}`}>
+                  Dowód wykonania zadania został przesłany!
+                </div>
+              )}
+              
+              {task && (
+                <div className={styles.taskDetails}>
+                  <h1 className={styles.taskDetailsTitle}>{task.title}</h1>
+                  <p className={styles.taskDetailsDescription}>{task.description}</p>
+                  
+                  <div className={styles.taskDetailsMeta}>
+                    <span className={styles.taskDetailsMetaItem}>
+                      <i className="fas fa-star"></i> {task.reward} punktów
+                    </span>
+                    <span className={styles.taskDetailsMetaItem}>
+                      <i className="fas fa-tag"></i> {getTaskTypeName(task.type)}
+                    </span>
+                    <span className={styles.taskDetailsMetaItem}>
+                      <i className={task.isGroup ? 'fas fa-users' : 'fas fa-user'}></i>
+                      {task.isGroup ? 'Zadanie grupowe' : 'Zadanie indywidualne'}
+                    </span>
+                  </div>
+                  
+                  <div className={styles.taskUpload}>
+                    <h3 className={styles.taskUploadTitle}>Prześlij dowód wykonania:</h3>
+                    <input 
+                      type="file" 
+                      id="taskProof"
+                      className={styles.taskUploadInput}
+                      onChange={handleFileChange} 
+                      accept="image/*,video/*" 
+                    />
+                    <label htmlFor="taskProof" className={styles.taskUploadLabel}>
+                      <i className="fas fa-cloud-upload-alt"></i> Wybierz plik
+                    </label>
+                    
+                    {selectedFile && (
+                      <div className={styles.taskFileInfo}>
+                        <i className="fas fa-file"></i>
+                        <span>Wybrany plik: {selectedFile.name}</span>
+                      </div>
+                    )}
+                    
+                    {selectedFile && (
+                      <button 
+                        onClick={handleSubmitProof} 
+                        disabled={loading}
+                        className={styles.taskSubmitButton}
+                      >
+                        <i className="fas fa-paper-plane"></i>
                         {loading ? 'Przesyłanie...' : 'Wyślij dowód'}
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
+        </div>
       </section>
       <Footer />
     </div>

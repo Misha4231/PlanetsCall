@@ -5,6 +5,7 @@ import { activateTemplateTask, createTemplateTask, deleteTemplateTask, getAllTem
 import { Link, useNavigate } from 'react-router-dom';
 import { Organisation } from '../community/communityTypes';
 import { useAuth } from '../../context/AuthContext';
+import styles from '../../stylePage/admin/adminTask.module.css';
 
 const AdminTasks = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -145,99 +146,117 @@ const AdminTasks = () => {
     }
 };
 
-  return (
-    <div className="app-container">
-      <Header/>
-      <section className="blockCode">
-      {loading ? (
-          <p>Ładowanie...</p>
-        ) : (
-          <>
-            <h2>Zarządzanie zadaniami szablonowymi</h2>
-                
-                <div className="create-task-form">
-                    <h3>Utwórz nowe zadanie</h3>
-                    <form onSubmit={handleTaskSubmit}>
-                        <div>
-                            <label>Tytuł:</label>
-                            <input
-                                type="text"
-                                value={newTask.title}
-                                onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label>Opis:</label>
-                            <textarea
-                                value={newTask.description}
-                                onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label>Nagroda (punkty):</label>
-                            <input
-                                type="number"
-                                value={newTask.reward}
-                                onChange={(e) => setNewTask({...newTask, reward: Number(e.target.value)})}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label>Typ zadania:</label>
-                            <select
-                                value={newTask.type}
-                                onChange={(e) => setNewTask({...newTask, type: Number(e.target.value) as TaskType})}
-                                required
-                            >
-                                <option value={1}>Łatwe (dzienne)</option>
-                                <option value={2}>Trudne (tygodniowe)</option>
-                                <option value={3}>Organizacyjne</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={newTask.isGroup}
-                                    onChange={(e) => setNewTask({...newTask, isGroup: e.target.checked})}
-                                />
-                                Zadanie grupowe
-                            </label>
-                        </div>
-                        <button type="submit" disabled={loading}>
-                            {loading ? 'Tworzenie...' : 'Utwórz zadanie'}
-                        </button>
-                    </form>
-                </div>
+return (
+    <div className="app-container dark-theme">
+      <Header />
+      <section className={styles.taskAdminContainer}>
+        <div className={styles.taskAdminContent}>
+          <h1 className={styles.taskAdminTitle}>Zarządzanie zadaniami szablonowymi</h1>
+          
+          {loading ? (
+            <p>Ładowanie...</p>
+          ) : error ? (
+            <div className="error-message">{error}</div>
+          ) : (
+            <>
+              <div className={styles.taskForm}>
+                <h3>Utwórz nowe zadanie</h3>
+                <form onSubmit={handleTaskSubmit} className={styles.taskForm}>
+                  <div className={styles.taskFormGroup}>
+                    <label className={styles.taskFormLabel}>Tytuł:</label>
+                    <input
+                      type="text"
+                      className={styles.taskFormInput}
+                      value={newTask.title}
+                      onChange={(e) => setNewTask({...newTask, title: e.target.value})}
+                      required
+                    />
+                  </div>
+                  
+                  <div className={`${styles.taskFormGroup} ${styles.fullWidth}`}>
+                    <label className={styles.taskFormLabel}>Opis:</label>
+                    <textarea
+                      className={styles.taskFormTextarea}
+                      value={newTask.description}
+                      onChange={(e) => setNewTask({...newTask, description: e.target.value})}
+                      required
+                    />
+                  </div>
+                  
+                  <div className={styles.taskFormGroup}>
+                    <label className={styles.taskFormLabel}>Nagroda (punkty):</label>
+                    <input
+                      type="number"
+                      className={styles.taskFormInput}
+                      value={newTask.reward}
+                      onChange={(e) => setNewTask({...newTask, reward: Number(e.target.value)})}
+                      required
+                    />
+                  </div>
+                  
+                  <div className={styles.taskFormGroup}>
+                    <label className={styles.taskFormLabel}>Typ zadania:</label>
+                    <select
+                      className={styles.taskFormSelect}
+                      value={newTask.type}
+                      onChange={(e) => setNewTask({...newTask, type: Number(e.target.value) as TaskType})}
+                      required
+                    >
+                      <option value={1}>Łatwe (dzienne)</option>
+                      <option value={2}>Trudne (tygodniowe)</option>
+                      <option value={3}>Organizacyjne</option>
+                    </select>
+                  </div>
+                  
+                  <div className={`${styles.taskFormGroup} ${styles.taskFormCheckbox}`}>
+                    <input
+                      type="checkbox"
+                      id="isGroup"
+                      checked={newTask.isGroup}
+                      onChange={(e) => setNewTask({...newTask, isGroup: e.target.checked})}
+                    />
+                    <label htmlFor="isGroup" className={styles.taskFormLabel}>Zadanie grupowe</label>
+                  </div>
+                  
+                  <div className={styles.taskFormSubmit}>
+                    <button type="submit" className="submit-button" disabled={loading}>
+                      {loading ? 'Tworzenie...' : 'Utwórz zadanie'}
+                    </button>
+                  </div>
+                </form>
+              </div>
 
-                <div className="tasks-list">
-                    <h3>Lista zadań szablonowych</h3>
-                    {tasks.length > 0 ? (
-                        <ul>
-                            {tasks.map((task) => (
-                                <li key={task.id}>
-                                    <div>
-                                        <Link to={`/admin/organisations/task/${task.id}`}><h4>{task.title}</h4></Link>
-                                        
-                                        <p>{task.description}</p>
-                                        <p>Punkty: {task.reward}</p>
-                                        <p>Typ: {getTypeName(task.type)}</p>
-                                        <p>Status: {task.isActive ? 'Aktywne' : 'Nieaktywne'}</p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>Brak zadań szablonowych.</p>
-                    )}
-                </div>
-
-          </>
-        )}
+              <div className={styles.taskList}>
+                <h3 className={styles.taskListTitle}>Lista zadań szablonowych</h3>
+                {tasks.length > 0 ? (
+                  <div className={styles.taskListItems}>
+                    {tasks.map((task) => (
+                      <div key={task.id} className={styles.taskListItem}>
+                        <Link to={`/admin/organisations/task/${task.id}`}>
+                          <h4 className={styles.taskListItemTitle}>{task.title}</h4>
+                        </Link>
+                        <p className={styles.taskListItemDescription}>{task.description}</p>
+                        <div className={styles.taskListItemMeta}>
+                          <span>{getTypeName(task.type)} • {task.reward} punktów</span>
+                          <span className={`${styles.taskListItemStatus} ${task.isActive ? 'active' : 'inactive'}`}>
+                            {task.isActive ? 'Aktywne' : 'Nieaktywne'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.taskEmptyState}>
+                    <i className="fas fa-tasks"></i>
+                    <p>Brak zadań szablonowych</p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </section>
-      <Footer/>
+      <Footer />
     </div>
   )
 }

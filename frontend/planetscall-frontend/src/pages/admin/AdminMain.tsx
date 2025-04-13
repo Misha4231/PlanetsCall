@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { blockUserAdmin, getUsersAdmin, resetUserAdmin, unblockUserAdmin } from '../../services/adminService';
 import { UserAdmin, UsersResponseAdmin } from '../../types/adminTypes';
 import { isBlock } from 'typescript';
+import styles from '../../stylePage/admin/admin.module.css';
 
 const AdminMain = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -53,27 +54,39 @@ useEffect(() => {
 
 
 
-return (
-  <div className="app-container">
-      <Header/>
-      <section className="blockCode">
-      {loading ? (
+  return (
+    <div className="app-container dark-theme">
+      <Header />
+      <section className={styles.adminContainer}>
+        {loading ? (
           <p>Ładowanie...</p>
         ) : (
-          <>
-          {success && <p style={{ color: 'green' }}>{success}</p>}
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-            <ul>
-                <li><Link to="/admin/organisations">Organizacje</Link></li>
-                <li><Link to="/admin/users">Użytkownicy</Link></li>
-                <li><Link to="/admin/tasks">Zadania</Link></li>
-            </ul>
-          </>
+          <div className={styles.adminContent}>
+            {success && <div className={`${styles.adminMessage} ${styles.adminSuccess}`}>{success}</div>}
+            {error && <div className={`${styles.adminMessage} ${styles.adminError}`}>{error}</div>}
+            
+            <h1 className={styles.adminTitle}>Panel Administracyjny</h1>
+            
+            <nav className={styles.adminNav}>
+              <Link to="/admin/organisations" className={styles.adminNavLink}>
+                <i className="fas fa-sitemap"></i>
+                Organizacje
+              </Link>
+              <Link to="/admin/users" className={styles.adminNavLink}>
+                <i className="fas fa-users"></i>
+                Użytkownicy
+              </Link>
+              <Link to="/admin/tasks" className={styles.adminNavLink}>
+                <i className="fas fa-tasks"></i>
+                Zadania
+              </Link>
+            </nav>
+          </div>
         )}
       </section>
-      <Footer/> 
+      <Footer />
     </div>
   )
-}
+};;
 
 export default AdminMain

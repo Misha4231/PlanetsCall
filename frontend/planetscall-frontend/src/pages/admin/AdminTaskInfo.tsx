@@ -5,6 +5,7 @@ import { getOrganisationVerifications, sentResponseToOrganisationVerification, c
 import { useAuth } from '../../context/AuthContext';
 import { Organisation } from '../community/communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import styles from '../../stylePage/admin/adminTask.module.css';
 
 const AdminTaskInfo = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -88,49 +89,74 @@ const AdminTaskInfo = () => {
           }
       };
 
-  return (
-    <div className="app-container">
-      <Header/>
-
-      <section className="blockCode">        
-        {loading ? (
-            <p>Ładowanie...</p>
-            ) : (
-            <>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                {success && <p style={{ color: 'green' }}>{success}</p>}
-                {task && (
-                <div>
-                    <h2>{task.title}</h2>
-                    <p>{task.description}</p>   
-                    <p>Punkty: {task.reward}</p>
-                    <p>Typ: {getTypeName(task.type)}</p>
-                    <button><Link to={`/admin/organisations/task/${taskId}/settings`}>Edytuj ustawienia</Link></button>
-                    <p>Status: {task.isActive ? 'Aktywne' : 'Nieaktywne'}</p>
+      return (
+        <div className="app-container dark-theme">
+          <Header />
+          <section className={styles.taskAdminContainer}>
+            <div className={styles.taskAdminContent}>
+              {loading ? (
+                <p>Ładowanie...</p>
+              ) : error ? (
+                <div className="error-message">{error}</div>
+              ) : task ? (
+                <>
+                  <div className={styles.taskInfoHeader}>
                     <div>
-                        <button
-                            onClick={() => task.id && handleTaskAction(task.id, 'activate')}
-                            disabled={loading || task.isActive}
-                        >
-                            Aktywuj
-                        </button>
-                        <button
-                            onClick={() => task.id && handleTaskAction(task.id, 'delete')}
-                            disabled={loading}
-                            style={{ backgroundColor: '#ff4444' }}
-                        >
-                            Usuń
-                        </button>
+                      <h1 className={styles.taskInfoTitle}>{task.title}</h1>
+                      <div className={styles.taskInfoMeta}>
+                        <span className={styles.taskInfoMetaItem}>
+                          <i className="fas fa-star"></i> {task.reward} punktów
+                        </span>
+                        <span className={styles.taskInfoMetaItem}>
+                          <i className="fas fa-tag"></i> {getTypeName(task.type)}
+                        </span>
+                        <span className={`${styles.taskInfoMetaItem} ${task.isActive ? 'active' : 'inactive'}`}>
+                          <i className={task.isActive ? 'fas fa-check-circle' : 'fas fa-times-circle'}></i>
+                          {task.isActive ? 'Aktywne' : 'Nieaktywne'}
+                        </span>
+                      </div>
                     </div>
+                    <Link 
+                      to={`/admin/organisations/task/${taskId}/settings`}
+                      className="edit-button"
+                    >
+                      <i className="fas fa-edit"></i> Edytuj
+                    </Link>
+                  </div>
+    
+                  <div className={styles.taskInfoDescription}>
+                    <h3>Opis zadania</h3>
+                    <p>{task.description}</p>
+                  </div>
+    
+                  <div className={styles.taskInfoActions}>
+                    <button
+                      onClick={() => task.id && handleTaskAction(task.id, 'activate')}
+                      disabled={loading || task.isActive}
+                      className={`action-button ${task.isActive ? 'disabled' : ''}`}
+                    >
+                      <i className="fas fa-power-off"></i> Aktywuj
+                    </button>
+                    <button
+                      onClick={() => task.id && handleTaskAction(task.id, 'delete')}
+                      disabled={loading}
+                      className="delete-button"
+                    >
+                      <i className="fas fa-trash"></i> Usuń
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className={styles.taskEmptyState}>
+                  <i className="fas fa-tasks"></i>
+                  <p>Nie znaleziono zadania</p>
                 </div>
-                )}
-            </>
-            )}
-
-      </section>
-      <Footer/>
-    </div>
-  )
+              )}
+            </div>
+          </section>
+          <Footer />
+        </div>
+      )
 }
 
 export default AdminTaskInfo

@@ -4,6 +4,7 @@ import Header from '../../components/shared/Header'
 import { getOrganisationVerifications, sentResponseToOrganisationVerification, createTemplateTask, getAllTemplateTasks, activateTemplateTask, deleteTemplateTask, TaskTemplate, TaskType, getTemplateTaskById, updateTemplateTask, TaskTemplateUpdate  } from '../../services/adminOrgService';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import styles from '../../stylePage/admin/adminTask.module.css';
 
 const AdminTaskSettings = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -118,79 +119,90 @@ const handleSubmit = async (e: React.FormEvent) => {
   
 
   return (
-    <div className="app-container">
-      <Header/>
-
-      <section className="blockCode">        
-        {loading ? (
+    <div className="app-container dark-theme">
+      <Header />
+      <section className={styles.taskAdminContainer}>
+        <div className={styles.taskAdminContent}>
+          <h1 className={styles.taskAdminTitle}>Edytuj zadanie</h1>
+          
+          {loading ? (
             <p>Ładowanie...</p>
-            ) : (
-            <>
-                {success && <p style={{ color: 'green' }}>{success}</p>}
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                {task && (
-                        <div>
-                            <form onSubmit={handleSubmit}>
-                        <div>
-                            <label>Nazwa:</label>
-                            <input
-                                type="text"
-                                name="title"
-                                value={formData.title}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div>
-                            <label>Opis:</label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div>
-                            <label>Nagroda:</label>
-                            <input
-                                type="number"
-                                name="reward"
-                                value={formData.reward || 0}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    name="isGroup"
-                                    checked={formData.isGroup || false}
-                                    onChange={handleInputChange}
-                                />
-                                Grupowe
-                            </label>
-                        </div>                        
-                        <div>
-                        <label>Typ:</label>
-                        <select
-                            name="type"
-                            value={formData.type}
-                            onChange={handleInputChange}
-                        >
-                        <option value={1}>Łatwe (dzienne)</option>
-                        <option value={2}>Trudne (tygodniowe)</option>
-                        <option value={3}>Organizacyjne</option>
-                        </select>
-                        </div>
-                        <button type="submit" disabled={loading}>
-                            {loading ? 'Zapisywanie...' : 'Zapisano'}
-                        </button>
-                    </form>
-                </div>
-                )}
-            </>
-            )}
-
+          ) : error ? (
+            <div className="error-message">{error}</div>
+          ) : task ? (
+            <form onSubmit={handleSubmit} className={styles.taskForm}>
+              <div className={styles.taskFormGroup}>
+                <label className={styles.taskFormLabel}>Nazwa:</label>
+                <input
+                  type="text"
+                  name="title"
+                  className={styles.taskFormInput}
+                  value={formData.title}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className={`${styles.taskFormGroup} ${styles.fullWidth}`}>
+                <label className={styles.taskFormLabel}>Opis:</label>
+                <textarea
+                  name="description"
+                  className={styles.taskFormTextarea}
+                  value={formData.description}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className={styles.taskFormGroup}>
+                <label className={styles.taskFormLabel}>Nagroda:</label>
+                <input
+                  type="number"
+                  name="reward"
+                  className={styles.taskFormInput}
+                  value={formData.reward || 0}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className={styles.taskFormGroup}>
+                <label className={styles.taskFormLabel}>Typ:</label>
+                <select
+                  name="type"
+                  className={styles.taskFormSelect}
+                  value={formData.type}
+                  onChange={handleInputChange}
+                >
+                  <option value={1}>Łatwe (dzienne)</option>
+                  <option value={2}>Trudne (tygodniowe)</option>
+                  <option value={3}>Organizacyjne</option>
+                </select>
+              </div>
+              
+              <div className={`${styles.taskFormGroup} ${styles.taskFormCheckbox}`}>
+                <input
+                  type="checkbox"
+                  name="isGroup"
+                  id="isGroup"
+                  checked={formData.isGroup || false}
+                  onChange={handleInputChange}
+                />
+                <label htmlFor="isGroup" className={styles.taskFormLabel}>Grupowe</label>
+              </div>
+              
+              <div className={styles.taskFormSubmit}>
+                <button type="submit" className="submit-button" disabled={loading}>
+                  {loading ? 'Zapisywanie...' : 'Zapisz zmiany'}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className={styles.taskEmptyState}>
+              <i className="fas fa-exclamation-triangle"></i>
+              <p>Nie znaleziono zadania</p>
+            </div>
+          )}
+        </div>
       </section>
-      <Footer/>
+      <Footer />
     </div>
   )
 }
