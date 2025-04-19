@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
 import { Link } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
+import Footer from '../../components/Footer/Footer';
+import authStyles from '../../stylePage/auth.module.css';
 
 const ForgotPassword: React.FC = () => {
   const [uniqueIdentifier, setUniqueIdentifier] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [code, setCode] = useState('');
   const [isPasswordChange, setIsPasswordChange] = useState(false);
@@ -78,62 +81,102 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <div>
-      <Header />
-      {!isCodeSent ? (
-        <form onSubmit={handleSubmit}>
-          <h1>Zapomniałeś hasła?</h1>
-          <p>Wprowadź nazwę użytkownika lub e-mail:</p>
-          <input
-            type="text"
-            value={uniqueIdentifier}
-            onChange={(e) => setUniqueIdentifier(e.target.value)}
-            required
-          />
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
-          <button type="submit">Wyślij kod</button>
-        </form>
-       ) : (
-        <form onSubmit={handlePasswordChange}>
+    <div className="app-container dark-theme">
+    <Header />
+    <section className={`${authStyles.blockCode} ${authStyles.auth}`}>
+      {loading ? (
+        <p className={authStyles.loadingText}>Ładowanie...</p>
+      ) : (
+        <>
+          {!isCodeSent ? (
+            <form onSubmit={handleSubmit} className={authStyles.form}>
+              <h1 className={authStyles.title}>Zapomniałeś hasła?</h1>
+              <div className={authStyles.instructionText}>
+                <p>Wprowadź nazwę użytkownika lub e-mail</p>
+              </div>
+              
+              <div className={authStyles.inputGroup}>
+                <label className={authStyles.label}>Nazwa użytkownika lub e-mail:</label>
+                <input
+                  type="text"
+                  value={uniqueIdentifier}
+                  onChange={(e) => setUniqueIdentifier(e.target.value)}
+                  placeholder="Wprowadź swoją nazwę użytkownika lub email"
+                  required
+                  className={authStyles.input}
+                />
+              </div>
+              
+              {error && <div className={authStyles.errorMessage}>{error}</div>}
+              {success && <div className={authStyles.successMessage}>{success}</div>}
+              
+              <button type="submit" className={authStyles.submitButton}>Wyślij kod</button>
+            </form>
+          ) : (
+            <form onSubmit={handlePasswordChange} className={authStyles.form}>
+              <h1 className={authStyles.title}>Resetowanie hasła</h1>
+              
+              <div className={authStyles.inputGroup}>
+                <label className={authStyles.label}>Kod weryfikacyjny:</label>
+                <input
+                  type="text"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="Wprowadź kod z emaila"
+                  required
+                  className={authStyles.input}
+                />
+              </div>
+              
+              <div className={authStyles.inputGroup}>
+                <label className={authStyles.label}>Nowe hasło:</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Wprowadź nowe hasło"
+                  required
+                  className={authStyles.input}
+                />
+              </div>
+              
+              <div className={authStyles.inputGroup}>
+                <label className={authStyles.label}>Potwierdź nowe hasło:</label>
+                <input
+                  type="password"
+                  value={passwordConfirmation}
+                  onChange={(e) => setPasswordConfirmation(e.target.value)}
+                  placeholder="Powtórz nowe hasło"
+                  required
+                  className={authStyles.input}
+                />
+              </div>
+              
+              {error && <div className={authStyles.errorMessage}>{error}</div>}
+              {success && <div className={authStyles.successMessage}>{success}</div>}
+              
+              <button type="submit" className={authStyles.submitButton}>Zmień hasło</button>
+            </form>
+          )}
           
-          <h1>Potwierdź kod</h1>
-          <p>Wprowadź kod, który otrzymałeś na mail:</p>
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            required
-          />
-          <h1>Zmień hasło</h1>
-          <p>Wprowadź nowe hasło:</p>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-          <p>Potwierdź nowe hasło:</p>
-          <input
-            type="password"
-            value={passwordConfirmation}
-            onChange={(e) => setPasswordConfirmation(e.target.value)}
-            required
-          />
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
-          <button type="submit">Zmień hasło</button>
-        </form>
-      ) 
-      }
-      <ul>
-        <li>
-          <Link to="/auth/sign-up">Zarejestruj się</Link>
-        </li>
-        <li>
-          <Link to="/auth/sign-in">Zaloguj się</Link>
-        </li>
-      </ul>
+          <div className={authStyles.authLinks}>
+            <ul className={authStyles.linksList}>
+              <li className={authStyles.linkItem}>
+                <Link to="/auth/sign-up" className={authStyles.link}>
+                  <i className="fas fa-user-plus"></i> Zarejestruj się
+                </Link>
+              </li>
+              <li className={authStyles.linkItem}>
+                <Link to="/auth/sign-in" className={authStyles.link}>
+                  <i className="fas fa-sign-in-alt"></i> Zaloguj się
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </>
+      )}
+    </section>
+    <Footer />
     </div>
   );
 };

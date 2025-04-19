@@ -3,6 +3,7 @@ import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
 import { Link, useNavigate } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
+import authStyles from '../../stylePage/auth.module.css';
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -10,6 +11,8 @@ const SignUp: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -59,50 +62,81 @@ const SignUp: React.FC = () => {
   
 
   return (
-    <div>
+    <div className="app-container dark-theme">
       <Header />
-      <form onSubmit={handleSignUp}>
-        <h1>Zarejestruj się</h1>
-        <div>
-          <label>Nazwa użytkownika:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Hasło:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {success && <p style={{ color: 'green' }}>{success}</p>}
-        <button type="submit">Zarejestruj się</button>
-      </form>
-          <ul>
-            <li>
-              <Link to="/auth/sign-in">Zaloguj się</Link>
-            </li>
-            <li>
-              <Link to="/auth/forgot-password">Nie pamiętam hasła</Link>
-            </li>
-          </ul>
-      <Footer />
+        <section className={`${authStyles.blockCode} ${authStyles.auth}`}>
+          {loading ? (
+            <p className={authStyles.loadingText}>Ładowanie...</p>
+          ) : (
+            <>
+              <form onSubmit={handleSignUp} className={authStyles.form}>
+                <h1 className={authStyles.title}>Zarejestruj się</h1>
+                
+                {error && (
+                  <div className={authStyles.errorMessage}>
+                    {error}
+                  </div>
+                )}
+                
+                {success && (
+                  <div className={authStyles.successMessage}>
+                    {success}
+                  </div>
+                )}
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Nazwa użytkownika:</label>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Wprowadź nazwę użytkownika"
+                    required
+                    className={authStyles.input}
+                  />
+                </div>
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Email:</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Wprowadź adres email"
+                    required
+                    className={authStyles.input}
+                  />
+                </div>
+                
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Hasło:</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Wprowadź hasło"
+                    required
+                    className={authStyles.input}
+                  />
+                </div>
+                
+                <button type="submit" className={authStyles.submitButton}>Zarejestruj się</button>
+              </form>
+              
+              <div className={authStyles.linksContainer}>
+                <ul className={authStyles.linksList}>
+                  <li className={authStyles.linkItem}>
+                    <Link to="/auth/sign-in" className={authStyles.link}>Zaloguj się</Link>
+                  </li>
+                  <li className={authStyles.linkItem}>
+                    <Link to="/auth/forgot-password" className={authStyles.link}>Nie pamiętam hasła</Link>
+                  </li>
+                </ul>
+              </div>
+            </>
+          )}
+        </section>
+        <Footer />
     </div>
   );
 };

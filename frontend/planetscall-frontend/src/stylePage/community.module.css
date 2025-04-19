@@ -1,0 +1,520 @@
+/* community.module.css */
+
+.userSearchContainer {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    min-width: 50vw;
+    min-height: 50vh;
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.loader, .smallLoader {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(76, 175, 80, 0.3);
+    border-radius: 50%;
+    border-top-color: #4CAF50;
+    animation: spin 1s ease-in-out infinite;
+}
+
+.smallLoader {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.searchContent {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.searchTitle {
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.searchForm {
+    margin-bottom: 30px;
+}
+
+.searchGroup {
+    margin-bottom: 20px;
+}
+
+.searchLabel {
+    display: block;
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.searchInputWrapper {
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #212121;
+    border: 1px solid #2c2c2c;
+    transition: all 0.3s ease;
+}
+
+.searchInputWrapper:focus-within {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.searchInput {
+    flex: 1;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 15px;
+}
+
+.searchInput::placeholder {
+    color: #555;
+}
+
+.searchButton {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.searchButton:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.searchButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.errorMessage {
+    color: #f44336;
+    background-color: rgba(244, 67, 54, 0.1);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.usersList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.userCard {
+    display: flex;
+    align-items: center;
+    background-color: #212121;
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #2c2c2c;
+}
+
+.userCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-color: #4CAF50;
+}
+
+.avatarContainer {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 20px;
+    flex-shrink: 0;
+    background-color: #2c2c2c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarPlaceholder {
+    color: #555;
+    font-size: 24px;
+}
+
+.userInfo {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nameSection {
+    flex: 1;
+}
+
+.username {
+    color: #fff;
+    font-size: 18px;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.adminBadge {
+    background-color: #ff9800;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.fullName {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0;
+}
+
+.blockedStatus {
+    color: #f44336;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.progressSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 150px;
+}
+
+.progressContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.progressBar {
+    flex: 1;
+    height: 8px;
+    background-color: #2c2c2c;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background-color: #4CAF50;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.progressText {
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: right;
+}
+
+.pointsBadge {
+    background-color: #333;
+    color: #ffc107;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.paginationButton {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.paginationButton:hover:not(:disabled) {
+    background-color: #4CAF50;
+}
+
+.paginationButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageInfo {
+    color: #aaa;
+    font-size: 14px;
+}
+
+.noResults {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+.noResults i {
+    font-size: 24px;
+    margin-bottom: 10px;
+    display: block;
+    color: #4CAF50;
+}
+
+.noResults p {
+    margin: 0;
+}
+
+
+.friendUsername {
+    color: #4CAF50 !important;
+}
+
+.friendBadge {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-left: 8px;
+}
+
+
+
+
+.headerSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .organisationActions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .createButton, .searchButton {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  
+  .createButton:hover, .searchButton:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+  }
+  
+  .organisationsList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .organisationCard {
+    display: flex;
+    background-color: #212121;
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #2c2c2c;
+  }
+  
+  .organisationCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-color: #4CAF50;
+  }
+  
+  .orgImageContainer {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 20px;
+    flex-shrink: 0;
+    background-color: #2c2c2c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .orgImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .orgInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .orgName {
+    color: #fff;
+    font-size: 18px;
+    margin: 0 0 4px 0;
+  }
+  
+  .orgUniqueName {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0 0 8px 0;
+  }
+  
+  .orgDescription {
+    color: #ccc;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    flex: 1;
+  }
+  
+  .orgMeta {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .orgPrivacy {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .orgPrivacy.private {
+    background-color: #f44336;
+    color: #fff;
+  }
+  
+  .orgPrivacy.public {
+    background-color: #4CAF50;
+    color: #fff;
+  }
+  
+  .orgLevel {
+    color: #aaa;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .memberBadge {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  
+  .requestedBadge {
+    background-color: #FF9800;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  
+  .joinButton {
+    background-color: #2196F3;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  
+  .joinButton:hover {
+    background-color: #0b7dda;
+    transform: translateY(-2px);
+  }
+  
+  .joinButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+
+
+  

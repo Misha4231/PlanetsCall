@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import Home from '../pages/home/Home';
+import '../stylePage/styles.css';
 
 import { createBrowserRouter, Link, RouterProvider, useNavigate } from 'react-router-dom';
 
-import App from '../App';
 //import NotFound from '../pages/NotFound/NotFound';
 
 //PROFILE LINKS
 import { AuthProvider, useAuth } from '../context/AuthContext';
-import NotFound from '../pages/NotFound/NotFound';
+import NotFound from '../pages/Additional/NotFound';
 import Shop from '../pages/shop/Shop';
 
 import SignIn from '../pages/auth/SignIn';
 import SignUp from '../pages/auth/SignUp';
 
 import Profile from '../pages/profile/Profile';
-import UserProfile from '../pages/profile/UsersProfile';
+import UserProfile from '../pages/people/UsersProfile';
 import Statistics from '../pages/profile/Statistics';
 import Achievements from '../pages/profile/Achievements';
 import LevelTree from '../pages/profile/LevelTree';
@@ -23,26 +23,34 @@ import ChangePassword from '../pages/auth/ChangePassword';
 import ForgotPassword from '../pages/auth/ForgotPassword';
 import ActivateAccount from '../pages/auth/ActivateAccount';
 import Settings from '../pages/profile/Settings';
-import Friends from '../pages/community/Friends';
+import Friends from '../pages/people/Friends';
 import CommunityMain from '../pages/community/CommunityMain';
 import CommunitySettings from '../pages/community/CommunitySettings';
-import Organisations from '../pages/community/Organisations';
-import CreateOrganisation from '../pages/community/CreateOrganisation';
-import AnOrganisation from '../pages/community/AnOrganisation';
-import OrganisationAdmin from '../pages/community/OrganisationAdmin';
-import OrganisationSettings from '../pages/community/OrganisationSettings';
+import Organisations from '../pages/organisations/Organisations';
+import CreateOrganisation from '../pages/organisations/CreateOrganisation';
+import AnOrganisation from '../pages/organisations/AnOrganisation';
+import OrganisationAdmin from '../pages/organisations/OrganisationAdmin';
+import OrganisationSettings from '../pages/organisations/OrganisationSettings';
 import TaskList from '../pages/tasks/TaskList';
 import TaskDetails from '../pages/tasks/TaskDetails';
 import AdminMain from '../pages/admin/AdminMain';
-import Verification from '../pages/admin/Verification';
-import Task from '../pages/admin/Task';
-import TaskSettings from '../pages/admin/TaskSettings';
+import Verification from '../pages/admin/AdminOrganisations';
+import Task from '../pages/admin/AdminTaskInfo';
+import TaskSettings from '../pages/admin/AdminTaskSettings';
+import OrganisationTaskManagement from '../pages/organisations/OrganisationTaskManagement';
+import AdminOrganisations from '../pages/admin/AdminOrganisations';
+import AdminUsers from '../pages/admin/AdminUsers';
+import AdminTasks from '../pages/admin/AdminTasks';
+import AdminTaskInfo from '../pages/admin/AdminTaskInfo';
+import AdminTaskSettings from '../pages/admin/AdminTaskSettings';
+import People from '../pages/people/People';
+import SearchOrganisation from '../pages/organisations/SearchOrganisation';
 
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <Home />,
     /*errorElement: <NotFound/>*/
   },
 
@@ -90,10 +98,6 @@ const router = createBrowserRouter([
     element: <Statistics />
   },
   {
-    path: '/user/:userName',
-    element: <UserProfile />
-  },
-  {
     path: '/profile/level-tree',
     element: <LevelTree/>
   },
@@ -104,13 +108,28 @@ const router = createBrowserRouter([
     element: <CommunityMain />
   },
   {
+    path: '/community/settings',
+    element: <CommunitySettings/>
+  },
+
+  
+  {
+    path: '/community/users',
+    element: <People />
+  },
+  {
     path: '/community/friends',
     element: <Friends/>
   },
   {
-    path: '/community/organisations',
-    element: <Organisations/>
+    path: '/user/:userName',
+    element: <UserProfile />
   },
+
+
+
+
+
   {
     path: '/community/organisation/:organisationUniqueName/admin',
     element: <OrganisationAdmin/>
@@ -124,12 +143,20 @@ const router = createBrowserRouter([
     element: <CreateOrganisation/>
   },
   {
+    path: '/community/organisations',
+    element: <Organisations/>
+  },
+  {
+    path: '/community/organisations/search',
+    element: <SearchOrganisation/>
+  },
+  {
     path: '/community/organisation/:organisationUniqueName/settings',
     element: <OrganisationSettings/>
   },
   {
-    path: '/community/settings',
-    element: <CommunitySettings/>
+    path: '/community/organisation/:organisationUniqueName/settings/tasks',
+    element: <OrganisationTaskManagement/>
   },
   
   {
@@ -141,7 +168,7 @@ const router = createBrowserRouter([
     element: <TaskList />
   },
   {
-    path: '/tasks/:id',
+    path: '/task/:taskId',
     element: <TaskDetails />
   },
 
@@ -152,15 +179,23 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin/organisations',
-    element: <Verification />
+    element: <AdminOrganisations />
+  },
+  {
+    path: '/admin/users',
+    element: <AdminUsers />
+  },
+  {
+    path: '/admin/tasks',
+    element: <AdminTasks />
   },
   {
     path: '/admin/organisations/task/:taskId',
-    element: <Task />
+    element: <AdminTaskInfo />
   },
   {
     path: '/admin/organisations/task/:taskId/settings',
-    element: <TaskSettings />
+    element: <AdminTaskSettings />
   },
 ]);
 

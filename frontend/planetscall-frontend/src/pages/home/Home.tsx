@@ -4,10 +4,12 @@ import Header from '../../components/shared/Header';
 
 const Home: React.FC = () => {
   return (
-    <div className="home">
+    <div className="app-container">
       <Header/>
-      <h1>Welcome to Home Paged</h1>
-      <p>To be continued...</p>
+      <section className="blockCode">
+        <h1>Welcome to Home Paged</h1>
+        <p>To be continued...</p>
+      </section>
       <Footer/>
     </div>
   );

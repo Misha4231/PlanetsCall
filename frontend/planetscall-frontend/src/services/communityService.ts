@@ -22,10 +22,14 @@ export const getFriends = async (authToken: string, page: number, search: string
   });
 
   const data = await response.json();
-  const d = data.items;
-  console.log(data + "\n" + d);
+  // console.log("data" + "\n" + data);
+  // const d = await response.text();
+  // console.log("items" + "\n" + d);
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać listy znajomych.');
+    const errorData = await response.json();
+    console.log(errorData.error);
+    console.log(errorData);
+    throw new Error(errorData.message || 'Nie udało się pobrać listy znajomych.');
   }
 
   //console.log('API zwróciło:', data);

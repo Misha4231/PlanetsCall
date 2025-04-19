@@ -27,6 +27,15 @@ export interface TaskTemplateUpdate {
   isGroup: boolean;
 }
 
+export interface OrganizationTask {
+  id: number;
+  title: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  expiresAt: string | null;
+}
+
 
 // VERIFICATIONS
 export const getOrganisationVerifications = async (authToken: string ) => {
@@ -207,9 +216,10 @@ export const activateTemplateTask = async (authToken: string, id: number) => {
   }
 
   
-  const data = await response.json();
-  
-  return data;
+  const data = await response;
+  console.log(data)
+  const d = data.json();
+  return d;
 };
 
 export const getOrganizationTasks = async (authToken: string, organizationName: string) => {
