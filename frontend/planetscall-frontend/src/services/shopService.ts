@@ -151,7 +151,7 @@ export const removeItems = async (authToken: string) => {
 
 //
 
-export const updteItem = async (
+export const updateItem = async (
   authToken: string,
   itemId: number,  
   categoryId: number,
@@ -190,7 +190,7 @@ export const updteItem = async (
 
 //
 
-export const updteCategory = async (
+export const updateCategory = async (
 authToken: string,
 categoryId: number,
 title: string,

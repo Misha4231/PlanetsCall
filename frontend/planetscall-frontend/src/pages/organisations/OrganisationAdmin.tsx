@@ -11,6 +11,7 @@ import { getOrganisationData, getOrganisationRoles,
      removeOrganisationUser, sentVerificationRequest,
      deleteOrganisation } from '../../services/communityService';
 import { imageUrl } from '../../services/imageConvert';
+import NotAdmin from '../Additional/NotAdmin';
 
 
 
@@ -27,11 +28,12 @@ const OrganisationAdmin = () => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     const [loading, setLoading] = useState<boolean>(false);
-      const [success, setSuccess] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
 
+    { /* Get data about organisation data, users, roles for users and also request of joining if organisation is private */} 
     useEffect(() => {
         if(token!=null){
         const fetchData = async () => {  
@@ -76,14 +78,10 @@ const OrganisationAdmin = () => {
   }
 
   if(organisation?.creatorId!=user?.id){
-    return (<div>
-      <Header/>
-      <p style={{ color: 'red' }}>Nie masz uprawnień by zarządać organizacją.</p>
-      <Footer/>
-
-    </div>);  
+    return (<NotAdmin/>);  
   } 
 
+{ /* Accepting request from user to join organisation if its private */} 
 const handleAcceptRequest = async (userId: number) =>{
         if (!isAuthenticated || !token) return;
         setLoading(true);
@@ -111,6 +109,7 @@ const handleAcceptRequest = async (userId: number) =>{
         }
 }
 
+{ /* Decline request from user to join organisation if its private */} 
 const handleDeleteRequest = async (userId: number) =>{
   if (!isAuthenticated || !token) return;
   setLoading(true);
@@ -134,6 +133,8 @@ const handleDeleteRequest = async (userId: number) =>{
         setLoading(false);
       }
 }
+
+{ /* Delete user from organisation */}
 const handleDeleteUser = async (userId: number) =>{
       if (!isAuthenticated || !token) return;
       setLoading(true);
@@ -158,6 +159,7 @@ const handleDeleteUser = async (userId: number) =>{
       }
 }
 
+{ /* Sent Request to verify organisation to main admin */}
 const handleSentRequestToVerify = async () =>{
   if (!isAuthenticated || !token) return;
   setLoading(true);
@@ -181,6 +183,7 @@ const handleSentRequestToVerify = async () =>{
 }
 
 
+{ /* Delete organisation */}
 const handleDeleteOrganisation = async () =>{
   if (!isAuthenticated || !token) return;
   setShowDeleteConfirmation(false);
@@ -255,6 +258,7 @@ return (
             </button>
           )}
 
+          { /* If organisation is private it shows a request list of users */}
           {organisation?.isPrivate && (
             <>
               <h3 className={styles.sectionTitle}>Prośby o dołączenie</h3>
@@ -299,6 +303,8 @@ return (
           )}
 
           <h3 className={styles.sectionTitle}>Członkowie ({users.length})</h3>
+
+          { /* Show members of the organisation */}
           {users.length > 0 ? (
             <ul className={styles.memberList}>
               {users.map((member) => (
@@ -344,6 +350,7 @@ return (
       )}
     </section>
 
+    { /* Confirmation if admin of organisation wants delete organisation  */}
     {showDeleteConfirmation && (
       <div className={styles.modalOverlay}>
         <div className={styles.modalContent}>

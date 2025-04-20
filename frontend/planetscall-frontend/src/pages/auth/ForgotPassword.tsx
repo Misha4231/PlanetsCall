@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
 import Footer from '../../components/Footer/Footer';
 import authStyles from '../../stylePage/auth.module.css';
@@ -16,9 +16,13 @@ const ForgotPassword: React.FC = () => {
   const [newPassword, setNewPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
+    const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+      const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoadingSubmit(true);
     setSuccess(null);
 
     try {
@@ -36,49 +40,16 @@ const ForgotPassword: React.FC = () => {
       }
 
       setIsCodeSent(true);
+
       setSuccess('Kod został wysłany na Twój adres e-mail.');
+      navigate('/auth/change-password'); 
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-
-    if (newPassword !== passwordConfirmation) {
-      setError('Hasła nie są takie same.');
-      return;
-    }
-    
-    try {
-      const response = await fetch(`${authHeader()}api/Auth/forgot-password/change`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          passwords: {
-            password: newPassword,
-            passwordConfirmation,
-          },
-          code,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Nie udało się zmienić hasła.');
-      }
-
-      setSuccess('Hasło zostało pomyślnie zmienione. Możesz się teraz zalogować.');
-      setIsCodeSent(false);
-      setIsPasswordChange(false);
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
 
   return (
     <div className="app-container dark-theme">
@@ -88,11 +59,10 @@ const ForgotPassword: React.FC = () => {
         <p className={authStyles.loadingText}>Ładowanie...</p>
       ) : (
         <>
-          {!isCodeSent ? (
             <form onSubmit={handleSubmit} className={authStyles.form}>
               <h1 className={authStyles.title}>Zapomniałeś hasła?</h1>
               <div className={authStyles.instructionText}>
-                <p>Wprowadź nazwę użytkownika lub e-mail</p>
+                <p></p>
               </div>
               
               <div className={authStyles.inputGroup}>
@@ -110,56 +80,15 @@ const ForgotPassword: React.FC = () => {
               {error && <div className={authStyles.errorMessage}>{error}</div>}
               {success && <div className={authStyles.successMessage}>{success}</div>}
               
-              <button type="submit" className={authStyles.submitButton}>Wyślij kod</button>
+              <button type="submit" className={authStyles.submitButton} disabled={loadingSubmit}>
+              {loadingSubmit ? (
+                  <span className={authStyles.buttonLoader}></span>
+                ) : (
+                  'Wyślij kod'
+                )}</button>
             </form>
-          ) : (
-            <form onSubmit={handlePasswordChange} className={authStyles.form}>
-              <h1 className={authStyles.title}>Resetowanie hasła</h1>
-              
-              <div className={authStyles.inputGroup}>
-                <label className={authStyles.label}>Kod weryfikacyjny:</label>
-                <input
-                  type="text"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="Wprowadź kod z emaila"
-                  required
-                  className={authStyles.input}
-                />
-              </div>
-              
-              <div className={authStyles.inputGroup}>
-                <label className={authStyles.label}>Nowe hasło:</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Wprowadź nowe hasło"
-                  required
-                  className={authStyles.input}
-                />
-              </div>
-              
-              <div className={authStyles.inputGroup}>
-                <label className={authStyles.label}>Potwierdź nowe hasło:</label>
-                <input
-                  type="password"
-                  value={passwordConfirmation}
-                  onChange={(e) => setPasswordConfirmation(e.target.value)}
-                  placeholder="Powtórz nowe hasło"
-                  required
-                  className={authStyles.input}
-                />
-              </div>
-              
-              {error && <div className={authStyles.errorMessage}>{error}</div>}
-              {success && <div className={authStyles.successMessage}>{success}</div>}
-              
-              <button type="submit" className={authStyles.submitButton}>Zmień hasło</button>
-            </form>
-          )}
           
-          <div className={authStyles.authLinks}>
+          <div className={authStyles.linksContainer}>
             <ul className={authStyles.linksList}>
               <li className={authStyles.linkItem}>
                 <Link to="/auth/sign-up" className={authStyles.link}>

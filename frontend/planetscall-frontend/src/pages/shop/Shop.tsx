@@ -1,4 +1,3 @@
-// src/components/Shop.tsx
 import React, { useEffect, useState } from 'react';
 import {
    getCategories,
@@ -8,8 +7,8 @@ import {
    removeCategory,
    addItems,
    removeItems,
-   updteItem,
-   updteCategory
+   updateItem,
+   updateCategory
 } from '../../services/shopService';
 import { getFullUser, getUser } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
@@ -27,7 +26,6 @@ const Shop: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
 
-  /** Pobieranie kategorii */
   useEffect(() => {
     if (!token) return;
 
@@ -42,7 +40,6 @@ const Shop: React.FC = () => {
     fetchCategories();
   }, [token]);
 
-  /** Pobieranie przedmiotów danej kategorii */
   useEffect(() => {
     if (!token) return;
     if (selectedCategory !== null && token) {
@@ -58,7 +55,6 @@ const Shop: React.FC = () => {
     }
   }, [selectedCategory, page, token]);
 
-    /** Pobieranie waluty użytkownika */
     useEffect(() => {
       if (!token) return;
   
@@ -76,7 +72,6 @@ const Shop: React.FC = () => {
 
 
 
-  /** Kupowanie przedmiotu */
   const handleBuy = async (itemId: number) => {
     if (!token) {
       alert("Brak tokenu. Proszę się zalogować.");
@@ -93,7 +88,6 @@ const Shop: React.FC = () => {
     }
   };
 
-  /** Dodawanie kategorii */
   const handleAddCategory = async () => {
     if (!token) {
       alert("Brak tokenu. Proszę się zalogować.");
@@ -117,14 +111,12 @@ const Shop: React.FC = () => {
   };
 
 
-  /** Próbowanie itemu */
   const handleTryItem = (item: any) => {
     setSelectedItem(item);
     alert(`Próbujesz ${item.name}!`);
   };
 
 
-  /** Konwersja obrazu na Base64 */
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -154,7 +146,6 @@ const Shop: React.FC = () => {
             </ul>
           </div>
 
-          {/* Dodawanie kategorii */}
           <div>
             <h2>Dodaj kategorię</h2>
             <input
@@ -172,7 +163,6 @@ const Shop: React.FC = () => {
             <button onClick={handleAddCategory}>Dodaj</button>
           </div>
 
-          {/* Lista przedmiotów */}
           <div>
             <h2>Przedmioty</h2>
             <ul>
@@ -187,7 +177,6 @@ const Shop: React.FC = () => {
             <button onClick={() => setPage((prev) => prev + 1)}>Załaduj więcej</button>
           </div>
 
-          {/* Wyświetlanie przymierzanego przedmiotu */}
           {selectedItem && (
             <div>
               <h2>Próbujesz: {selectedItem.name}</h2>

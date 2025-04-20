@@ -17,7 +17,8 @@ const AnOrganisation = () => {
   const [error, setError] = useState<string | null>(null);
   const { organisationUniqueName } = useParams<{ organisationUniqueName: string }>();
   const navigate = useNavigate();
-
+  
+  { /* Variable to pagination data */} 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [membersPerPage] = useState<number>(10); 
   
@@ -28,6 +29,7 @@ const AnOrganisation = () => {
   const currentMembers = users.slice(indexOfFirstMember, indexOfLastMember);
   const totalPages = Math.ceil(users.length / membersPerPage);
 
+  { /* Get data about specific organisation and users in it */} 
   useEffect(() => {
     if(token!=null){
       const fetchData = async () => {

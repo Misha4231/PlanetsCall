@@ -133,20 +133,20 @@ public class ItemsController(
     
     [HttpDelete]
     [AdminOnlyFilter]
-    [Route("")]
+    [Route("{itemId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult DeleteItem([FromBody] int itemId) // deletes item
+    public IActionResult DeleteItem(int itemId) // deletes item
     {
         bool isSuccess = itemsRepository.DeleteItem(itemId);
         return (isSuccess ? Ok() : BadRequest());
     }
     [HttpDelete]
     [AdminOnlyFilter]
-    [Route("categories/")]
+    [Route("categories/{categoryId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult DeleteCategory([FromBody] int categoryId) // deletes category
+    public IActionResult DeleteCategory(int categoryId) // deletes category
     {
         bool isSuccess = itemsRepository.DeleteCategory(categoryId);
         return (isSuccess ? Ok() : BadRequest());

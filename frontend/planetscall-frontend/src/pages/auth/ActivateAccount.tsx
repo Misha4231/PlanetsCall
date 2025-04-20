@@ -4,6 +4,7 @@ import { authHeader }  from  "../../services/authHeader";
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
 import authStyles from '../../stylePage/auth.module.css';
+import { activationAccount } from '../../services/authService';
 
 const ActivateAccount = () => {
   const location = useLocation();
@@ -13,12 +14,15 @@ const ActivateAccount = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const codeFromUrl = params.get('code');
-    if (codeFromUrl) {
-      setActivationCode(codeFromUrl); // Automatycznie ustaw kod z URL
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    
+    const codeUrl = urlParams.get('code');
+    
+    if (codeUrl) {
+      setActivationCode(codeUrl);
     }
-  }, [location]);
+  }, []);
 
 
   const handleActivation = async (e: React.FormEvent) => {
@@ -26,19 +30,9 @@ const ActivateAccount = () => {
   
     try {
       const encodedCode = encodeURIComponent(activationCode);
-      const response = await fetch(`${authHeader()}api/Auth/activate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: activationCode }),
-      });
+      await activationAccount(activationCode);
   
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Szczegóły błędu:', errorData); 
-        throw new Error(errorData.message || 'Błąd aktywacji konta');
-      }
-  
-      navigate('/profile/settings'); 
+      navigate('/auth/sign-in'); 
     } catch (err: any) {
       console.error('Błąd:', err);
       setError(err.message || 'Wystąpił błąd podczas aktywacji konta.');
@@ -56,15 +50,20 @@ const ActivateAccount = () => {
         <>
           <h1 className={authStyles.title}>Aktywuj Konto</h1>
           <form onSubmit={handleActivation} className={authStyles.form}>
-            <label className={authStyles.label}>Kod aktywacyjny:</label>
-            <input
-              type="text"
-              value={activationCode}
-              onChange={(e) => setActivationCode(e.target.value)}
-              placeholder="Wprowadź kod aktywacyjny"
-              required
-              className={authStyles.input}
-            />
+            {!activationCode && (
+              <>
+                <label className={authStyles.label}>Kod aktywacyjny:</label>
+                <input
+                  type="text"
+                  value={activationCode}
+                  onChange={(e) => setActivationCode(e.target.value)}
+                  placeholder="Wprowadź kod aktywacyjny"
+                  required
+                  className={authStyles.input}
+                />
+              </>
+            )}
+            
             {error && <p className={authStyles.errorMessage}>{error}</p>}
             <button type="submit" className={authStyles.submitButton}>Aktywuj</button>
           </form>

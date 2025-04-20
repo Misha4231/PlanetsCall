@@ -34,9 +34,6 @@ import OrganisationSettings from '../pages/organisations/OrganisationSettings';
 import TaskList from '../pages/tasks/TaskList';
 import TaskDetails from '../pages/tasks/TaskDetails';
 import AdminMain from '../pages/admin/AdminMain';
-import Verification from '../pages/admin/AdminOrganisations';
-import Task from '../pages/admin/AdminTaskInfo';
-import TaskSettings from '../pages/admin/AdminTaskSettings';
 import OrganisationTaskManagement from '../pages/organisations/OrganisationTaskManagement';
 import AdminOrganisations from '../pages/admin/AdminOrganisations';
 import AdminUsers from '../pages/admin/AdminUsers';
@@ -196,6 +193,12 @@ const router = createBrowserRouter([
   {
     path: '/admin/organisations/task/:taskId/settings',
     element: <AdminTaskSettings />
+  },
+
+
+  {
+    path: '*',
+    element: <NotFound/>
   },
 ]);
 

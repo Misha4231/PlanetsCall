@@ -85,17 +85,18 @@ const SignIn = () => {
                 )}
                 </button>
               </form>
-              
+
               <div className={authStyles.linksContainer}>
                 <ul className={authStyles.linksList}>
                   <li className={authStyles.linkItem}>
-                    <Link to="/auth/sign-up" className={authStyles.link}>Zarejestruj się</Link>
+                    <Link to="/auth/sign-up" className={authStyles.link}><i className="fas fa-user-plus"></i> Zarejestruj się</Link>
                   </li>
                   <li className={authStyles.linkItem}>
-                    <Link to="/auth/forgot-password" className={authStyles.link}>Nie pamiętam hasła</Link>
+                    <Link to="/auth/forgot-password" className={authStyles.link}><i className="fas fa-key"></i>Nie pamiętam hasła</Link>
                   </li>
                 </ul>
               </div>
+
             </>
           )}
         </section>

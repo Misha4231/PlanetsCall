@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Organisation } from '../community/communityTypes';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../../stylePage/admin/admin.module.css';
+import NotAdmin from '../Additional/NotAdmin';
 
 
 const AdminOrganisations = () => {
@@ -47,13 +48,7 @@ const AdminOrganisations = () => {
     }
 
     if(!user?.isAdmin){
-        return (
-            <div>
-                <Header/>
-                <p style={{ color: 'red' }}>Nie masz uprawnień administratora.</p>
-                <Footer/>
-            </div>
-        );  
+      return (<NotAdmin/>) 
     } 
 
     const handleSentResponse = async (organisationUniqueName: string, action: string) => {

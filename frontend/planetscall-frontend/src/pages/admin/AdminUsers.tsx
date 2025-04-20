@@ -7,6 +7,7 @@ import { blockUserAdmin, getUsersAdmin, resetUserAdmin, unblockUserAdmin } from 
 import { UserAdmin, UsersResponseAdmin } from '../../types/adminTypes';
 import styles from '../../stylePage/admin/admin.module.css';
 import { isBlock } from 'typescript';
+import NotAdmin from '../Additional/NotAdmin';
 
 const AdminUsers = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -60,12 +61,7 @@ useEffect(() => {
   }
 
   if(!user?.isAdmin){
-    return (<div>
-      <Header/>
-      <p style={{ color: 'red' }}>Nie masz uprawnień administratora.</p>
-      <Footer/>
-
-    </div>);  
+    return (<NotAdmin/>) 
   } 
 
 

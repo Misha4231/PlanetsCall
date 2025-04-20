@@ -4,59 +4,44 @@ import Footer from '../../components/Footer/Footer';
 import { Link, useNavigate } from 'react-router-dom';
 import { authHeader }  from  "../../services/authHeader";
 import authStyles from '../../stylePage/auth.module.css';
+import { signUpUser } from '../../services/authService';
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingUser, setLoadingUser] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoadingUser(true)
     setSuccess(null);
   
+
+
     try {
-      //const response = await fetch(authHeader + 'api/Auth/sign-up', {
-      const response = await fetch(`${authHeader()}api/Auth/development-sign-up`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          username,
-          passwords: {
-            password,
-            passwordConfirmation: password,
-          },
-          agreedToTermsOfService: true, 
-        }),
-      });
-  
-      const responseText = await response.text(); 
-  
-      if (!response.ok) {
-        console.log(responseText); 
-        const errorData = JSON.parse(responseText);
-        if (errorData.errors && errorData.errors.CustomValidation) {
-          if (errorData.errors.CustomValidation.includes('User with the same username already exists')) {
-            throw new Error('Użytkownik o podanej nazwie już istnieje. Wybierz inną nazwę.');
-          }
-        }
-        
-        throw new Error(errorData.message || 'Rejestracja nie powiodła się.');
+      if (!agreedToTerms) {
+        setError('Musisz zaakceptować warunki korzystania z usługi.');
+      } else {
+        //const response = await fetch(authHeader + 'api/Auth/sign-up', {
+        const response = await signUpUser(username, email, password, passwordConfirmation, agreedToTerms);
+    
+        setSuccess('Rejestracja przebiegła pomyślnie! Sprawdź swój email, aby aktywować konto.');
+        setTimeout(() => navigate('/auth/activate-account'), 3000);
       }
-  
-      setSuccess('Rejestracja przebiegła pomyślnie! Sprawdź swój email, aby aktywować konto.');
-      setTimeout(() => navigate('/auth/activate-account'), 3000);
     } catch (err: any) {
       console.log('Error:', err); 
-      setError(err.message);
+      setError(err);
+    } finally {
+      setLoadingUser(false);
     }
   };
   
@@ -72,11 +57,7 @@ const SignUp: React.FC = () => {
               <form onSubmit={handleSignUp} className={authStyles.form}>
                 <h1 className={authStyles.title}>Zarejestruj się</h1>
                 
-                {error && (
-                  <div className={authStyles.errorMessage}>
-                    {error}
-                  </div>
-                )}
+                {error && <p className={authStyles.errorMessage}>{error}</p>}
                 
                 {success && (
                   <div className={authStyles.successMessage}>
@@ -120,16 +101,47 @@ const SignUp: React.FC = () => {
                   />
                 </div>
                 
-                <button type="submit" className={authStyles.submitButton}>Zarejestruj się</button>
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.label}>Potwierdź hasło:</label>
+                  <input
+                    type="password"
+                    value={passwordConfirmation}
+                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                    placeholder="Wprowadź ponownie hasło"
+                    required
+                    className={authStyles.input}
+                  />
+                </div>
+
+                <div className={authStyles.inputGroup}>
+                  <label className={authStyles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={agreedToTerms}
+                      onChange={(e) => setAgreedToTerms(e.target.checked)}
+                      className={authStyles.checkbox}
+                    />
+                    Akceptuję <Link to="/terms.txt" target="_blank" className={authStyles.termsLink}>Warunki korzystania z usługi</Link>
+                  </label>
+                </div>
+
+                <button type="submit" className={authStyles.submitButton} disabled={loadingUser}>
+                {loadingUser ? (
+                  <span className={authStyles.buttonLoader}></span>
+                ) : (
+                  'Zajerestruj się'
+                )}
+                </button>
+
               </form>
-              
+                        
               <div className={authStyles.linksContainer}>
                 <ul className={authStyles.linksList}>
                   <li className={authStyles.linkItem}>
-                    <Link to="/auth/sign-in" className={authStyles.link}>Zaloguj się</Link>
+                    <Link to="/auth/sign-in" className={authStyles.link}><i className="fas fa-sign-in-alt"></i> Zaloguj się</Link>
                   </li>
                   <li className={authStyles.linkItem}>
-                    <Link to="/auth/forgot-password" className={authStyles.link}>Nie pamiętam hasła</Link>
+                      <Link to="/auth/forgot-password" className={authStyles.link}><i className="fas fa-key"></i>Nie pamiętam hasła</Link>
                   </li>
                 </ul>
               </div>

@@ -6,6 +6,7 @@ import Header from '../../components/shared/Header';
 import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
 import Footer from '../../components/Footer/Footer';
 import styles from '../../stylePage/profile.module.css';
+import NotAuthenticated from '../Additional/NotAuthenticated';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -118,8 +119,9 @@ const Settings: React.FC = () => {
     }
   };
 
-  if (!isAuthenticated) {
-    return <p>Nie jesteś zalogowany!</p>;
+  if (!isAuthenticated || !user) {
+    return (<NotAuthenticated/>
+    );   
   }
 
   return (
@@ -155,7 +157,7 @@ const Settings: React.FC = () => {
                         />
                         <span className={styles.fileInputButton}>Wybierz zdjęcie</span>
                         {previewImage && (
-                          <span className={styles.fileName}>{previewImage || "Wybrane zdjęcie"}</span>
+                          <span className={styles.fileName}>{"Wybrane zdjęcie"}</span>
                         )}
                       </label>
                     </div>

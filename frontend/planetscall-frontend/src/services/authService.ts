@@ -2,6 +2,62 @@ import { error } from "console";
 import { authHeader }  from  "./authHeader";
 let token = "";
 
+export const signUpUser = async (username: string, email: string, password: string, passwordConfirmation: string, agreedToTermsOfService: boolean): Promise<string> => {
+  const response = await fetch(`${authHeader()}api/Auth/sign-up`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      username,
+      passwords: {
+        password,
+        passwordConfirmation,
+      },
+      agreedToTermsOfService,
+    }),
+  });
+
+  console.log(response)
+  if (!response.ok) {
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd rejestracji');
+  }
+
+  return "";
+};
+
+export const activationAccount = async (activationCode: string): Promise<string> => {
+  const response = await fetch(`${authHeader()}api/Auth/activate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: activationCode }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Szczegóły błędu:', errorData); 
+        throw new Error(errorData.message || 'Błąd aktywacji konta');
+      }
+
+
+  if (!response.ok) {
+    const errorData = await response.json();  
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd aktywacji');
+  }
+
+  
+
+  const data = await response.json();
+  console.log(data + "\n");
+  console.log(response);
+
+  return "";
+};
+
+
 export const login = async (uniqueIdentifier: string, password: string) => {
   const response = await fetch(`${authHeader()}api/Auth/sign-in`, {
     method: 'POST',
@@ -54,7 +110,3 @@ export const getUser = async (authToken: string) => {
 export const isAuthenticated = () => {
   return !!token;
 };
-
-
-
-

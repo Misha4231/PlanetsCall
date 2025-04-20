@@ -14,7 +14,7 @@ const CreateOrganisation = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   
-  { /* Stan dla danych organizacji */} 
+  { /* Data types fos specif variable in organisation data */} 
   const [organisationData, setOrganisationData] = useState({
     name: '',
     uniqueName: '',
@@ -27,11 +27,10 @@ const CreateOrganisation = () => {
     minimumJoinLevel: 0,
   });
 
-  { /* Obsługa zmian w formularzu */} 
+  { /* Function to form management */} 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
 
-    { /* Obsługa checkboxa */} 
     if (type === 'checkbox') {
       setOrganisationData(prev => ({
         ...prev,
@@ -45,7 +44,7 @@ const CreateOrganisation = () => {
     }
   };
 
-  { /* Obsługa wysłania formularza */} 
+  { /* Function to send form to database */} 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -54,7 +53,7 @@ const CreateOrganisation = () => {
       return;
     }
 
-    { /* Walidacja pól wymaganych */} 
+    { /* Validation of requirement fields */} 
     if (!organisationData.name || !organisationData.uniqueName) {
       setError('Nazwa i unikalna nazwa są wymagane.');
       return;
@@ -65,13 +64,11 @@ const CreateOrganisation = () => {
       setError(null);
       setSuccess(null);
 
-      { /* Wywołanie funkcji do tworzenia organizacji */} 
+      { /* Sending data to create organisation */} 
       const newOrganisation = await createOrganisation(token, organisationData);
 
-      { /* Komunikat sukcesu */} 
       setSuccess(`Organizacja "${newOrganisation.name}" została pomyślnie utworzona!`);
 
-      { /* Reset formularza */} 
       setOrganisationData({
         name: '',
         uniqueName: '',
@@ -104,15 +101,12 @@ const CreateOrganisation = () => {
                   <li><Link to="/community/organisations">Twoje Organizacje</Link></li>
                   <li><Link to="/community/">Znajdź Organizacje</Link></li>
                 </ul>
-        
-                {/* Komunikat w razie błędu */}
                 {error && <p style={{ color: 'red' }}>{error}</p>}
 
                 
-        {/* Komunikat sukcesu */}
         {success && <p style={{ color: 'green' }}>{success}</p>}
 
-        {/* Formularz do tworzenia organizacji */}
+        {/* Form to create an organisation */}
         <form onSubmit={handleSubmit}>
           <div>
             <label>Nazwa organizacji:</label>

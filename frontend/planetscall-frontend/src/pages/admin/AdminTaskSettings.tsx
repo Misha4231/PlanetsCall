@@ -5,6 +5,7 @@ import { getOrganisationVerifications, sentResponseToOrganisationVerification, c
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styles from '../../stylePage/admin/adminTask.module.css';
+import NotAdmin from '../Additional/NotAdmin';
 
 const AdminTaskSettings = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -100,14 +101,9 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
 
     if(!user?.isAdmin){
-        return (
-            <div>
-                <Header/>
-                <p style={{ color: 'red' }}>Nie masz uprawnień administratora.</p>
-                <Footer/>
-            </div>
-        );  
+      return (<NotAdmin/>) 
     } 
+
     const getTypeName = (type: TaskType): string => {
       switch(type) {
           case 1: return 'Łatwe (dzienne)';

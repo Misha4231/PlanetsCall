@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { imageUrl } from '../../services/imageConvert';
 import { getFriends } from '../../services/communityService';
 import styles from '../../stylePage/profile.module.css';
+import NotAuthenticated from '../Additional/NotAuthenticated';
 
 const Profile: React.FC = () => {
   const { user, isAuthenticated, loadingUser, token } = useAuth();
@@ -13,11 +14,14 @@ const Profile: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [totalFriends, setTotalFriends] = useState<number>(0);
 
+  
+{ /* Get data about user Friends */} 
 useEffect(() => {
     if (!isAuthenticated || !token) return;  
     fetchFriends();
   }, [isAuthenticated, token]);
   
+  {/* Function to search user's friends */}
   const fetchFriends = async () => {
     if (!isAuthenticated || !token) return;
     setLoading(true);
@@ -37,6 +41,7 @@ useEffect(() => {
     }
   };
 
+  {/* Function to see last login data */}
   const formatLastLogin = (date: Date | string | undefined): string => {
     if (!date) return 'Nigdy nie logowano';
     const loginDate = new Date(date);
@@ -54,14 +59,7 @@ useEffect(() => {
   }
 
   if (!isAuthenticated || !user) {
-    return (
-      <div className="app-container">
-        <Header/>
-        <section className="blockCode">
-          <p className="error-message">Użytkownik nie jest zalogowany.</p>
-        </section>
-        <Footer/>
-      </div>
+    return (<NotAuthenticated/>
     );   
   }
 

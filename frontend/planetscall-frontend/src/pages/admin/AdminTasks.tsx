@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Organisation } from '../community/communityTypes';
 import { useAuth } from '../../context/AuthContext';
 import styles from '../../stylePage/admin/adminTask.module.css';
+import NotAdmin from '../Additional/NotAdmin';
 
 const AdminTasks = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -66,13 +67,7 @@ const AdminTasks = () => {
   }
 
   if(!user?.isAdmin){
-      return (
-          <div>
-              <Header/>
-              <p style={{ color: 'red' }}>Nie masz uprawnień administratora.</p>
-              <Footer/>
-          </div>
-      );  
+    return (<NotAdmin/>) 
   } 
 
 

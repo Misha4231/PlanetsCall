@@ -21,6 +21,7 @@ const Organisations: React.FC = () => {
   });
   const navigate = useNavigate();
 
+  { /* Get data about users organisations */} 
   useEffect(() => {
     if (!isAuthenticated || !token) return;
 
@@ -46,6 +47,7 @@ const Organisations: React.FC = () => {
     fetchMyOrganisations();
   }, [isAuthenticated, token, pagination.pageIndex]); 
 
+  { /* System of pagination */}
   const handleNextPage = () => {
     if (pagination.hasNextPage) {
       setPagination((prev) => ({ ...prev, pageIndex: prev.pageIndex + 1 }));
@@ -102,7 +104,8 @@ const Organisations: React.FC = () => {
               <span className={styles.loader}></span>
             </div>
           ) : myOrganisations.length > 0 ? (
-            <div className={styles.organisationsList}>
+            <div className={styles.organisationsList}>              
+            { /* Show users organisation */}
               {myOrganisations.map(org => (
                 <div key={org.uniqueName} className={styles.organisationCard} onClick={() => navigate(`/community/organisation/${org.uniqueName}`)}>
                   <div className={styles.orgImageContainer}>

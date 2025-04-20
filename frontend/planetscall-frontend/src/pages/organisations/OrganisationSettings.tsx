@@ -6,6 +6,7 @@ import { Member, Organisation } from '../community/communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getOrganisationData, getOrganisationSettings, updateOrganisationSettings } from '../../services/communityService';
 import styles from '../../stylePage/organisation/organisationAdmin.module.css';
+import NotAdmin from '../Additional/NotAdmin';
 
 const OrganisationSettings = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -21,6 +22,7 @@ const OrganisationSettings = () => {
 
 
 
+    { /* Get data about organisation and its settings */} 
     useEffect(() => {
         if(token && organisationUniqueName){
         const fetchData = async () => {  
@@ -45,6 +47,7 @@ const OrganisationSettings = () => {
 
 
   
+  { /* Function to change settings of organisation */}
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
 
@@ -64,6 +67,7 @@ const OrganisationSettings = () => {
     }
 };
 
+{ /* Function to send settings change to database */}
 const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -97,12 +101,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       }
 
       if(organisation?.creatorId!=user?.id){
-        return (<div>
-          <Header/>
-          <p style={{ color: 'red' }}>Nie masz uprawnień by zarządać organizacją.</p>
-          <Footer/>
-    
-        </div>);  
+        return (<NotAdmin/>)
       } 
 
     if (loading) {

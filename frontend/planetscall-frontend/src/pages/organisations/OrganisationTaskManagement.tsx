@@ -12,6 +12,7 @@ import {
   OrganizationTask
 } from '../../services/adminOrgService';
 import { getOrganisationData } from '../../services/communityService';
+import NotAdmin from '../Additional/NotAdmin';
 
 const OrganisationTaskManagement = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -30,6 +31,7 @@ const OrganisationTaskManagement = () => {
 
     sessionStorage.setItem('successInfo', "");
     
+    { /* Get organisation data and tasks */} 
     useEffect(() => {
         if (token && organisationUniqueName) {
             const fetchData = async () => {  
@@ -63,14 +65,10 @@ const OrganisationTaskManagement = () => {
     }
 
     if(organisation?.creatorId!=user?.id){
-        return (<div>
-          <Header/>
-          <p style={{ color: 'red' }}>Nie masz uprawnień by zarządać organizacją.</p>
-          <Footer/>
-    
-        </div>);  
+        return (<NotAdmin/>) 
       } 
 
+    { /* Function to activate or delete task */}
     const handleTaskAction = async (id: number, action: 'activate' | 'delete') => {
         if (!token || !organisationUniqueName) return;
         
@@ -84,7 +82,7 @@ const OrganisationTaskManagement = () => {
                 setSuccess('Zadanie zostało aktywowane na 3 dni!');
                 const updatedTasks = await getOrganizationTasks(token, organisationUniqueName);
                 setTasks(updatedTasks);
-            } else {
+            } else if (action === 'delete') {
                 await deleteOrganizationTask(token, organisationUniqueName, id);
                 setTasks(tasks.filter(task => task.id !== id));
                 setSuccess('Zadanie zostało usunięte!');
@@ -96,6 +94,7 @@ const OrganisationTaskManagement = () => {
         }
     };
 
+    { /* Function to create task */}
     const handleCreateTask = async () => {
         if (!token || !organisationUniqueName) {
             setError('Brak tokenu lub nazwy organizacji');
@@ -126,6 +125,7 @@ const OrganisationTaskManagement = () => {
         }
     };
 
+    { /* Function to get if task is active */}
     const getStatusInfo = (task: OrganizationTask): string => {
         if (task.isActive && task.expiresAt) {
             return `Aktywne (wygaśnie: ${new Date(task.expiresAt).toLocaleString()})`;
