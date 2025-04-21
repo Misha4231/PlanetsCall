@@ -76,7 +76,6 @@ useEffect(() => {
                 {user.profileImage ? (
                   <img
                     src={imageUrl() + user.profileImage}
-                    alt={`Profilowe ${user.username}`}
                     className={styles.avatarImage}
                   />
                 ) : (

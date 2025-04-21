@@ -24,7 +24,8 @@ export const getItemsByCategory = async (authToken: string, categoryId: number, 
 
   if (!response.ok) throw new Error('Nie udało się pobrać przedmiotów.');
 
-  return await response.json();
+  const data = await response.json();
+  return data.items ?? []; 
 };
 
 //
@@ -84,10 +85,10 @@ return await response.json();
 
 //
 
-export const removeCategory = async (authToken: string) => {
+export const removeCategory = async (authToken: string, categoryId: number) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch(`${authHeader()}api/Items/categories`, {
+  const response = await fetch(`${authHeader()}api/Items/categories/${categoryId}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -131,10 +132,10 @@ export const addItems = async (authToken: string, categoryId: number, price: num
 
 //
 
-export const removeItems = async (authToken: string) => {
+export const removeItems = async (authToken: string, itemId: number) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch(`${authHeader()}/api/Items`, {
+  const response = await fetch(`${authHeader()}/api/Items/${itemId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

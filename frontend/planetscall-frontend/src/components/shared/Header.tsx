@@ -60,6 +60,7 @@ const Header: React.FC = () => {
                     <li><Link to="/admin/organisations">Organizacje</Link></li>
                     <li><Link to="/admin/users">Użytkownicy</Link></li>
                     <li><Link to="/admin/tasks">Zadania</Link></li>
+                    <li><Link to="/admin/shop">Sklep</Link></li>
                   </ul>
                 </li>
               )}

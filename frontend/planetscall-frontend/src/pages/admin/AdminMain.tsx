@@ -63,7 +63,7 @@ useEffect(() => {
             
             <h1 className={styles.adminTitle}>Panel Administracyjny</h1>
             
-            <nav className={styles.adminNav}>
+            <nav className={styles.adminNavGrid}>
               <Link to="/admin/organisations" className={styles.adminNavLink}>
                 <i className="fas fa-sitemap"></i>
                 Organizacje
@@ -76,6 +76,10 @@ useEffect(() => {
                 <i className="fas fa-tasks"></i>
                 Zadania
               </Link>
+              <Link to="/admin/shop" className={styles.adminNavLink}>
+                <i className="fas fa-store"></i> {/* Changed from fa-shop to fa-store */}
+                Sklep
+              </Link>
             </nav>
           </div>
         )}
@@ -83,6 +87,6 @@ useEffect(() => {
       <Footer />
     </div>
   )
-};;
+};
 
 export default AdminMain

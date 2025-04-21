@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import Footer from '../../components/Footer/Footer'
-import Header from '../../components/shared/Header'
-import { getOrganisationVerifications, sentResponseToOrganisationVerification, createTemplateTask, getAllTemplateTasks, activateTemplateTask, deleteTemplateTask, TaskTemplate, TaskType, getTemplateTaskById, updateTemplateTask, TaskTemplateUpdate  } from '../../services/adminOrgService';
-import { useAuth } from '../../context/AuthContext';
+import Footer from '../../../components/Footer/Footer'
+import Header from '../../../components/shared/Header'
+import { getOrganisationVerifications, sentResponseToOrganisationVerification, createTemplateTask, getAllTemplateTasks, activateTemplateTask, deleteTemplateTask, TaskTemplate, TaskType, getTemplateTaskById, updateTemplateTask, TaskTemplateUpdate  } from '../../../services/adminOrgService';
+import { useAuth } from '../../../context/AuthContext';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import styles from '../../stylePage/admin/adminTask.module.css';
-import NotAdmin from '../Additional/NotAdmin';
+import styles from '../../../stylePage/admin/adminTask.module.css';
+import NotAdmin from '../../Additional/NotAdmin';
 
 const AdminTaskSettings = () => {
     const { user, isAuthenticated, token } = useAuth();

@@ -38,10 +38,16 @@ import OrganisationTaskManagement from '../pages/organisations/OrganisationTaskM
 import AdminOrganisations from '../pages/admin/AdminOrganisations';
 import AdminUsers from '../pages/admin/AdminUsers';
 import AdminTasks from '../pages/admin/AdminTasks';
-import AdminTaskInfo from '../pages/admin/AdminTaskInfo';
-import AdminTaskSettings from '../pages/admin/AdminTaskSettings';
+import AdminTaskInfo from '../pages/admin/task/AdminTaskInfo';
+import AdminTaskSettings from '../pages/admin/task/AdminTaskSettings';
 import People from '../pages/people/People';
 import SearchOrganisation from '../pages/organisations/SearchOrganisation';
+import AdminShop from '../pages/admin/AdminShop';
+import AdminShopCategory from '../pages/admin/shop/AdminShopCategory';
+import AdminShopCreateCategory from '../pages/admin/shop/AdminShopCreateCategory';
+import AdminShopCreateItem from '../pages/admin/shop/AdminShopCreateItem';
+import AdminShopEditCategory from '../pages/admin/shop/AdminShopEditCategory';
+import AdminShopEditItem from '../pages/admin/shop/AdminShopEditItem';
 
 
 const router = createBrowserRouter([
@@ -178,6 +184,32 @@ const router = createBrowserRouter([
     path: '/admin/organisations',
     element: <AdminOrganisations />
   },
+  {
+    path: '/admin/shop',
+    element: <AdminShop />
+  },
+  {
+    path: '/admin/shop/category/:id',
+    element: <AdminShopCategory />
+  },
+  {
+    path: '/admin/shop/create-category',
+    element: <AdminShopCreateCategory />
+  },
+  {
+    path: '/admin/shop/create-item',
+    element: <AdminShopCreateItem  />
+  },
+  {
+    path: '/admin/shop/category/:id/edit',
+    element: <AdminShopEditCategory />
+  },
+  {
+    path: '/admin/shop/item/:id/edit',
+    element: <AdminShopEditItem  />
+  },
+
+
   {
     path: '/admin/users',
     element: <AdminUsers />

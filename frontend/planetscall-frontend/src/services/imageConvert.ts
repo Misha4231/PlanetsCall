@@ -8,6 +8,6 @@ export const convertImageToBase64 = (file: File): Promise<string> => {
 };
 
 export const imageUrl = () => {
-  const linkToImage = "http://localhost:8080/";
+  const linkToImage = "https://localhost:7000/";
   return linkToImage;
 };

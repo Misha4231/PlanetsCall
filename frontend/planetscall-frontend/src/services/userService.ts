@@ -67,10 +67,9 @@ export const updateUserSettings = async (authToken: string, userId: number, form
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.log(errorData.error);
-    console.log(errorData);
-    throw new Error(errorData.message || 'Błąd aktualizacji profilu');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd rejestracji');
   }
 
   return await response.json();
