@@ -3,8 +3,10 @@ import React, { useState } from 'react'
 import Header from '../../components/shared/Header'
 import { useAuth } from '../../context/AuthContext';
 import { createOrganisation } from '../../services/communityService';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer/Footer';
+import styles from '../../stylePage/organisation/organisationAdmin.module.css';
+import { convertImageToBase64 } from '../../services/imageConvert';
 
 
 const CreateOrganisation = () => {
@@ -12,10 +14,12 @@ const CreateOrganisation = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [previewImage, setPreviewImage] = useState<string>('');
 
   
   { /* Data types fos specif variable in organisation data */} 
-  const [organisationData, setOrganisationData] = useState({
+  const [formData, setFormData] = useState({
     name: '',
     uniqueName: '',
     description: '',
@@ -27,22 +31,33 @@ const CreateOrganisation = () => {
     minimumJoinLevel: 0,
   });
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+        const base64Image = await convertImageToBase64(file);
+        setFormData(prev => ({ ...prev, organizationLogo: base64Image }));
+        setPreviewImage(base64Image);
+    } catch (error) {
+        console.error('Error converting image:', error);
+        setError('Wystąpił błąd podczas przetwarzania zdjęcia');
+    }
+};
+
   { /* Function to form management */} 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
 
     if (type === 'checkbox') {
-      setOrganisationData(prev => ({
-        ...prev,
-        [name]: (e.target as HTMLInputElement).checked,
-      }));
+        const checkbox = e.target as HTMLInputElement;
+        setFormData(prev => ({ ...prev, [name]: checkbox.checked }));
+    } else if (type === 'number') {
+        setFormData(prev => ({ ...prev, [name]: parseInt(value) || 0 }));
     } else {
-      setOrganisationData(prev => ({
-        ...prev,
-        [name]: value,
-      }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     }
-  };
+};
 
   { /* Function to send form to database */} 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,7 +69,7 @@ const CreateOrganisation = () => {
     }
 
     { /* Validation of requirement fields */} 
-    if (!organisationData.name || !organisationData.uniqueName) {
+    if (!formData.name || !formData.uniqueName) {
       setError('Nazwa i unikalna nazwa są wymagane.');
       return;
     }
@@ -65,21 +80,8 @@ const CreateOrganisation = () => {
       setSuccess(null);
 
       { /* Sending data to create organisation */} 
-      const newOrganisation = await createOrganisation(token, organisationData);
-
-      setSuccess(`Organizacja "${newOrganisation.name}" została pomyślnie utworzona!`);
-
-      setOrganisationData({
-        name: '',
-        uniqueName: '',
-        description: '',
-        organizationLogo: '',
-        instagramLink: '',
-        linkedinLink: '',
-        youtubeLink: '',
-        isPrivate: false,
-        minimumJoinLevel: 0,
-      });
+      await createOrganisation(token, formData);
+      navigate(`/community/organisation/${formData.uniqueName}`); 
     } catch (err: any) {
       setError(err.message || 'Wystąpił błąd podczas tworzenia organizacji.');
     } finally {
@@ -88,129 +90,171 @@ const CreateOrganisation = () => {
   };
 
   return (
-    <div className="app-container">
-      <Header />
-      <section className="codeBlock">
-      {loading ? (
-          <p>Ładowanie...</p>
-        ) : (
-          <>
-        
-                <h3>Stwórz Organizacje</h3>
-                <ul>
-                  <li><Link to="/community/organisations">Twoje Organizacje</Link></li>
-                  <li><Link to="/community/">Znajdź Organizacje</Link></li>
-                </ul>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="app-container dark-theme">
+        <Header />
+        <section className={styles.adminContainer}>
+            <div className={styles.adminContent}>
+                <div className={styles.adminHeader}>
+                    <h1 className={styles.sectionTitle}>Stwórz Nową Organizację</h1>
+                    <button 
+                        onClick={() => navigate('/community')}
+                        className={styles.secondaryButton}
+                    >
+                        <i className="fas fa-arrow-left"></i> Powrót
+                    </button>
+                </div>
 
-                
-        {success && <p style={{ color: 'green' }}>{success}</p>}
+                {error && <div className={styles.errorMessage}>{error}</div>}
 
-        {/* Form to create an organisation */}
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Nazwa organizacji:</label>
-            <input
-              type="text"
-              name="name"
-              value={organisationData.name}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+                <form onSubmit={handleSubmit} className={styles.settingsForm}>
+                    <div className={styles.formGrid}>
+                        <div className={styles.formColumn}>
+                            <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                                <label className={styles.formLabel}>Logo Organizacji:</label>
+                                <div className={styles.imageUploadContainer}>
+                                    {previewImage && (
+                                        <div className={styles.imagePreview}>
+                                            <img 
+                                                src={previewImage} 
+                                                alt="Podgląd logo organizacji" 
+                                                className={styles.previewImage}
+                                            />
+                                        </div>
+                                    )}
+                                    <label className={styles.fileInputLabel}>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            className={styles.fileInput}
+                                        />
+                                        <span className={styles.fileInputButton}>Wybierz zdjęcie</span>
+                                    </label>
+                                </div>
+                            </div>
 
-          <div>
-            <label>Unikalna nazwa:</label>
-            <input
-              type="text"
-              name="uniqueName"
-              value={organisationData.uniqueName}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Nazwa:</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    className={styles.formInput}
+                                    required
+                                />
+                            </div>
 
-          <div>
-            <label>Opis:</label>
-            <textarea
-              name="description"
-              value={organisationData.description}
-              onChange={handleInputChange}
-            />
-          </div>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Unikalna nazwa:</label>
+                                <input
+                                    type="text"
+                                    name="uniqueName"
+                                    value={formData.uniqueName}
+                                    onChange={handleInputChange}
+                                    className={styles.formInput}
+                                    required
+                                />
+                            </div>
 
-          <div>
-            <label>Logo (URL):</label>
-            <input
-              type="text"
-              name="organizationLogo"
-              value={organisationData.organizationLogo}
-              onChange={handleInputChange}
-            />
-          </div>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Minimalny poziom dołączenia:</label>
+                                <input
+                                    type="number"
+                                    name="minimumJoinLevel"
+                                    value={formData.minimumJoinLevel}
+                                    onChange={handleInputChange}
+                                    className={styles.formInput}
+                                    min="0"
+                                />
+                            </div>
+                        </div>
 
-          <div>
-            <label>Link do Instagrama:</label>
-            <input
-              type="text"
-              name="instagramLink"
-              value={organisationData.instagramLink}
-              onChange={handleInputChange}
-            />
-          </div>
+                        <div className={styles.formColumn}>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Instagram Link:</label>
+                                <input
+                                    type="url"
+                                    name="instagramLink"
+                                    value={formData.instagramLink}
+                                    onChange={handleInputChange}
+                                    className={styles.formInput}
+                                />
+                            </div>
 
-          <div>
-            <label>Link do LinkedIn:</label>
-            <input
-              type="text"
-              name="linkedinLink"
-              value={organisationData.linkedinLink}
-              onChange={handleInputChange}
-            />
-          </div>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>LinkedIn Link:</label>
+                                <input
+                                    type="url"
+                                    name="linkedinLink"
+                                    value={formData.linkedinLink}
+                                    onChange={handleInputChange}
+                                    className={styles.formInput}
+                                />
+                            </div>
 
-          <div>
-            <label>Link do YouTube:</label>
-            <input
-              type="text"
-              name="youtubeLink"
-              value={organisationData.youtubeLink}
-              onChange={handleInputChange}
-            />
-          </div>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>YouTube Link:</label>
+                                <input
+                                    type="url"
+                                    name="youtubeLink"
+                                    value={formData.youtubeLink}
+                                    onChange={handleInputChange}
+                                    className={styles.formInput}
+                                />
+                            </div>
 
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                name="isPrivate"
-                checked={organisationData.isPrivate}
-                onChange={handleInputChange}
-              />
-              Prywatna organizacja
-            </label>
-          </div>
+                            <div className={styles.checkboxGroup}>
+                                <label className={styles.checkboxLabel}>
+                                    <input
+                                        type="checkbox"
+                                        name="isPrivate"
+                                        checked={formData.isPrivate}
+                                        onChange={handleInputChange}
+                                        className={styles.checkboxInput}
+                                    />
+                                    <span className={styles.checkboxCustom}></span>
+                                    <span className={styles.checkboxText}>Prywatna organizacja</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
 
-          <div>
-            <label>Minimalny poziom dołączenia:</label>
-            <input
-              type="number"
-              name="minimumJoinLevel"
-              value={organisationData.minimumJoinLevel}
-              onChange={handleInputChange}
-            />
-          </div>
+                    <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Opis:</label>
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleInputChange}
+                            className={styles.formTextarea}
+                            rows={4}
+                            required
+                        />
+                    </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Tworzenie...' : 'Stwórz organizację'}
-          </button>
-        </form>
-          </>
-        )}
-      </section>
-      <Footer/>
+                    <div className={styles.formActions}>
+                        <button 
+                            type="submit" 
+                            className={styles.primaryButton}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <i className="fas fa-spinner fa-spin"></i> Tworzenie...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-plus"></i> Stwórz Organizację
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <Footer />
     </div>
-  )
+);
 }
 
 export default CreateOrganisation

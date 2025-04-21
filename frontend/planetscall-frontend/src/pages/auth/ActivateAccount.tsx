@@ -10,6 +10,7 @@ const ActivateAccount = () => {
   const location = useLocation();
   const [activationCode, setActivationCode] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [codeByLink, setCodeByLink] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -20,6 +21,7 @@ const ActivateAccount = () => {
     const codeUrl = urlParams.get('code');
     
     if (codeUrl) {
+      setCodeByLink(true);
       setActivationCode(codeUrl);
     }
   }, []);
@@ -50,7 +52,7 @@ const ActivateAccount = () => {
         <>
           <h1 className={authStyles.title}>Aktywuj Konto</h1>
           <form onSubmit={handleActivation} className={authStyles.form}>
-            {!activationCode && (
+            {!codeByLink && (
               <>
                 <label className={authStyles.label}>Kod aktywacyjny:</label>
                 <input

@@ -361,7 +361,7 @@ export const deleteOrganisation = async (authToken: string, organisationUniqueNa
 };
 
 
-export const sentVerificationRequest = async (authToken: string, organisationUniqueName: string ) => {
+export const sentVerificationRequest = async (authToken: string, organisationUniqueName: string, verificationMessage:string ) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -369,13 +369,17 @@ export const sentVerificationRequest = async (authToken: string, organisationUni
   const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/request-verification`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
     },
+    body: JSON.stringify(verificationMessage),
   });
 
 
   if (!response.ok) {
-    throw new Error('Nie udało się nadać wysłać żądania.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się nadać wysłać żądania.');
   }
   const data = await response.json(); 
 

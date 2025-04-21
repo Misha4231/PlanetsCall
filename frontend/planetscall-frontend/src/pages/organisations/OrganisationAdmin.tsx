@@ -22,6 +22,9 @@ const OrganisationAdmin = () => {
     const [organisationRoles, setOrganisationRoles] = useState<any>(null);
     const [users, setUsers] = useState<Member[]>([]);
     const [requestList, setRequestList] = useState<Member[]>([]);
+    const [requestSent, setRequestSent] = useState<boolean>(false);
+    const [verificationMessage, setVerificationMessage] = useState('');
+    const [showVerificationModal, setShowVerificationModal] = useState(false);
 
 
     const { organisationUniqueName } = useParams<{ organisationUniqueName: string }>();
@@ -64,7 +67,7 @@ const OrganisationAdmin = () => {
         };
         fetchData();
         }    
-  }, [token, organisationUniqueName]);
+  }, [token, organisationUniqueName, requestSent]);
 
 
 
@@ -172,10 +175,16 @@ const handleSentRequestToVerify = async () =>{
       return;
     }
     const authToken = token || '';
-    await sentVerificationRequest(authToken, organisationUniqueName);
+    await sentVerificationRequest(authToken, organisationUniqueName, verificationMessage);
+    setSuccess('Prośba o weryfikację została wysłana!');
+    setShowVerificationModal(false);
+    setVerificationMessage('');
 
 
   } catch (err: any) {
+    if(err.message == "Request was already sent"){
+      setRequestSent(true);
+    }
     setError(err.message);
   } finally {
     setLoading(false);
@@ -248,14 +257,16 @@ return (
             </Link>
           </div>
 
-          {!organisation?.isVerified && (
-            <button
-              className={styles.primaryButton}
-              onClick={() => handleSentRequestToVerify()}
-              disabled={loading}
-            >
-              Wyślij prośbę o weryfikację organizacji
-            </button>
+          {(!organisation?.isVerified && !requestSent) && (
+            <>
+                <button
+                    className={styles.primaryButton}
+                    onClick={() => setShowVerificationModal(true)}
+                    disabled={loading}
+                >
+                    Wyślij prośbę o weryfikację organizacji
+                </button>
+            </>
           )}
 
           { /* If organisation is private it shows a request list of users */}
@@ -349,6 +360,40 @@ return (
         </div>
       )}
     </section>
+
+    {showVerificationModal && (
+        <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+                <h2 className={styles.modalTitle}>Prośba o weryfikację</h2>
+                <p>Wpisz wiadomość do administratora (opcjonalnie):</p>
+                <textarea
+                    value={verificationMessage}
+                    onChange={(e) => setVerificationMessage(e.target.value)}
+                    className={styles.formTextarea}
+                    rows={4}
+                    placeholder="Dlaczego Twoja organizacja powinna zostać zweryfikowana?"
+                />
+                <div className={styles.modalButtons}>
+                    <button
+                        className={`${styles.actionButton} ${styles.modalCancelButton}`}
+                        onClick={() => {
+                            setShowVerificationModal(false);
+                            setVerificationMessage('');
+                        }}
+                    >
+                        Anuluj
+                    </button>
+                    <button
+                        className={`${styles.actionButton} ${styles.primaryButton}`}
+                        onClick={handleSentRequestToVerify}
+                        disabled={loading}
+                    >
+                        {loading ? 'Wysyłanie...' : 'Wyślij prośbę'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    )}
 
     { /* Confirmation if admin of organisation wants delete organisation  */}
     {showDeleteConfirmation && (

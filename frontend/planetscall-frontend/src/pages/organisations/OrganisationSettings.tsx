@@ -7,6 +7,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getOrganisationData, getOrganisationSettings, updateOrganisationSettings } from '../../services/communityService';
 import styles from '../../stylePage/organisation/organisationAdmin.module.css';
 import NotAdmin from '../Additional/NotAdmin';
+import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
 
 const OrganisationSettings = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -18,6 +19,7 @@ const OrganisationSettings = () => {
     const [loading, setLoading] = useState<boolean>(false);
       const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [previewImage, setPreviewImage] = useState<string>('');  
     const navigate = useNavigate();
 
 
@@ -41,11 +43,27 @@ const OrganisationSettings = () => {
                 setLoading(false);
             }
         };
+        if(formData.organizationLogo) {
+          setPreviewImage(imageUrl() + formData.organizationLogo);
+        }
         fetchData();
         }    
   }, [token, organisationUniqueName]);
 
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const base64Image = await convertImageToBase64(file);
+      setFormData(prev => ({ ...prev, organizationLogo: base64Image }));
+      setPreviewImage(base64Image);
+    } catch (error) {
+      console.error('Error converting image:', error);
+      alert('Wystąpił błąd podczas przetwarzania zdjęcia');
+    }
+  };
   
   { /* Function to change settings of organisation */}
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -80,6 +98,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         setLoading(true);
         await updateOrganisationSettings(token!, organisationUniqueName, formData);
         setSuccess('Pomyślnie zaaktulizowane dane.');
+        setTimeout(() => navigate(`/community/organisation/${organisationUniqueName}/admin`), 1000);
         setError(null);
     } catch (err: any) {
         setError(err.message || 'Failed to update organisation settings.');
@@ -125,8 +144,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <div className={styles.adminHeader}>
                   <h1 className={styles.sectionTitle}>Ustawienia Organizacji</h1>
                   <Link 
-                    to={`/community/organisation/${organisationUniqueName}`} 
-                    className={styles.secondaryButton}
+                    to={`/community/organisation/${organisationUniqueName}/admin`} 
+                    className={styles.primaryButton}
                   >
                     <i className="fas fa-arrow-left"></i> Powrót
                   </Link>
@@ -138,6 +157,31 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <form onSubmit={handleSubmit} className={styles.settingsForm}>
                   <div className={styles.formGrid}>
                     <div className={styles.formColumn}>
+
+                    <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Logo:</label>
+                    <div className={styles.imageUploadContainer}>
+                      {formData.organizationLogo && (
+                        <div className={styles.imagePreview}>
+                          <img 
+                            src={imageUrl() + formData.organizationLogo} 
+                            alt="Podgląd loga organizacji" 
+                            className={styles.previewImage}
+                          />
+                        </div>
+                        )}
+                        <label className={styles.fileInputLabel}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className={styles.fileInput}
+                        />
+                        <span className={styles.fileInputButton}>Wybierz zdjęcie</span>
+                      </label>
+                      </div>
+                      </div>
+
                       <div className={styles.formGroup}>
                         <label className={styles.formLabel}>Nazwa:</label>
                         <input
@@ -155,17 +199,6 @@ const handleSubmit = async (e: React.FormEvent) => {
                           type="text"
                           name="uniqueName"
                           value={formData.uniqueName || ''}
-                          onChange={handleInputChange}
-                          className={styles.formInput}
-                        />
-                      </div>
-    
-                      <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Logo URL:</label>
-                        <input
-                          type="text"
-                          name="organizationLogo"
-                          value={formData.organizationLogo || ''}
                           onChange={handleInputChange}
                           className={styles.formInput}
                         />

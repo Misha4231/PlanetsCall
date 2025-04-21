@@ -88,7 +88,7 @@ const AnOrganisation = () => {
                   <div className={styles.logoSection}>
                     {organisation.organizationLogo ? (
                       <img
-                        src={organisation.organizationLogo}
+                        src={imageUrl() + organisation.organizationLogo}
                         alt={`${organisation.name} logo`}
                         className={styles.logoImage}
                       />

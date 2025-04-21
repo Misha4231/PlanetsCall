@@ -106,4 +106,10 @@ public class FileService(IWebHostEnvironment webHostEnvironment)
         
         return path;
     }
+
+    public bool FileExists(string filePath)
+    {
+        var path = Path.Combine(webHostEnvironment.WebRootPath, filePath);
+        return File.Exists(path);
+    }
 }

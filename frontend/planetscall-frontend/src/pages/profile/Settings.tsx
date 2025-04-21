@@ -42,7 +42,7 @@ const Settings: React.FC = () => {
         username: user.username || '',
         firstName: user.firstName || '',
         lastName: user.lastName || '',
-        profileImage: user.profileImage || '',
+        profileImage: (user.profileImage || ''),
         preferredLanguage: user.preferredLanguage || '',
         isNotifiable: user.isNotifiable ?? false,
         isVisible: user.isVisible ?? false,
@@ -109,9 +109,6 @@ const Settings: React.FC = () => {
         alert('Nie można zaktualizować ustawień: brak identyfikatora użytkownika');
         return;
       }
-    
-      console.log('Auth Token:', authToken);
-      console.log('User ID:', userId);
 
       await updateUserSettings(authToken, userId, formData);
       setSuccess("Pomyślnie zaktulizowano ustawienia");
