@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../../components/shared/Header'
-import { getAddAttendance } from '../../services/userService';
+import { getUserAttendance } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 import Footer from '../../components/Footer/Footer';
 
@@ -10,17 +10,19 @@ const Statistics = () => {
 
   useEffect(() => {
     const fetchAttendance = async () => {
+      if (!isAuthenticated || !token) return;  
+      if (!token ) return;  
+      console.log('Attendance Data:');
       try {
-        const authToken = token || '';
-        const attendanceData = await getAddAttendance(authToken);
+        const attendanceData = await getUserAttendance(token, (user?.username + ""));
         console.log('Attendance Data:', attendanceData);
       } catch (err: any) {
-        console.error('Error fetching attendance:', err.message);
+        console.log(err);
       }
     };
 
     fetchAttendance();
-  }, []);
+  }, [isAuthenticated, token]);
 
 
   return (

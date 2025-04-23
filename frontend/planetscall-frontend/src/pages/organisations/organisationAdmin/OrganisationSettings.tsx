@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import Header from '../../components/shared/Header';
-import Footer from '../../components/Footer/Footer';
-import { useAuth } from '../../context/AuthContext';
-import { Member, Organisation } from '../community/communityTypes';
+import Header from '../../../components/shared/Header';
+import Footer from '../../../components/Footer/Footer';
+import { useAuth } from '../../../context/AuthContext';
+import { Member, Organisation } from '../../community/communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { getOrganisationData, getOrganisationSettings, updateOrganisationSettings } from '../../services/communityService';
-import styles from '../../stylePage/organisation/organisationAdmin.module.css';
-import NotAdmin from '../Additional/NotAdmin';
-import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
+import { getOrganisationData, getOrganisationSettings, updateOrganisationSettings } from '../../../services/communityService';
+import styles from '../../../stylePage/organisation/organisationAdmin.module.css';
+import NotAdmin from '../../Additional/NotAdmin';
+import { convertImageToBase64, imageUrl } from '../../../services/imageConvert';
 
 const OrganisationSettings = () => {
     const { user, isAuthenticated, token } = useAuth();

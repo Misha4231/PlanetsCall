@@ -1,8 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/shared/Header';
-import { useAuth } from '../../context/AuthContext';
-import { Organisation } from '../community/communityTypes';
+import Footer from '../../../components/Footer/Footer';
+import Header from '../../../components/shared/Header';
+import { useAuth } from '../../../context/AuthContext';
+import { Organisation } from '../../community/communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { 
   getOrganizationTasks,
@@ -10,17 +11,16 @@ import {
   createOrganizationTask,
   activateOrganizationTask,
   OrganizationTask
-} from '../../services/adminOrgService';
-import { getOrganisationData } from '../../services/communityService';
-import NotAdmin from '../Additional/NotAdmin';
+} from '../../../services/adminOrgService';
+import { getOrganisationData } from '../../../services/communityService';
+import NotAdmin from '../../Additional/NotAdmin';
 
-const OrganisationTaskManagement = () => {
+const OrganisationCreateTask = () => {
     const { user, isAuthenticated, token } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
     const [success, setSuccess] = useState<string | null>(sessionStorage.getItem('successInfo'));
     const [organisation, setOrganisation] = useState<Organisation | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [tasks, setTasks] = useState<OrganizationTask[]>([]);
     const [newTask, setNewTask] = useState({
         title: '',
         description: ''
@@ -40,9 +40,6 @@ const OrganisationTaskManagement = () => {
 
                     const orgData = await getOrganisationData(token, organisationUniqueName);
                     setOrganisation(orgData);
-
-                    const tasksData = await getOrganizationTasks(token, organisationUniqueName);
-                    setTasks(tasksData);
                     setError(null);
                 } catch (err: any) {
                     setError(err.message);
@@ -68,31 +65,6 @@ const OrganisationTaskManagement = () => {
         return (<NotAdmin/>) 
       } 
 
-    { /* Function to activate or delete task */}
-    const handleTaskAction = async (id: number, action: 'activate' | 'delete') => {
-        if (!token || !organisationUniqueName) return;
-        
-        setLoading(true);
-        setError(null);
-        setSuccess(null);
-        
-        try {
-            if (action === 'activate') {
-                await activateOrganizationTask(token, organisationUniqueName, id);
-                setSuccess('Zadanie zostało aktywowane na 3 dni!');
-                const updatedTasks = await getOrganizationTasks(token, organisationUniqueName);
-                setTasks(updatedTasks);
-            } else if (action === 'delete') {
-                await deleteOrganizationTask(token, organisationUniqueName, id);
-                setTasks(tasks.filter(task => task.id !== id));
-                setSuccess('Zadanie zostało usunięte!');
-            }
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     { /* Function to create task */}
     const handleCreateTask = async () => {
@@ -115,8 +87,6 @@ const OrganisationTaskManagement = () => {
                 }
             );
             
-            setTasks([...tasks, createdTask]);
-            setNewTask({ title: '', description: '' });
             setSuccess('Zadanie zostało utworzone!');
         } catch (err: any) {
             setError(err.message || 'Wystąpił błąd podczas tworzenia zadania');
@@ -171,38 +141,6 @@ const OrganisationTaskManagement = () => {
                                 Utwórz zadanie
                             </button>
                         </div>
-
-                        <h3>Lista zadań</h3>
-                        {tasks.length > 0 ? (
-                            <div >
-                                {tasks.map(task => (
-                                    <div key={task.id}>
-                                        <h4>{task.title}</h4>
-                                        <p>{task.description}</p>
-                                        <p>Status: {getStatusInfo(task)}</p>
-                                        <p>Utworzono: {new Date(task.createdAt).toLocaleString()}</p>
-                                        
-                                        <div>
-                                            <button
-                                                onClick={() => handleTaskAction(task.id, 'activate')}
-                                                disabled={loading || task.isActive}
-                                    
-                                            >
-                                                Aktywuj
-                                            </button>
-                                            <button
-                                                onClick={() => handleTaskAction(task.id, 'delete')}
-                                                disabled={loading}
-                                            >
-                                                Usuń
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p>Brak zadań dla tej organizacji</p>
-                        )}
                     </>
                 )}
             </section>
@@ -211,4 +149,4 @@ const OrganisationTaskManagement = () => {
     );
 };
 
-export default OrganisationTaskManagement;
+export default OrganisationCreateTask;

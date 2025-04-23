@@ -70,6 +70,9 @@ const AdminShop = () => {
             </Link>
 
             <div className={styles.grid}>
+              {categories.length == 0 && (
+                  <p>Nie ma jeszcze utworzonych kategorii</p>
+              )}
               {categories.map(category => (
                 <div key={category.id} className={styles.card}>
                   <h3>{category.title}</h3>

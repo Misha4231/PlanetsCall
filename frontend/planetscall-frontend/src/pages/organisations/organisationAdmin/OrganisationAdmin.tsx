@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import Header from '../../components/shared/Header';
-import Footer from '../../components/Footer/Footer';
-import { useAuth } from '../../context/AuthContext';
-import { Member, Organisation } from '../community/communityTypes';
+import Header from '../../../components/shared/Header';
+import Footer from '../../../components/Footer/Footer';
+import { useAuth } from '../../../context/AuthContext';
+import { Member, Organisation } from '../../community/communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import styles from '../../stylePage/organisation/organisationAdmin.module.css';
+import styles from '../../../stylePage/organisation/organisationAdmin.module.css';
 import { getOrganisationData, getOrganisationRoles,
    getOrganisationUsers, getOrganisationRequests,
     acceptOrganisationRequest, rejectOrganisationRequest,
      removeOrganisationUser, sentVerificationRequest,
-     deleteOrganisation } from '../../services/communityService';
-import { imageUrl } from '../../services/imageConvert';
-import NotAdmin from '../Additional/NotAdmin';
+     deleteOrganisation } from '../../../services/communityService';
+import { imageUrl } from '../../../services/imageConvert';
+import NotAdmin from '../../Additional/NotAdmin';
 
 
 
@@ -244,13 +244,19 @@ return (
 
           <div className={styles.adminNav}>
             <Link 
+                to={`/community/organisation/${organisationUniqueName}`} 
+                className={styles.adminNavLink}
+              >
+              <i className="fas fa-arrow-left"></i> Powrót
+            </Link>
+            <Link 
               to={`/community/organisation/${organisationUniqueName}/settings`}
               className={styles.adminNavLink}
             >
               Ustawienia
             </Link>
             <Link 
-              to={`/community/organisation/${organisationUniqueName}/settings/tasks`}
+              to={`/community/organisation/${organisationUniqueName}/tasks`}
               className={styles.adminNavLink}
             >
               Zadania

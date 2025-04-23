@@ -7,6 +7,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer/Footer';
 import styles from '../../stylePage/organisation/organisationAdmin.module.css';
 import { convertImageToBase64 } from '../../services/imageConvert';
+import NotAdmin from '../Additional/NotAdmin';
+import NotAuthenticated from '../Additional/NotAuthenticated';
 
 
 const CreateOrganisation = () => {
@@ -89,6 +91,14 @@ const CreateOrganisation = () => {
     }
   };
 
+  if (!isAuthenticated) {
+    return (<NotAuthenticated/>
+    );   
+  }
+
+  if(!user?.isAdmin) {
+    return <NotAdmin/>;
+  }
   return (
     <div className="app-container dark-theme">
         <Header />

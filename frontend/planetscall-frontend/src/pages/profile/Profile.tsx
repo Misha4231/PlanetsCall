@@ -7,6 +7,7 @@ import { imageUrl } from '../../services/imageConvert';
 import { getFriends } from '../../services/communityService';
 import styles from '../../stylePage/profile.module.css';
 import NotAuthenticated from '../Additional/NotAuthenticated';
+import { getAddAttendance } from '../../services/userService';
 
 const Profile: React.FC = () => {
   const { user, isAuthenticated, loadingUser, token } = useAuth();
@@ -19,7 +20,18 @@ const Profile: React.FC = () => {
 useEffect(() => {
     if (!isAuthenticated || !token) return;  
     fetchFriends();
+    fetchAttendance();
   }, [isAuthenticated, token]);
+
+    
+  const fetchAttendance = async () => {
+    try {
+      if (!isAuthenticated || !token) return;  
+      await getAddAttendance(token);
+    } catch (err: any) {
+      console.log(err);
+    }
+  };
   
   {/* Function to search user's friends */}
   const fetchFriends = async () => {
@@ -84,7 +96,7 @@ useEffect(() => {
                   </div>
                 )}
                 <div className={styles.avatarControls}>
-                  <button className={styles.editButton}>Zmień awatar</button>
+                  {/*<button className={styles.editButton}>Zmień awatar</button>*/}
                   <button className={styles.editButton}>Zarządzaj itemami</button>
                 </div>
               </div>

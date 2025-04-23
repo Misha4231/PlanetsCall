@@ -29,12 +29,12 @@ import CommunitySettings from '../pages/community/CommunitySettings';
 import Organisations from '../pages/organisations/Organisations';
 import CreateOrganisation from '../pages/organisations/CreateOrganisation';
 import AnOrganisation from '../pages/organisations/AnOrganisation';
-import OrganisationAdmin from '../pages/organisations/OrganisationAdmin';
-import OrganisationSettings from '../pages/organisations/OrganisationSettings';
+import OrganisationAdmin from '../pages/organisations/organisationAdmin/OrganisationAdmin';
+import OrganisationSettings from '../pages/organisations/organisationAdmin/OrganisationSettings';
 import TaskList from '../pages/tasks/TaskList';
 import TaskDetails from '../pages/tasks/TaskDetails';
 import AdminMain from '../pages/admin/AdminMain';
-import OrganisationTaskManagement from '../pages/organisations/OrganisationTaskManagement';
+import OrganisationTaskManagement from '../pages/organisations/organisationAdmin/OrganisationTask';
 import AdminOrganisations from '../pages/admin/AdminOrganisations';
 import AdminUsers from '../pages/admin/AdminUsers';
 import AdminTasks from '../pages/admin/AdminTasks';
@@ -48,6 +48,7 @@ import AdminShopCreateCategory from '../pages/admin/shop/AdminShopCreateCategory
 import AdminShopCreateItem from '../pages/admin/shop/AdminShopCreateItem';
 import AdminShopEditCategory from '../pages/admin/shop/AdminShopEditCategory';
 import AdminShopEditItem from '../pages/admin/shop/AdminShopEditItem';
+import OrganisationCreateTask from '../pages/organisations/organisationAdmin/OrganisationCreateTask';
 
 
 const router = createBrowserRouter([
@@ -158,8 +159,12 @@ const router = createBrowserRouter([
     element: <OrganisationSettings/>
   },
   {
-    path: '/community/organisation/:organisationUniqueName/settings/tasks',
+    path: '/community/organisation/:organisationUniqueName/tasks',
     element: <OrganisationTaskManagement/>
+  },
+  {
+    path: '/community/organisation/:organisationUniqueName/tasks/create',
+    element: <OrganisationCreateTask/>
   },
   
   {

@@ -112,10 +112,36 @@ export const getAddAttendance  = async (authToken: string) => {
     },
   });
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać danych użytkownika');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać danych użytkownika');
   }
 
-  return await response.json();
+  return true;
+};
+
+
+export const getUserAttendance  = async (authToken: string, username: string) => {
+  console.log(username);
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+  
+  const response = await fetch(`${authHeader()}api/Profiles/${username}/attendance`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać danych użytkownika');
+  }
+
+  const data = await response.json();
+  console.log(data);
+  return data;
 };
 
 

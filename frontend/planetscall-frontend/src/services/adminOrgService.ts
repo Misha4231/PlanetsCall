@@ -52,12 +52,14 @@ export const getOrganisationVerifications = async (authToken: string ) => {
   
   
     if (!response.ok) {
-      throw new Error('Nie udało się pobrać listy organizacji do weryfikacji.');
+      const errorData = await response.json();  
+      console.log(errorData)
+      throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać listy organizacji do weryfikacji.');
     }
   
   
     const data = await response.json();
-  
+    //console.log(data);
     return data;
 
   };

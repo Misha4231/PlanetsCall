@@ -5,9 +5,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../../services/authService'; 
 import { useAuth } from '../../context/AuthContext';
 import authStyles from '../../stylePage/auth.module.css';
+import { getAddAttendance } from '../../services/userService';
 
 const SignIn = () => {
-  const { login: loginUser, isAuthenticated } = useAuth();
+  const { token, login: loginUser, isAuthenticated } = useAuth();
   const [uniqueIdentifier, setUniqueIdentifier] = useState(''); 
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -32,6 +33,8 @@ const SignIn = () => {
       setLoadingUser(false);
     }
   };
+
+
 
   if(isAuthenticated){
     navigate('/profile'); 
