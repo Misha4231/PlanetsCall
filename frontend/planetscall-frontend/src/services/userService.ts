@@ -1,4 +1,4 @@
-import { authHeader }  from  "./authHeader";
+import { authHeader }  from  "./headers";
 
 export const getUser  = async (authToken: string) => {
   if (!authToken) {

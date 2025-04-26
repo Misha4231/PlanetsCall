@@ -16,13 +16,6 @@ const AdminTasks = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tasks, setTasks] = useState<TaskTemplate[]>([]);
-  const [newTask, setNewTask] = useState({
-      title: '',
-      description: '',
-      isGroup: false,
-      reward: 0,
-      type: 1 as TaskType 
-  });
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -71,43 +64,6 @@ const AdminTasks = () => {
   } 
 
 
-
-  
-  const handleTaskSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!token) return;
-    
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    
-    try {
-        const taskToSend = {
-            title: newTask.title,
-            description: newTask.description,
-            isGroup: newTask.isGroup,
-            reward: newTask.reward,
-            type: newTask.type
-        };
-        
-        if(await createTemplateTask(token, taskToSend)){
-          fetchTasks();
-          setSuccess('Nowe zadanie zostało pomyślnie utworzone!');
-          setNewTask({
-              title: '',
-              description: '',
-              isGroup: false,
-              reward: 0,
-              type: 1
-          });
-        }
-    } catch (err: any) {
-        setError(err.message || 'Nie udało się utworzyć zadania');
-    } finally {
-        setLoading(false);
-    }
-};
-
   const handleTaskAction = async (id: number, action: 'activate' | 'delete') => {
       if (!token) return;
       
@@ -154,73 +110,7 @@ return (
             <div className="error-message">{error}</div>
           ) : (
             <>
-              <div className={styles.taskForm}>
-                <h3>Utwórz nowe zadanie</h3>
-                <form onSubmit={handleTaskSubmit} className={styles.taskForm}>
-                  <div className={styles.taskFormGroup}>
-                    <label className={styles.taskFormLabel}>Tytuł:</label>
-                    <input
-                      type="text"
-                      className={styles.taskFormInput}
-                      value={newTask.title}
-                      onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                      required
-                    />
-                  </div>
-                  
-                  <div className={`${styles.taskFormGroup} ${styles.fullWidth}`}>
-                    <label className={styles.taskFormLabel}>Opis:</label>
-                    <textarea
-                      className={styles.taskFormTextarea}
-                      value={newTask.description}
-                      onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                      required
-                    />
-                  </div>
-                  
-                  <div className={styles.taskFormGroup}>
-                    <label className={styles.taskFormLabel}>Nagroda (punkty):</label>
-                    <input
-                      type="number"
-                      className={styles.taskFormInput}
-                      value={newTask.reward}
-                      onChange={(e) => setNewTask({...newTask, reward: Number(e.target.value)})}
-                      required
-                    />
-                  </div>
-                  
-                  <div className={styles.taskFormGroup}>
-                    <label className={styles.taskFormLabel}>Typ zadania:</label>
-                    <select
-                      className={styles.taskFormSelect}
-                      value={newTask.type}
-                      onChange={(e) => setNewTask({...newTask, type: Number(e.target.value) as TaskType})}
-                      required
-                    >
-                      <option value={1}>Łatwe (dzienne)</option>
-                      <option value={2}>Trudne (tygodniowe)</option>
-                      <option value={3}>Organizacyjne</option>
-                    </select>
-                  </div>
-                  
-                  <div className={`${styles.taskFormGroup} ${styles.taskFormCheckbox}`}>
-                    <input
-                      type="checkbox"
-                      id="isGroup"
-                      checked={newTask.isGroup}
-                      onChange={(e) => setNewTask({...newTask, isGroup: e.target.checked})}
-                    />
-                    <label htmlFor="isGroup" className={styles.taskFormLabel}>Zadanie grupowe</label>
-                  </div>
-                  
-                  <div className={styles.taskFormSubmit}>
-                    <button type="submit" className="submit-button" disabled={loading}>
-                      {loading ? 'Tworzenie...' : 'Utwórz zadanie'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-
+              <Link to={`/admin/task/create`}>Stwórz</Link>
               <div className={styles.taskList}>
                 <h3 className={styles.taskListTitle}>Lista zadań szablonowych</h3>
                 {tasks.length > 0 ? (

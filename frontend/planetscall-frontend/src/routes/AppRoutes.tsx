@@ -49,6 +49,8 @@ import AdminShopCreateItem from '../pages/admin/shop/AdminShopCreateItem';
 import AdminShopEditCategory from '../pages/admin/shop/AdminShopEditCategory';
 import AdminShopEditItem from '../pages/admin/shop/AdminShopEditItem';
 import OrganisationCreateTask from '../pages/organisations/organisationAdmin/OrganisationCreateTask';
+import AdminTaskCreate from '../pages/admin/task/AdminTaskCreate';
+import AdminTaskAllVerification from '../pages/admin/task/AdminTaskAllVerification';
 
 
 const router = createBrowserRouter([
@@ -222,6 +224,14 @@ const router = createBrowserRouter([
   {
     path: '/admin/tasks',
     element: <AdminTasks />
+  },
+  {
+    path: '/admin/task/create',
+    element: <AdminTaskCreate />
+  },
+  {
+    path: '/admin/task/overwatch',
+    element: <AdminTaskAllVerification />
   },
   {
     path: '/admin/organisations/task/:taskId',

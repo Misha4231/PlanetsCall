@@ -1,5 +1,5 @@
 
-import { authHeader }  from  "./authHeader";
+import { authHeader }  from  "./headers";
 
 export const getCategories = async (authToken: string) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');

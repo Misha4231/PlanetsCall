@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
 import { Link, useNavigate } from 'react-router-dom';
-import { authHeader }  from  "../../services/authHeader";
+import { authHeader }  from  "../../services/headers";
 import authStyles from '../../stylePage/auth.module.css';
 import { signUpUser } from '../../services/authService';
 

@@ -1,5 +1,5 @@
 import { error } from "console";
-import { authHeader }  from  "./authHeader";
+import { authHeader }  from  "./headers";
 let token = "";
 
 export const signUpUser = async (username: string, email: string, password: string, passwordConfirmation: string, agreedToTermsOfService: boolean): Promise<string> => {

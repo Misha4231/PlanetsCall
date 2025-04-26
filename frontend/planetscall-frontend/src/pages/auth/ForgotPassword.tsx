@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../../components/shared/Header';
 import { Link, useNavigate } from 'react-router-dom';
-import { authHeader }  from  "../../services/authHeader";
+import { authHeader }  from  "../../services/headers";
 import Footer from '../../components/Footer/Footer';
 import authStyles from '../../stylePage/auth.module.css';
 

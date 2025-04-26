@@ -1,6 +1,6 @@
 import React, { useEffect, useState }  from 'react';
 import { useNavigate, useLocation  } from 'react-router-dom';
-import { authHeader }  from  "../../services/authHeader";
+import { authHeader }  from  "../../services/headers";
 import Header from '../../components/shared/Header';
 import Footer from '../../components/Footer/Footer';
 import authStyles from '../../stylePage/auth.module.css';

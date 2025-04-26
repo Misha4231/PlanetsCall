@@ -1,5 +1,5 @@
 
-import { authHeader }  from  "./authHeader";
+import { authHeader }  from  "./headers";
 /*Podzial
 
   - FRIENDS,

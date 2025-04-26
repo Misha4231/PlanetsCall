@@ -1,4 +1,4 @@
-import { authHeader }  from  "./authHeader";
+import { authHeader }  from  "./headers";
 
 export const getUsersAdmin = async (authToken: string, page: number ) => {
     if (!authToken) {
