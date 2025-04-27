@@ -148,7 +148,7 @@ export const getListOfTask = async (authToken: string) => {
     throw new Error('Nie udało się pobrać listy zadań.');
   }
 
-  //console.log('API zwróciło:', data);
+  console.log('API zwróciło:', data);
 
   return data.items ?? []; 
 };

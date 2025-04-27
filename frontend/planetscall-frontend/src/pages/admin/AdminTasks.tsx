@@ -111,6 +111,7 @@ return (
           ) : (
             <>
               <Link to={`/admin/task/create`}>Stwórz</Link>
+              <Link to={`/admin/task/overwatch`}>Werifikacja</Link>
               <div className={styles.taskList}>
                 <h3 className={styles.taskListTitle}>Lista zadań szablonowych</h3>
                 {tasks.length > 0 ? (

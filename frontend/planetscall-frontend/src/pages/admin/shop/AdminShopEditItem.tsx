@@ -12,54 +12,64 @@ interface Category {
   id: number;
   title: string;
 }
+interface ItemShop {    
+  "categoryId": number,
+  "price": number,
+  "image": string,
+  "rarity": string,
+  "title": string
+}
 
 const AdminShopEditItem = () => {
-    const { id } = useParams<{ id: string }>();
+  const {categoryIdParm, itemId} = useParams();
     const { user, isAuthenticated, token } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [formData, setFormData] = useState({
-      title: '',
+    const [formData, setFormData] = useState<ItemShop>({
+      categoryId: categoryIdParm ? parseInt(categoryIdParm) : 0,
       price: 0,
       image: '',
       rarity: '',
-      categoryId: 0
+      title: ''
     });
+    console.log(categoryIdParm);
+    console.log(itemId);
     const [previewImage, setPreviewImage] = useState<string>('');
     const [isNewImage, setIsNewImage] = useState<boolean>(false);
     const navigate = useNavigate();
   
     useEffect(() => {
-      if (token && user?.isAdmin && id) {
+      if (token && user?.isAdmin &&  itemId && categoryIdParm) {
         fetchData();
       }
-    }, [token, user?.isAdmin, id]);
+    }, [token, user?.isAdmin, itemId, categoryIdParm]);
   
     const fetchData = async () => {
+      if (!token || !itemId || !categoryIdParm) return;
+
       try {
         setLoading(true);
         
-        const categoriesData = await getCategories(token!);
-        setCategories(categoriesData);
-        
-        for (const category of categoriesData) {
-          const items = await getItemsByCategory(token!, category.id);
-          const foundItem = items.find((i: { id: number; }) => i.id === parseInt(id!));
-          if (foundItem) {
+          const items = await getItemsByCategory(token, parseInt(categoryIdParm), 1);
+          const categs = await getCategories(token);
+          setCategories(categs);
+          console.log(items);
+          const itemData = items.find((i: { id: number; }) => i.id === parseInt(itemId!));
+          if (itemData) {
             setFormData({
-              title: foundItem.title,
-              price: foundItem.price,
-              image: foundItem.image,
-              rarity: foundItem.rarity,
-              categoryId: foundItem.categoryId
+              title: itemData.title,
+              price: itemData.price,
+              image: itemData.image,
+              rarity: itemData.rarity,
+              categoryId: itemData.categoryId
             });
+
+            console.log(formData);
             
-            setPreviewImage(imageUrl() + foundItem.image);
+            setPreviewImage(imageUrl() + itemData.image);
             setIsNewImage(false);
-            break;
-          }
         }
       } catch (err: any) {
         setError(err.message);
@@ -93,13 +103,13 @@ const AdminShopEditItem = () => {
   
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!token || !id) return;
+      if (!token || !itemId) return;
       
       try {
         setLoading(true);
         await updateItem(
           token,
-          parseInt(id),
+          parseInt(itemId),
           formData.categoryId,
           formData.price,
           formData.image,
@@ -215,7 +225,6 @@ const AdminShopEditItem = () => {
                   className={styles.formSelect}
                   required
                 >
-                  <option value="0">Wybierz kategorię</option>
                   {categories.map(category => (
                     <option key={category.id} value={category.id}>
                       {category.title}

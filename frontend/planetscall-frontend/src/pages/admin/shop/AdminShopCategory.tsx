@@ -143,36 +143,46 @@ const AdminShopCategory = () => {
             <div className={styles.section}>
               <h2>Przedmioty w kategorii</h2>
               <Link 
-                to={`/admin/shop/create-item?categoryId=${category.id}`}
+                to={`/admin/shop/category/${id}/create-item/`}
                 className={styles.addButton}
               >
                 Dodaj nowy przedmiot
               </Link>
 
               <div className={styles.grid}>
-                {items.map(item => (
-                  <div key={item.id} className={styles.card}>
-                    <h3>{item.title}</h3>
-                    <p>Cena: {item.price} zł</p>
-                    <p>Rzadkość: {item.rarity}</p>
-                    <img src={imageUrl + item.image} alt={item.title} className={styles.image} />
-                    <div className={styles.actions}>
-                      <Link
-                        to={`/admin/shop/item/${item.id}/edit`}
-                        className={styles.actionButton}
-                      >
-                        Edytuj
-                      </Link>
-                      <button
-                        onClick={() => handleDeleteItem(item.id)}
-                        className={styles.deleteButton}
-                        disabled={loading}
-                      >
-                        Usuń
-                      </button>
+                {items.length > 0 ? (
+                  <>
+                    {items.map(item => (
+                    <div key={item.id} className={styles.card}>
+                      <h3>{item.title}</h3>
+                      <p>Cena: {item.price} zł</p>
+                      <p>Rzadkość: {item.rarity}</p>
+                      <img src={imageUrl() + item.image} alt={item.title} className={styles.image} />
+                      <div className={styles.actions}>
+                        <Link
+                          to={`/admin/shop/category/${id}/item/${item.id}/edit`}
+                          className={styles.actionButton}
+                        >
+                          Edytuj
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteItem(item.id)}
+                          className={styles.deleteButton}
+                          disabled={loading}
+                        >
+                          Usuń
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                  </>
+                )  : (
+                  <>
+                    <p>Brak itemów</p>
+                  </>
+                )
+              }
+                
               </div>
             </div>
           </div>

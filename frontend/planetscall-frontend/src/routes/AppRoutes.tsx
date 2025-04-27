@@ -45,12 +45,13 @@ import SearchOrganisation from '../pages/organisations/SearchOrganisation';
 import AdminShop from '../pages/admin/AdminShop';
 import AdminShopCategory from '../pages/admin/shop/AdminShopCategory';
 import AdminShopCreateCategory from '../pages/admin/shop/AdminShopCreateCategory';
-import AdminShopCreateItem from '../pages/admin/shop/AdminShopCreateItem';
 import AdminShopEditCategory from '../pages/admin/shop/AdminShopEditCategory';
 import AdminShopEditItem from '../pages/admin/shop/AdminShopEditItem';
 import OrganisationCreateTask from '../pages/organisations/organisationAdmin/OrganisationCreateTask';
 import AdminTaskCreate from '../pages/admin/task/AdminTaskCreate';
 import AdminTaskAllVerification from '../pages/admin/task/AdminTaskAllVerification';
+import AdminVerificationInfo from '../pages/admin/task/AdminVerificationInfo';
+import AdminShopCreateItem from '../pages/admin/shop/AdminShopCreateItem';
 
 
 const router = createBrowserRouter([
@@ -204,7 +205,7 @@ const router = createBrowserRouter([
     element: <AdminShopCreateCategory />
   },
   {
-    path: '/admin/shop/create-item',
+    path: '/admin/shop/category/:categoryId/create-item',
     element: <AdminShopCreateItem  />
   },
   {
@@ -212,7 +213,7 @@ const router = createBrowserRouter([
     element: <AdminShopEditCategory />
   },
   {
-    path: '/admin/shop/item/:id/edit',
+    path: '/admin/shop/category/:categoryIdParm/item/:itemId/edit',
     element: <AdminShopEditItem  />
   },
 
@@ -232,6 +233,10 @@ const router = createBrowserRouter([
   {
     path: '/admin/task/overwatch',
     element: <AdminTaskAllVerification />
+  },
+  {
+    path: '/admin/task/overwatch/:verificationId',
+    element: <AdminVerificationInfo />
   },
   {
     path: '/admin/organisations/task/:taskId',

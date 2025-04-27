@@ -7,13 +7,20 @@ import { Organisation } from '../community/communityTypes';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../../stylePage/admin/admin.module.css';
 import NotAdmin from '../Additional/NotAdmin';
+import NotAuthenticated from '../Additional/NotAuthenticated';
 
+interface OrganisationVerification {
+  description:string,
+  id : number,
+  organisation: Organisation,
+}
 
 const AdminOrganisations = () => {
     const { user, isAuthenticated, token } = useAuth();
     
     const [loading, setLoading] = useState<boolean>(false);
-    const [organisation, setOrganisation] = useState<Organisation[]>([]);
+    const [organisations, setOrganisations] = useState<OrganisationVerification[]>([]);
+    const [expandedDescriptions, setExpandedDescriptions] = useState<Record<number, boolean>>({});
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -24,7 +31,8 @@ const AdminOrganisations = () => {
                 try {
                     setLoading(true);
                     const org = await getOrganisationVerifications(token);
-                    setOrganisation(org);
+                    console.log(org);
+                    setOrganisations(org);
                     setError(null);
                 } catch (err: any) {
                     setError(err.message);
@@ -36,15 +44,16 @@ const AdminOrganisations = () => {
         }    
     }, [token, user?.isAdmin]);
   
+    const toggleDescription = (id: number) => {
+        setExpandedDescriptions(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
+  
 
     if (!isAuthenticated) {
-        return (
-            <div>
-                <Header/>
-                <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>
-                <Footer/>
-            </div>
-        );   
+        return (<NotAuthenticated/>);   
     }
 
     if(!user?.isAdmin){
@@ -61,7 +70,7 @@ const AdminOrganisations = () => {
             setSuccess(`Weryfikacja organizacji ${organisationUniqueName} zostało wysłana.`);
 
             const org = await getOrganisationVerifications(token);
-            setOrganisation(org);
+            setOrganisations(org);
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -86,29 +95,47 @@ const AdminOrganisations = () => {
                 <p>Ładowanie...</p>
               ) : error ? (
                 <div className={`${styles.adminMessage} ${styles.adminError}`}>{error}</div>
-              ) : organisation.length > 0 ? (
+              ) : organisations.length > 0 ? (
                 <ul className={styles.adminList}>
-                  {organisation.map((org) => (
+                  {organisations.map((org) => (
                     <li key={org.id} className={styles.adminListItem}>
                       <div className={styles.adminListItemContent}>
                         <Link 
-                          to={`/community/organisation/${org.uniqueName}`} 
+                          to={`/community/organisation/${org.organisation.uniqueName}`} 
                           className={styles.adminListItemLink}
                         >
-                          {org.name}
+                          {org.organisation.name}
                         </Link>
-                        <span>@{org.uniqueName}</span>
+                        <span>@{org.organisation.uniqueName}</span>
                       </div>
+                      
+                      {org.description && (
+                        <div className={styles.adminDescriptionContainer}>
+                          <button 
+                            onClick={() => toggleDescription(org.id)}
+                            className={styles.adminShowMoreButton}
+                          >
+                            <i className={`fas fa-${expandedDescriptions[org.id] ? 'chevron-up' : 'chevron-down'}`}></i>
+                            {expandedDescriptions[org.id] ? 'Pokaż mniej' : 'Pokaż więcej'}
+                          </button>
+                          {expandedDescriptions[org.id] && (
+                            <p className={styles.adminDescriptionText}>
+                              {org.description}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                      
                       <div className={styles.adminButtonGroup}>
                         <button
-                          onClick={() => handleSentResponse(org.uniqueName, "reject")}
+                          onClick={() => handleSentResponse(org.organisation.uniqueName, "reject")}
                           disabled={loading}
                           className={`${styles.adminButton} ${styles.adminButtonDanger}`}
                         >
                           <i className="fas fa-times"></i> Odrzuć
                         </button>
                         <button
-                          onClick={() => handleSentResponse(org.uniqueName, "approve")}
+                          onClick={() => handleSentResponse(org.organisation.uniqueName, "approve")}
                           disabled={loading}
                           className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
                         >

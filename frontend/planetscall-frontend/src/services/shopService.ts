@@ -22,9 +22,17 @@ export const getItemsByCategory = async (authToken: string, categoryId: number, 
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
-  if (!response.ok) throw new Error('Nie udało się pobrać przedmiotów.');
+  if (!response.ok) {
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się pobrać przedmiotów.');
+  }
 
   const data = await response.json();
+  console.log(data);
+
+
+  
   return data.items ?? []; 
 };
 
@@ -185,7 +193,7 @@ console.log(errorData);
     throw new Error(errorData.errors.CustomValidation[0] || 'Błąd aktualizacji itemu');
   }
 
-  return await response.json();
+  return true;
 };
 
 //

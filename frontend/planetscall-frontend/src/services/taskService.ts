@@ -56,6 +56,7 @@ export const getTasks = async (authToken: string) => {
   }
 
   const data = await response.json();
+  //console.log(data);
   return data;
 };
 
@@ -147,6 +148,7 @@ export const getCompletedTasks = async (authToken: string) => {
 
 
 export const addOverwatchReaction = async (authToken: string, formData: any) => {
+  console.log(formData)
   if (!authToken) {
      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -162,12 +164,10 @@ export const addOverwatchReaction = async (authToken: string, formData: any) => 
   if (!response.ok) {
     const errorData = await response.json();  
     console.log(errorData)
-    throw new Error(errorData.errors.CustomValidation[0] ||
-    `Nie udało się wysłać reakcji na wykonanie zadania.`);
+    throw new Error(`Nie udało się wysłać reakcji na wykonanie zadania.`);
   }
 
-  const data = await response.json();
-  return data;
+  return true;
 };
 
 export const getOverwatchFeed = async (authToken: string, page: number): Promise<PaginationResponse<OverwatchTaskItem>> => {
@@ -196,7 +196,7 @@ export const getOverwatchFeed = async (authToken: string, page: number): Promise
   return data;
 };
 
-export const getOverwatchSpecificFeed = async (authToken: string, verificationId: number) => {
+export const getOverwatchSpecificFeed = async (authToken: string, verificationId: string) => {
   if (!authToken) {
      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }

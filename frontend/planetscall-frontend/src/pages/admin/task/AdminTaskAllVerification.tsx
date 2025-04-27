@@ -96,9 +96,24 @@ const AdminTaskAllVerification = () => {
                                       <p>Data ukończenia: {new Date(verification.completedAt).toLocaleString()}</p>
                                   </div>
                               ))}
+                              {verifications.map((verification) => (
+                                <div key={verification.id} className={styles.taskListItem}>
+                                    <Link to={`/admin/task/overwatch/${verification.id}`}>
+                                        <h4 className={styles.taskListItemTitle}>{verification.executor.username} - {new Date(verification.completedAt).toLocaleString()}</h4>
+                                    </Link>
+                                    {verification.message ? (
+                                        <p className={styles.taskListItemDescription}>{verification.message}</p>
+                                    ) : (
+                                        <p className={styles.taskListItemDescription}>Brak informacji</p>
+                                    )}
+                                    <div className={styles.taskListItemMeta}>
+                                    </div>
+                                </div>
+                                ))}
                           </div>
                           
-                          {pagination && (
+                          
+                          {pagination && pagination.totalPages!=1 && (
                               <div className={styles.pagination}>
                                   <button 
                                       onClick={() => goToPage(currentPage - 1)} 

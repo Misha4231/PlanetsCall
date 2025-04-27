@@ -40,7 +40,7 @@ export const getFullUser = async (authToken: string) => {
   }
 
   const data = await response.json();
-  //console.log("Dane " + data);
+  //console.log(data);
   const d = data.isAdmin;
   //console.log(d);
 
@@ -163,6 +163,10 @@ export const getAnotherUser  = async (authToken: string, anotherUser : string) =
     throw new Error('Nie udało się pobrać danych użytkownika');
   }
 
-  return await response.json();
+  const data = await response.json();
+  console.log(data);
+
+  return data;
 };
+
 
