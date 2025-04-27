@@ -14,12 +14,15 @@ public class MinItemDto
     }
     public MinItemDto(Items i)
     {
+        this.Id = i.Id;
         this.CategoryId = i.CategoryId;
         this.Price = i.Price;
         this.Image = i.Image;
         this.Rarity = i.Rarity;
         this.Title = i.Title;
     }
+    [Key]
+    public int Id { get; set; }
     public int? CategoryId { get; set; }
     public int Price { get; set; }
     [CleanBase64String]
