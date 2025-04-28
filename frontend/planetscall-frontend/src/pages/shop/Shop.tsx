@@ -7,13 +7,19 @@ import {
 import { getFullUser, getUser } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 import Header from '../../components/shared/Header';
+import styles from '../../stylePage/shop.module.css';
 import Footer from '../../components/Footer/Footer';
+import { imageUrl } from '../../services/imageConvert';
+
 
 interface Category {
   id: number;
   title: string;
+  image: string;
 }
-interface ItemShop {    
+
+interface ItemShop {   
+  "id": number, 
   "categoryId": number,
   "price": number,
   "image": string,
@@ -23,116 +29,184 @@ interface ItemShop {
 
 const Shop: React.FC = () => {  
   const { token, isAuthenticated, user } = useAuth();
-  const [categories, setCategories] = useState<any[]>([]);
-  const [items, setItems] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [items, setItems] = useState<ItemShop[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [page, setPage] = useState<number>(1);
-  const [newCategory, setNewCategory] = useState({ title: '', image: '' });
   const [currency, setCurrency] = useState<number>(0);
-  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ItemShop | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [purchaseStatus, setPurchaseStatus] = useState<{success: boolean, message: string} | null>(null);
 
 
   useEffect(() => {
     if (!token) return;
 
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getCategories(token);
-        setCategories(data);
+        const [categoriesData, userData] = await Promise.all([
+          getCategories(token),
+          getFullUser(token)
+        ]);
+        setCategories(categoriesData);
+        setCurrency(userData.points || 0);
+        
+        if (categoriesData.length > 0 && selectedCategory === null) {
+          setSelectedCategory(categoriesData[0].id);
+        }
       } catch (error) {
         console.error(error);
       }
     };
-    fetchCategories();
-  }, [token]);
+    
+    fetchData();
+  }, [token, selectedCategory]);
 
   useEffect(() => {
-    if (!token) return;
-    if (selectedCategory !== null && token) {
-      const fetchItems = async () => {
-        try {
-          const data = await getItemsByCategory(token, selectedCategory, page);
-          setItems(data);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-      fetchItems();
-    }
-  }, [selectedCategory, page, token]);
+    if (!token || selectedCategory === null) return;
 
+    const fetchItems = async () => {
+      try {
+        const data = await getItemsByCategory(token, selectedCategory, 1);
+        setItems(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchItems();
+  }, [selectedCategory, token]);
 
+  const handleBuyClick = (item: ItemShop) => {
+    setSelectedItem(item);
+    setShowConfirmModal(true);
+  };
 
-  const handleBuy = async (itemId: number) => {
-    if (!token) {
-      alert("Brak tokenu. Proszę się zalogować.");
-      return;
-    }
+  const confirmPurchase = async () => {
+    if (!token || !selectedItem) return;
     
     try {
-      await buyItem(token, itemId);
-      alert('Zakupiono przedmiot!');
+      await buyItem(token, selectedItem.id);
       const userData = await getFullUser(token);
-      setCurrency(userData.ponits); 
-    } catch (error) {
-      alert('Nie udało się kupić przedmiotu.');
+      setCurrency(userData.points || 0);
+      setPurchaseStatus({success: true, message: 'Zakupiono przedmiot!'});
+      setTimeout(() => setPurchaseStatus(null), 3000);
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Nie udało się kupić przedmiotu';
+      setPurchaseStatus({success: false, message});
+      setTimeout(() => setPurchaseStatus(null), 3000);
+    } finally {
+      setShowConfirmModal(false);
+      setSelectedItem(null);
     }
   };
 
-
-
-  const handleTryItem = (item: any) => {
-    setSelectedItem(item);
-    alert(`Próbujesz ${item.name}!`);
+  const cancelPurchase = () => {
+    setShowConfirmModal(false);
+    setSelectedItem(null);
   };
 
-
-
+ 
   return (
     <div className="app-container">
       <Header/>
-      <h1>Sklep</h1>
-      {isAuthenticated && token ? (
-        <div>
-          <h2>Saldo: {user?.points} waluty</h2>
-          <div>
-            <h2>Kategorie</h2>
-            <ul>
-              {categories.map((category) => (
-                <li key={category.id} onClick={() => setSelectedCategory(category.id)}>
-                  {category.title}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h2>Przedmioty</h2>
-            <ul>
-              {items.map((item) => (
-                <li key={item.id}>
-                  {item.name} - {item.price} waluty
-                  <button onClick={() => handleTryItem(item)}>Próbuj</button>
-                  <button onClick={() => handleBuy(item.id)}>Kup</button>
-                </li>
-              ))}
-            </ul>
-            <button onClick={() => setPage((prev) => prev + 1)}>Załaduj więcej</button>
-          </div>
-
-          {selectedItem && (
-            <div>
-              <h2>Próbujesz: {selectedItem.name}</h2>
-              <img src={selectedItem.image} alt={selectedItem.name} style={{ width: 150, height: 150 }} />
+      <section className="blockCode">
+        <h1 className={styles.title}>Shop</h1>
+        {isAuthenticated && token ? (
+          <div className={styles.shopLayout}>
+            <div className={styles.sidebar}>
+              <h2>Categories</h2>
+              <div className={styles.categoryList}>
+                {categories.map((category) => (
+                  <div 
+                    key={category.id} 
+                    className={`${styles.categoryItem} ${selectedCategory === category.id ? styles.active : ''}`}
+                    onClick={() => setSelectedCategory(category.id)}
+                  >
+                    <img src={imageUrl()+category.image} alt={category.title} className={styles.categoryImage} />
+                    <span>{category.title}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
+
+            <div className={styles.mainContent}>
+              <div className={styles.currencyDisplay}>
+                <h2>Your balance:</h2>
+                <span className={styles.currencyAmount}>{currency}</span>
+              </div>
+              
+              <h2 className={styles.title}>
+                {categories.find(c => c.id === selectedCategory)?.title || 'Select a category'}
+              </h2>
+              
+              <div className={styles.itemsGrid}>
+                {items.map((item) => (
+                  <div key={item.id} className={styles.shopItem}>
+                    <img src={imageUrl()+item.image} alt={item.title} className={styles.itemImage} />
+                    <div className={styles.itemDetails}>
+                      <h3 className={styles.itemTitle}>{item.title}</h3>
+                      <p className={styles.itemPrice}>Price: {item.price}</p>
+                      <div className={styles.itemActions}>
+                        <button 
+                          className={`${styles.actionButton} ${styles.buyButton}`}
+                          onClick={() => handleBuyClick(item)}
+                          disabled={currency < item.price}
+                        >
+                          Buy
+                        </button>
+                        <button 
+                          className={`${styles.actionButton} ${styles.tryButton}`}
+                          onClick={() => setSelectedItem(item)}
+                        >
+                          Try
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p className={styles.loginMessage}>Please log in to view the shop.</p>
+        )}
+      </section>
+
+      {showConfirmModal && selectedItem && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.confirmationModal}>
+            <h3 className={styles.modalTitle}>Confirm Purchase</h3>
+            <p className={styles.modalText}>Are you sure you want to buy {selectedItem.title} for {selectedItem.price}?</p>
+            <div className={styles.modalButtons}>
+              <button onClick={confirmPurchase} className={`${styles.actionButton} ${styles.confirmButton}`}>Confirm</button>
+              <button onClick={cancelPurchase} className={`${styles.actionButton} ${styles.cancelButton}`}>Cancel</button>
+            </div>
+          </div>
         </div>
-      ) : (
-        <p>Proszę się zalogować, aby zobaczyć sklep.</p>
       )}
+
+      {purchaseStatus && (
+        <div className={`${styles.notification} ${purchaseStatus.success ? styles.successNotification : styles.errorNotification}`}>
+          {purchaseStatus.message}
+        </div>
+      )}
+
+      {selectedItem && !showConfirmModal && (
+        <div className={styles.previewPanel}>
+          <h3 className={styles.previewTitle}>Preview: {selectedItem.title}</h3>
+          <img src={imageUrl()+selectedItem.image} alt={selectedItem.title} className={styles.previewImage} />
+          <button 
+            className={styles.closePreview}
+            onClick={() => setSelectedItem(null)}
+          >
+            Close
+          </button>
+        </div>
+      )}
+
       <Footer/>
     </div>
   );
 };
+
 
 export default Shop;
