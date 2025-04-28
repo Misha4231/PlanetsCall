@@ -27,19 +27,35 @@ public class ItemsRepository(PlatensCallContext context, IConfiguration configur
     }
 
     // Gets a batch of items by category and paginates them
-    public PaginatedList<MinItemDto> GetItemsPartition(int categoryId, int page)
+    public PaginatedList<MinItemDto> GetItemsPartition(int page, int? categoryId = null, Users? user = null, bool selectedOnly = false)
     {
         int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>(); // gets the number of items per batch from configuration
 
-        var items = Context.Items
+        var query = Context.Items.AsQueryable();
+        if (categoryId.HasValue)
+        {
+            query = query.Where(item => item.CategoryId == categoryId.Value);
+        }
+
+        if (user is not null)
+        {
+            var userId = user.Id;
+
+            query = query.Where(u => u.Owners!.Any(cs => cs.Id == userId));
+            if (selectedOnly)
+            {
+                query = query.Where(i => i.CurrentlySelecting!.Any(cs => cs.Id == userId));
+            }
+        }
+        
+        var items = query
             .OrderBy(i => i.Id)
-            .Where(i => i.CategoryId == categoryId)
             .Select(i => new MinItemDto(i))
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToList();
         
-        var count = Context.Items.Count(i => i.CategoryId == categoryId);
+        var count = query.Count();
         var totalPages = (int)Math.Ceiling(count / (double)pageSize);
         
         return new PaginatedList<MinItemDto>(items, page, totalPages);
@@ -86,6 +102,51 @@ public class ItemsRepository(PlatensCallContext context, IConfiguration configur
         Context.SaveChanges();
 
         return newCategory.Entity; // return newly added object
+    }
+
+    public bool SelectItem(int itemId, Users user)
+    {
+        user = Context.Users
+            .Include(u => u.ItemsCollection)
+            .Include(u => u.ItemsSelected)
+            .FirstOrDefault(u => u.Id == user.Id)!;
+        
+        Items? item = Context.Items.FirstOrDefault(i => i.Id == itemId);
+        
+        if (item is null || user.ItemsCollection == null) return false; // null exception
+        if (user.ItemsCollection.All(i => i.Id != itemId)) return false;
+
+        if (user.ItemsSelected != null)
+        {
+            bool itemAlreadySelected = user.ItemsSelected.Any(i => i.Id == itemId);
+            if (itemAlreadySelected) return true; // item is already selected, no need to update in database
+            
+            // if user has selected item with the same category earlier, replace it with a new one
+            var sameCategorySelected = user.ItemsSelected.FirstOrDefault(i => i.CategoryId == item.CategoryId);
+            if (sameCategorySelected is not null) user.ItemsSelected.Remove(sameCategorySelected);
+            
+            user.ItemsSelected.Add(item); // replace with a new one
+            Context.SaveChanges();
+            
+            return true;
+        }
+        
+        return false;
+    }
+
+    public bool DeselectItem(int itemId, Users user)
+    {
+        user = Context.Users
+            .Include(u => u.ItemsSelected)
+            .FirstOrDefault(u => u.Id == user.Id)!;
+        
+        Items? item = Context.Items.FirstOrDefault(i => i.Id == itemId);
+        if (item is null || user.ItemsSelected == null) return false; // null exception
+        
+        user.ItemsSelected.Remove(item);
+        Context.SaveChanges();
+        
+        return true;
     }
 
     public void UpdateItem(MinItemDto itemData, int itemId)
@@ -168,7 +229,7 @@ public class ItemsRepository(PlatensCallContext context, IConfiguration configur
             throw new CodeException("You already have that item", StatusCodes.Status400BadRequest);
         
         // if everything ok, give item
-        usersRepository.UpdateUserPoints(user.Id, -item.Price);
+        usersRepository.UpdateUserPoints(user.Id, (int)item.Price * -1);
         if (item.Owners != null) item.Owners.Add(user);
 
         Context.SaveChanges();

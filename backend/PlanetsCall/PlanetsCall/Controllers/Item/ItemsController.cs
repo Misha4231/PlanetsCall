@@ -21,7 +21,7 @@ public class ItemsController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetItemsBatch([FromRoute] int categoryId, [FromQuery] int page = 1) // Fetches a batch of items by category and paginates them
     {
-        PaginatedList<MinItemDto> pageItems = itemsRepository.GetItemsPartition(categoryId, page); // Retrieves a paginates list of items for given category
+        PaginatedList<MinItemDto> pageItems = itemsRepository.GetItemsPartition(page, categoryId); // Retrieves a paginates list of items for given category
 
         return Ok(pageItems);
     }
@@ -150,5 +150,16 @@ public class ItemsController(
     {
         bool isSuccess = itemsRepository.DeleteCategory(categoryId);
         return (isSuccess ? Ok() : BadRequest());
+    }
+
+    [HttpGet]
+    [Route("my-items/")]
+    [TokenAuthorizeFilter]
+    public IActionResult GetMyItems([FromQuery] int? categoryId = null, [FromQuery] int page = 1)
+    {
+        Users? requestUser = HttpContext.GetRouteValue("requestUser") as Users;
+        PaginatedList<MinItemDto> pageItems = itemsRepository.GetItemsPartition(page, categoryId, requestUser);
+        
+        return Ok(pageItems);
     }
 }

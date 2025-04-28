@@ -24,23 +24,11 @@ public class MinItemDto
     [Key]
     public int Id { get; set; }
     public int? CategoryId { get; set; }
-    public int Price { get; set; }
+    public uint Price { get; set; }
     [CleanBase64String]
     public string Image { get; set; }
     [MaxLength(30)]
     public string Rarity { get; set; }
     [MaxLength(30)]
     public string Title { get; set; }
-}
-
-public class UpdateItemDto
-{
-    [Key]
-    public int Id { get; set; }
-    public int CategoryId { get; set; }
-    public int Price { get; set; }
-    [CleanBase64String]
-    public string? Image { get; set; }
-    [MaxLength(30)]
-    public required string Rarity { get; set; }
 }
