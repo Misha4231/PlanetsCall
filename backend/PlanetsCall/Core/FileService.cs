@@ -53,7 +53,8 @@ public class FileService(IWebHostEnvironment webHostEnvironment)
     public void DeleteFile(string fileDir)
     {
         var wwwPath = Path.Combine(webHostEnvironment.WebRootPath, fileDir); // combine to get full path
-        File.Delete(wwwPath); // delete file
+        if (File.Exists(wwwPath))
+            File.Delete(wwwPath); // delete file
     }
 
     // removes old file and saves new one (mostly used in update method)
