@@ -40,7 +40,7 @@ export const getFullUser = async (authToken: string) => {
   }
 
   const data = await response.json();
-  //console.log(data);
+  console.log(data);
   const d = data.isAdmin;
   //console.log(d);
 

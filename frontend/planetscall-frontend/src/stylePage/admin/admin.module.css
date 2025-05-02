@@ -2,11 +2,18 @@
 
 .adminContainer {
     max-width: 1200px;
-    min-width: 300px;
+    min-width: 900px;
     margin: 0 auto;
     padding: 20px;
     min-height: calc(100vh - 120px);
 }
+
+@media (max-width: 992px) {
+    .adminContainer {
+      padding: 16px;
+      min-width: 600px;
+    }
+  }
 
 .adminContent {
     background-color: #1a1a1a;

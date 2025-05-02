@@ -7,6 +7,7 @@
 
 .profileContainer {
   max-width: 1200px;
+  min-width: 900px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -239,6 +240,7 @@
 @media (max-width: 992px) {
   .profileContainer {
     padding: 16px;
+    min-width: 0px;
   }
 
   .profileContent {
@@ -367,6 +369,7 @@
   color: #fff;
   font-size: 15px;
   transition: all 0.3s ease;
+  max-height: fit-content;
 }
 
 .formInput:focus, .formSelect:focus, .formTextarea:focus {

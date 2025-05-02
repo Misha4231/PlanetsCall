@@ -6,7 +6,7 @@ import Header from '../../../components/shared/Header';
 import Footer from '../../../components/Footer/Footer';
 import { convertImageToBase64, imageUrl } from '../../../services/imageConvert';
 import NotAdmin from '../../Additional/NotAdmin';
-import styles from '../../../stylePage/organisation/organisationAdmin.module.css';
+import styles from '../../../stylePage/admin/adminShop.module.css';
 import NotAuthenticated from '../../Additional/NotAuthenticated';
 
 interface ItemShop {    

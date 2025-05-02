@@ -10,6 +10,7 @@ import Header from '../../components/shared/Header';
 import styles from '../../stylePage/shop.module.css';
 import Footer from '../../components/Footer/Footer';
 import { imageUrl } from '../../services/imageConvert';
+import Ecorus from '../../components/Ecorus';
 
 
 interface Category {
@@ -109,19 +110,27 @@ const Shop: React.FC = () => {
     <div className="app-container">
       <Header/>
       <section className="blockCode">
-        <h1 className={styles.title}>Shop</h1>
-        {isAuthenticated && token ? (
+        <h1 className={styles.title}>Sklep</h1>
           <div className={styles.shopLayout}>
             <div className={styles.sidebar}>
-              <h2>Categories</h2>
+              <h2>Kategorię</h2>
               <div className={styles.categoryList}>
                 {categories.map((category) => (
                   <div 
                     key={category.id} 
                     className={`${styles.categoryItem} ${selectedCategory === category.id ? styles.active : ''}`}
                     onClick={() => setSelectedCategory(category.id)}
-                  >
-                    <img src={imageUrl()+category.image} alt={category.title} className={styles.categoryImage} />
+                  > 
+                  <div className={styles.characterContainer}>
+                    <div className={styles.imageWrapper}>
+                      <Ecorus className={styles.characterBody} />
+                      <img 
+                        src={imageUrl() + category.image} 
+                        alt={category.title} 
+                        className={` ${styles.characterClothes}`}
+                      />
+                    </div>
+                  </div>
                     <span>{category.title}</span>
                   </div>
                 ))}
@@ -166,19 +175,16 @@ const Shop: React.FC = () => {
               </div>
             </div>
           </div>
-        ) : (
-          <p className={styles.loginMessage}>Please log in to view the shop.</p>
-        )}
       </section>
 
       {showConfirmModal && selectedItem && (
         <div className={styles.modalOverlay}>
           <div className={styles.confirmationModal}>
-            <h3 className={styles.modalTitle}>Confirm Purchase</h3>
-            <p className={styles.modalText}>Are you sure you want to buy {selectedItem.title} for {selectedItem.price}?</p>
+            <h3 className={styles.modalTitle}>Potwierdzenie zakupu</h3>
+            <p className={styles.modalText}>Czy na pewno chcesz kupić {selectedItem.title} za {selectedItem.price} punktów?</p>
             <div className={styles.modalButtons}>
-              <button onClick={confirmPurchase} className={`${styles.actionButton} ${styles.confirmButton}`}>Confirm</button>
-              <button onClick={cancelPurchase} className={`${styles.actionButton} ${styles.cancelButton}`}>Cancel</button>
+              <button onClick={confirmPurchase} className={`${styles.actionButton} ${styles.confirmButton}`}>Potwierdź</button>
+              <button onClick={cancelPurchase} className={`${styles.actionButton} ${styles.cancelButton}`}>Anuluj</button>
             </div>
           </div>
         </div>
@@ -192,13 +198,23 @@ const Shop: React.FC = () => {
 
       {selectedItem && !showConfirmModal && (
         <div className={styles.previewPanel}>
-          <h3 className={styles.previewTitle}>Preview: {selectedItem.title}</h3>
-          <img src={imageUrl()+selectedItem.image} alt={selectedItem.title} className={styles.previewImage} />
+          <h3 className={styles.previewTitle}>Widok: {selectedItem.title}</h3>
+         
+          <div className={`${styles.previewImage}`}>
+            <div className={styles.imageWrapper}>
+              <Ecorus className={styles.characterBody} />
+              <img 
+                src={imageUrl() + selectedItem.image} 
+                alt={selectedItem.title} 
+                className={` ${styles.characterClothes}`}
+              />
+            </div>
+          </div>
           <button 
             className={styles.closePreview}
             onClick={() => setSelectedItem(null)}
           >
-            Close
+            Zamknij
           </button>
         </div>
       )}

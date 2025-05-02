@@ -133,6 +133,10 @@ public sealed class PlatensCallContext : DbContext
             .HasOne<ItemsCategory>(i => i.Category)
             .WithMany(it => it.AttachedItems)
             .OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<Items>()
+            .HasMany<Users>(u => u.CurrentlySelecting)
+            .WithMany(u => u.ItemsSelected)
+            .UsingEntity(j => j.ToTable("SelectedItems"));
         
         // Logs
         modelBuilder.Entity<Logs>()

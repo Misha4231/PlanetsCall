@@ -9,7 +9,7 @@ public class Items
     
     public ItemsCategory? Category { get; set; }
     public int? CategoryId { get; set; }
-    public int Price { get; set; }
+    public uint Price { get; set; }
     public DateTime CreatedAt { get; set; }
     [Required]
     [MaxLength(300)]
@@ -24,4 +24,5 @@ public class Items
 
     
     public ICollection<Users>? Owners { get; set; }
+    public ICollection<Users>? CurrentlySelecting { get; set; }
 }

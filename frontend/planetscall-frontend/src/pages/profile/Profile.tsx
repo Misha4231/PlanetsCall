@@ -74,6 +74,7 @@ useEffect(() => {
     return (<NotAuthenticated/>
     );   
   }
+  
 
   return (
     <div className="app-container dark-theme">

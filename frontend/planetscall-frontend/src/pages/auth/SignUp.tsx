@@ -121,7 +121,7 @@ const SignUp: React.FC = () => {
                       onChange={(e) => setAgreedToTerms(e.target.checked)}
                       className={authStyles.checkbox}
                     />
-                    Akceptuję <Link to="/terms.txt" target="_blank" className={authStyles.termsLink}>Warunki korzystania z usługi</Link>
+                    Akceptuję <Link to="https://www.termsfeed.com/live/9bf35c82-b1eb-4ee4-a14c-74b0220b4235" target="_blank" className={authStyles.termsLink}>Warunki korzystania z usługi</Link>
                   </label>
                 </div>
 

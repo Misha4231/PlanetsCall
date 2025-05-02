@@ -249,10 +249,7 @@ const Settings: React.FC = () => {
                       placeholder="Dodaj opis swojego profilu"
                     />
                   </div>
-                </div>
-              </div>
-
-              <div className={styles.formSection}>
+                  <div className={styles.formSection}>
                 <h3 className={styles.sectionTitle}>Preferencje</h3>
                 <div className={styles.checkboxGroupContainer}>
                   <div className={styles.checkboxGroup}>
@@ -298,6 +295,10 @@ const Settings: React.FC = () => {
                   </div>
                 </div>
               </div>
+                </div>
+              </div>
+
+
 
               <div className={styles.socialLinksSection}>
                 <h3 className={styles.sectionTitle}>Linki społecznościowe</h3>

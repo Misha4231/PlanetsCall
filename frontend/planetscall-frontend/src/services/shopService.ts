@@ -103,11 +103,14 @@ export const removeCategory = async (authToken: string, categoryId: number) => {
     },
   });
 
+
   if (!response.ok) {
-    throw new Error(`Błąd: ${response.status} - ${response.statusText}`);
+    const errorData = await response.json();  
+    console.log(errorData);
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd podczas usuwania kategorii.');
   }
 
-  return await response.json();
+  return true;
 
 };
 
@@ -153,7 +156,7 @@ export const removeItems = async (authToken: string, itemId: number) => {
     throw new Error(errorData.errors.CustomValidation[0] || 'Błąd logowania');
   }
 
-  const data = await response.json();
+  return true;
 };
 
 //

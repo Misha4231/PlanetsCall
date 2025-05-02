@@ -29,6 +29,8 @@ export const signUpUser = async (username: string, email: string, password: stri
   return "";
 };
 
+
+
 export const activationAccount = async (activationCode: string): Promise<string> => {
   const response = await fetch(`${authHeader()}api/Auth/activate`, {
         method: 'POST',

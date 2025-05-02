@@ -1,38 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import {addCategory} from '../../../services/shopService';
+import {addItems} from '../../../services/shopService';
 import Header from '../../../components/shared/Header';
 import Footer from '../../../components/Footer/Footer';
 import { convertImageToBase64, imageUrl } from '../../../services/imageConvert';
 import NotAdmin from '../../Additional/NotAdmin';
-import styles from '../../../stylePage/organisation/organisationAdmin.module.css';
+import styles from '../../../stylePage/shop.module.css';
 import NotAuthenticated from '../../Additional/NotAuthenticated';
 
+interface ItemShop {    
+  "categoryId": number,
+  "price": number,
+  "image": string,
+  "rarity": string,
+  "title": string
+}
 
-const AdminShopCreateCategory = () => {
+const AdminShopCreateItem = () => {
   const { user, isAuthenticated, token } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { categoryId } = useParams<{ categoryId: string }>();
   const [previewImage, setPreviewImage] = useState<string>('');
 
   
   { /* Data types fos specif variable in category data */} 
-  const [formData, setFormData] = useState({
-    title: '',
-    image: '',
+  const [formData, setFormData] = useState<ItemShop>({ 
+    "categoryId": 0,
+    "price": 0,
+    "image": "",
+    "rarity": "",
+    "title": ""
   });
+
+    useEffect(() => {
+      if (token && user?.isAdmin && categoryId) {
+        fetchData();
+      }
+    }, [token, user?.isAdmin, categoryId]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setFormData(prev => ({ ...prev, categoryId: parseInt(categoryId!) }));
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-        setError('Zdjęcie nie może być większe niż 5MB');
-        return;
-    }
 
     try {
         const base64Image = await convertImageToBase64(file);
@@ -77,9 +100,11 @@ const AdminShopCreateCategory = () => {
       setLoading(true);
       setError(null);
       setSuccess(null);
+    if(!token || !categoryId) return;
 
       { /* Sending data to create category */} 
-      await addCategory(token, formData.title, formData.image);
+      console.log(formData);
+      await addItems(token, formData);
       setTimeout(() => navigate('/admin/shop'), 1000);
     } catch (err: any) {
       setError(err.message || 'Wystąpił błąd podczas tworzenia kategorii.');
@@ -124,6 +149,30 @@ const AdminShopCreateCategory = () => {
                                     type="text"
                                     name="title"
                                     value={formData.title}
+                                    onChange={handleInputChange}
+                                    className={styles.formInput}
+                                    required
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Cena:</label>
+                                <input
+                                    type="number"
+                                    name="price"
+                                    value={formData.price}
+                                    onChange={handleInputChange}
+                                    className={styles.formInput}
+                                    required
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Rzadkosc:</label>
+                                <input
+                                    type="text"
+                                    name="rarity"
+                                    value={formData.rarity}
                                     onChange={handleInputChange}
                                     className={styles.formInput}
                                     required
@@ -181,4 +230,4 @@ const AdminShopCreateCategory = () => {
 );
 }
 
-export default AdminShopCreateCategory
+export default AdminShopCreateItem

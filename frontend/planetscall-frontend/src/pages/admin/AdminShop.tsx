@@ -6,7 +6,8 @@ import Footer from '../../components/Footer/Footer';
 import { Link } from 'react-router-dom';
 import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
 import NotAdmin from '../Additional/NotAdmin';
-import styles from '../../stylePage/admin/admin.module.css';
+import styles from '../../stylePage/admin/adminShop.module.css';
+import Ecorus from '../../components/Ecorus';
 
 interface Category {
   id: number;
@@ -14,7 +15,7 @@ interface Category {
   image: string;
 }
 
-const AdminShop = () => {
+const AdminShop: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,36 +58,59 @@ const AdminShop = () => {
       <Header />
       <section className={styles.adminContainer}>
         <div className={styles.adminContent}>
-          <h1>Panel administracyjny sklepu</h1>
-          <Link to="/admin/" className={styles.backLink}>Powrót do panelu admina</Link>
+          <h1 className={styles.categoryPageTitle}>Panel administracyjny sklepu</h1>
+          <Link to="/admin/" className={styles.backButton}>
+            <i className="fas fa-arrow-left"></i> Powrót do panelu admina
+          </Link>
 
           {error && <p className={styles.errorMessage}>{error}</p>}
-          {loading && <p>Ładowanie...</p>}
+          {loading && <p className={styles.loadingMessage}>
+            <i className={`fas fa-spinner ${styles.loadingSpinner}`}></i> Ładowanie...
+          </p>}
 
-          <div className={styles.section}>
-            <h2>Kategorie</h2>
-            <Link to="/admin/shop/create-category" className={styles.addButton}>
-              Dodaj nową kategorię
-            </Link>
+          <div className={styles.categoryManagementContainer}>
+            <div className={styles.itemsSection}>
+              <div className={styles.sectionTitle}>
+                <h2>Kategorie</h2>
+                <Link 
+                  to="/admin/shop/create-category" 
+                  className={`${styles.primaryButton}`}
+                >
+                  <i className="fas fa-plus"></i> Dodaj nową kategorię
+                </Link>
+              </div>
 
-            <div className={styles.grid}>
-              {categories.length == 0 && (
-                  <p>Nie ma jeszcze utworzonych kategorii</p>
-              )}
-              {categories.map(category => (
-                <div key={category.id} className={styles.card}>
-                  <h3>{category.title}</h3>
-                  <img src={imageUrl() + category.image} alt={category.title} className={styles.image} />
-                  <div className={styles.actions}>
-                    <Link 
-                      to={`/admin/shop/category/${category.id}`} 
-                      className={styles.actionButton}
-                    >
-                      Zarządzaj
-                    </Link>
-                  </div>
+              {categories.length === 0 ? (
+                <p className={styles.statusMessage}>Nie ma jeszcze utworzonych kategorii</p>
+              ) : (
+                <div className={styles.itemsGrid}>
+                  {categories.map(category => (
+                    <div key={category.id} className={styles.itemCard}>
+                      <div className={styles.characterContainer}>
+                        <div className={styles.imageWrapper}>
+                        <Ecorus className={styles.characterBody} />
+                        <img 
+                          src={imageUrl() + category.image} 
+                          alt={category.title} 
+                          className={styles.characterClothes}
+                        />
+                        </div>
+                      </div>
+                      <div className={styles.itemDetails}>
+                        <h3 className={styles.itemTitle}>{category.title}</h3>
+                      </div>
+                      <div className={styles.itemActions}>
+                        <Link 
+                          to={`/admin/shop/category/${category.id}`}
+                          className={` ${styles.actionButton} ${styles.editButton}`}
+                        >
+                          <i className="fas fa-cog"></i> Zarządzaj
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>
