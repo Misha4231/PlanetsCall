@@ -19,8 +19,7 @@ public class OrganisationsRepository(PlatensCallContext context, IConfiguration 
     public PaginatedList<MinOrganisationDto> GetUserOrganisations(Users user, int page) // Retrieves a paginated list of organizations that the specified user is a member of.
     {
         int pageSize = Configuration.GetSection("Settings:Pagination:ItemsPerPage").Get<int>(); // Retrieve the page size from configuration settings.
-        Console.WriteLine(pageSize);
-        Console.WriteLine("\n\n\n\n");
+
         // Query to filter and project user's organizations.
         var organisationsQuery = Context.Organizations
             .Include(o => o.Members)
