@@ -19,7 +19,7 @@ public class Items
     public required string Rarity { get; set; }
 
     [Required]
-    [MaxLength(30)]
+    [MaxLength(255)]
     public required string Title { get; set; }
 
     

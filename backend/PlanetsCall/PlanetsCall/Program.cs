@@ -67,7 +67,10 @@ builder.Services.AddScoped<ITasksVerificationRepository, TasksVerificationReposi
 builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<JwtTokenManager>();
 builder.Services.AddScoped<FileService>();
-builder.Services.PrepareDatabase();
+builder.Services.CreateDefaultAdmin();
+if (builder.Environment.IsDevelopment()) { // add seed data
+    builder.Services.SeedData();
+}
 
 // Authentication jwt settings
 var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
