@@ -49,7 +49,7 @@ public class UsersRepository(
 
     public Users? GetUserById(int id)
     {
-        return Context.Users.Find(id);
+        return Context.Users.FirstOrDefault(u => u.Id == id);
     }
     
     public Users? GetFullUserById(int id)
