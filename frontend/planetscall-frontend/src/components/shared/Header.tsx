@@ -1,21 +1,30 @@
-// src/components/shared/Header.tsx
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Header.css';
 
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleDropdown = (menu: string) => {
     setActiveDropdown(activeDropdown === menu ? null : menu);
   };
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <header className='header-container'>
       <nav>
-        <ul className='main-nav'>
+        <div className='hamburger-menu' onClick={toggleMobileMenu}>
+          <span className={`hamburger ${isMobileMenuOpen ? 'open' : ''}`}></span>
+          <span className={`hamburger ${isMobileMenuOpen ? 'open' : ''}`}></span>
+          <span className={`hamburger ${isMobileMenuOpen ? 'open' : ''}`}></span>
+        </div>
+        <ul className={`main-nav ${isMobileMenuOpen ? 'show' : ''}`}>
           <li className="nav-item"><Link to="/">Strona Główna</Link></li>
           
           {isAuthenticated && (
@@ -38,7 +47,7 @@ const Header: React.FC = () => {
               >
                 <Link to="/community">Społeczność</Link>
                 <ul className={`dropdown-menu ${activeDropdown === 'community' ? 'show' : ''}`}>
-                <li><Link to="/community/users">Ludzie</Link></li>
+                  <li><Link to="/community/users">Ludzie</Link></li>
                   <li><Link to="/community/friends">Znajomi</Link></li>
                   <li><Link to="/community/organisations/search">Organizacje</Link></li>
                   <li><Link to="/community/organisations">Moje Organizacje</Link></li>

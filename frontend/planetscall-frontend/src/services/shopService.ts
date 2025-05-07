@@ -1,5 +1,14 @@
 
-import { authHeader }  from  "./headers";
+import { authHeader, PaginationResponse }  from  "./headers";
+
+export interface Items {
+    "id": number, 
+    "categoryId": number,
+    "price": number,
+    "image": string,
+    "rarity": string,
+    "title": string
+}
 
 export const getCategories = async (authToken: string) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
@@ -51,14 +60,14 @@ export const buyItem = async (authToken: string, itemId: number) => {
   });
 
   if (!response.ok) {
-    
-    const errorData = await response.json();
-    console.log(errorData.error);
-console.log(errorData);
-    throw new Error('Nie udało się kupić przedmiotu.');
+    const errorData = await response.json();  
+    console.log(errorData);
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd podczas usuwania kategorii.');
   }
 
-  return await response.json();
+  const data = await response;
+  console.log(data);
+  return true;
 };
 
 //
@@ -79,10 +88,9 @@ export const addCategory = async (authToken: string, title: string, image: strin
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.log(errorData.error);
-console.log(errorData);
-    throw new Error(`Błąd: ${response.status} - ${response.statusText}`);
+    const errorData = await response.json();  
+    console.log(errorData);
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd podczas usuwania kategorii.');
   }
   const data = await response;
   console.log(data);
@@ -232,4 +240,28 @@ image: string,
   }
 
   return true;
+};
+
+
+export const getUserItems  = async (authToken: string, categoryId: number, page: number): Promise<PaginationResponse<Items>> => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+  const response = await fetch(`${authHeader()}api/Items/my-items?categoryId=${categoryId}&?page=${page}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się pobrać itemów');
+  }
+
+  const data = await response.json();
+  console.log(data);
+
+  return data;
 };

@@ -54,6 +54,7 @@ import AdminVerificationInfo from '../pages/admin/task/AdminVerificationInfo';
 import AdminShopCreateItem from '../pages/admin/shop/AdminShopCreateItem';
 import TitleUpdater from '../hooks/TitleChanger';
 import RootLayout from '../components/RootLayout';
+import ProfileItems from '../pages/profile/ProfileItems';
 
 
 const router = createBrowserRouter([
@@ -110,6 +111,11 @@ const router = createBrowserRouter([
         path: '/profile/level',
         element: <LevelTree />,
         handle: { title: "Poziom | Planet's Call" }
+      },
+      {
+        path: '/profile/ecorus',
+        element: <ProfileItems />,
+        handle: { title: "Ecorus | Planet's Call" }
       },
       {
         path: '/profile/achievements',

@@ -98,7 +98,9 @@ useEffect(() => {
                 )}
                 <div className={styles.avatarControls}>
                   {/*<button className={styles.editButton}>Zmień awatar</button>*/}
-                  <button className={styles.editButton}>Zarządzaj itemami</button>
+                  <Link to="/profile/ecorus"  className={styles.settingsLink}>
+                    <button className={styles.editButton}>Zarządzaj itemami</button>
+                  </Link>
                 </div>
               </div>
 

@@ -39,7 +39,7 @@ const SignUp: React.FC = () => {
       }
     } catch (err: any) {
       console.log('Error:', err); 
-      setError(err);
+      setError(err.message || 'Wystąpił nieoczekiwany błąd.');
     } finally {
       setLoadingUser(false);
     }

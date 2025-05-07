@@ -76,28 +76,6 @@ export const updateUserSettings = async (authToken: string, userId: number, form
 };
 
 
-export const getBadge = async (authToken: string, formData: any) => {
-  if (!authToken) {
-    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
-  }
-
-  const response = await fetch(`${authHeader()}api/Profiles/set-settings`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${authToken}`,
-    },
-    body: JSON.stringify(formData),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Błąd aktualizacji profilu');
-  }
-
-  return await response.json();
-};
-
 
 
 export const getAddAttendance  = async (authToken: string) => {
@@ -156,11 +134,10 @@ export const getAnotherUser  = async (authToken: string, anotherUser : string) =
     },
   });
 
-  if (response.status === 401) {
-    throw new Error('Brak autoryzacji. Proszę się zalogować.');
-  }
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać danych użytkownika');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się pobrać danych użytkownika');
   }
 
   const data = await response.json();
@@ -170,3 +147,88 @@ export const getAnotherUser  = async (authToken: string, anotherUser : string) =
 };
 
 
+
+
+
+export const getUserSelectedItems  = async (authToken: string, categoryId: number, page: number) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+  const response = await fetch(`${authHeader()}api/SelectedItems?categoryId=${categoryId}&?page=${page}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się pobrać itemów');
+  }
+
+  const data = await response.json();
+  console.log(data);
+
+  return data;
+};
+
+
+
+export const addSelectedItem = async (authToken: string,  itemId: number) => {
+  if (!authToken) {
+      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+    }
+    
+  
+    const response = await fetch(`${authHeader()}api/SelectedItems/${itemId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ itemId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();  
+      console.log(errorData)
+      throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się dodać itemu');
+    }
+  
+    //console.log(username);
+    
+    return true;
+}
+
+
+export const deleteSelectedItem = async (authToken: string,  itemId: number) => {
+  if (!authToken) {
+      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+    }
+  
+    const response = await fetch(`${authHeader()}api/SelectedItems/${itemId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();  
+      console.log(errorData)
+      throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się zdjąć itemu');
+    }
+    // const data = await response.json();
+
+    // if (!response.ok ) {
+    //   const errorText = await response.text();
+    //   //console.log("BladR: " + errorText);
+    //   throw new Error('Nie udało się usunąć znajomego');
+    // }
+  
+    return  true;
+
+
+}

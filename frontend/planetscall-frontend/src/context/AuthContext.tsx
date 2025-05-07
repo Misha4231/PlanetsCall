@@ -60,11 +60,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoading] = useState(true);
-  const [token, setToken] = useState<string | null>(() => sessionStorage.getItem('authToken'));
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('authToken'));
 
 
   useEffect(() => {
-    const storedToken = sessionStorage.getItem('authToken');
+    const storedToken = localStorage.getItem('authToken');
     //console.log(storedToken);
     if (storedToken) {
       setLoading(true);
@@ -81,7 +81,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         })
         .catch(() => {
           setUser(null);
-          sessionStorage.removeItem('authToken');
+          localStorage.removeItem('authToken');
           setLoading(false);
         });
     } else {
@@ -92,7 +92,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const login = async (uniqueIdentifier: string, password: string) => {
     try {
       const { token: newToken, user: userData } = await loginService(uniqueIdentifier, password);
-      sessionStorage.setItem('authToken', newToken);
+      localStorage.setItem('authToken', newToken);
       setToken(newToken);
 
       const fullUserData = await getFullUser(newToken);
@@ -104,7 +104,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const logout = () => {
     logoutService();
-    sessionStorage.removeItem('authToken');
+    localStorage.removeItem('authToken');
     setUser(null);
     setToken(null);
   };

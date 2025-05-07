@@ -20,7 +20,7 @@
   background-color: #1e1e1e;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  padding: 50px;
+  padding: 20px 50px 50px;
   border: 1px solid #333;
   position: relative;
   overflow: hidden;
@@ -39,7 +39,7 @@
 .title {
   color: #fff;
   font-size: 32px;
-  margin-bottom: 40px;
+  margin-bottom: 23px;
   text-align: center;
   font-weight: 700;
   position: relative;
@@ -63,7 +63,7 @@
 
 .label {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 7px;
   color: #bbb;
   font-size: 15px;
   font-weight: 500;

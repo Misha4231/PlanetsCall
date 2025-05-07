@@ -83,7 +83,7 @@ const Shop: React.FC = () => {
 
   const confirmPurchase = async () => {
     if (!token || !selectedItem) return;
-    
+    console.log(selectedItem)
     try {
       await buyItem(token, selectedItem.id);
       const userData = await getFullUser(token);
@@ -91,7 +91,7 @@ const Shop: React.FC = () => {
       setPurchaseStatus({success: true, message: 'Zakupiono przedmiot!'});
       setTimeout(() => setPurchaseStatus(null), 3000);
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Nie udało się kupić przedmiotu';
+      const message = error.message || 'Nie udało się kupić przedmiotu';
       setPurchaseStatus({success: false, message});
       setTimeout(() => setPurchaseStatus(null), 3000);
     } finally {
@@ -113,7 +113,7 @@ const Shop: React.FC = () => {
         <h1 className={styles.title}>Sklep</h1>
           <div className={styles.shopLayout}>
             <div className={styles.sidebar}>
-              <h2>Kategorię</h2>
+              <h2>Kategoria:</h2>
               <div className={styles.categoryList}>
                 {categories.map((category) => (
                   <div 
@@ -139,12 +139,12 @@ const Shop: React.FC = () => {
 
             <div className={styles.mainContent}>
               <div className={styles.currencyDisplay}>
-                <h2>Your balance:</h2>
+                <h2>Twoje Monety:</h2>
                 <span className={styles.currencyAmount}>{currency}</span>
               </div>
               
               <h2 className={styles.title}>
-                {categories.find(c => c.id === selectedCategory)?.title || 'Select a category'}
+                {categories.find(c => c.id === selectedCategory)?.title || 'Wybierz kategorię'}
               </h2>
               
               <div className={styles.itemsGrid}>
@@ -160,13 +160,13 @@ const Shop: React.FC = () => {
                           onClick={() => handleBuyClick(item)}
                           disabled={currency < item.price}
                         >
-                          Buy
+                          Kup
                         </button>
                         <button 
                           className={`${styles.actionButton} ${styles.tryButton}`}
                           onClick={() => setSelectedItem(item)}
                         >
-                          Try
+                          Załóż
                         </button>
                       </div>
                     </div>
