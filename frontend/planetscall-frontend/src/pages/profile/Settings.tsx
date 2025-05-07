@@ -324,6 +324,17 @@ const Settings: React.FC = () => {
                     placeholder="https://linkedin.com/in/twojprofil"
                   />
                 </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Youtube:</label>
+                  <input
+                    type="url"
+                    name="youtubeLink"
+                    value={formData.youtubeLink}
+                    onChange={handleInputChange}
+                    className={styles.formInput}
+                    placeholder="https://youtube.com/twojprofil"
+                  />
+                </div>
               </div>
 
               <div className={styles.formActions}>

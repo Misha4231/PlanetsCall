@@ -176,14 +176,8 @@ const People = () => {
                                                     )}
                                                 </div>
                                                 <div className={styles.progressSection}>
-                                                    <div className={styles.progressContainer}>
-                                                        <div className={styles.progressBar}>
-                                                            <div 
-                                                                className={styles.progressFill}
-                                                                style={{ width: `${user.progress}%` }}
-                                                            ></div>
-                                                        </div>
-                                                        <span className={styles.progressText}>{user.progress}%</span>
+                                                    <div className={styles.pointsBadge}>
+                                                        <span className={styles.progressText}><i className="fas fa-star"></i>  {user.progress} Level</span>
                                                     </div>
                                                     <div className={styles.pointsBadge}>
                                                         <i className="fas fa-star"></i> {user.points} pkt

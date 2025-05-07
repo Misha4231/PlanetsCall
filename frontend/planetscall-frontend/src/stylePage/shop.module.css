@@ -118,6 +118,11 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     border-color: #4CAF50;
   }
+
+  .shopItem.selectedItem{
+    background-color: #666666;
+    border-color: #000000;
+  }
   
   .itemImage {
     display: block;

@@ -54,7 +54,17 @@ const Header: React.FC = () => {
                 </ul>
               </li>
 
-              <li className="nav-item"><Link to="/tasks">Zadania</Link></li>
+              <li 
+                className="nav-item dropdown"
+                onMouseEnter={() => toggleDropdown('task')}
+                onMouseLeave={() => setActiveDropdown(null)}
+              ><Link to="/tasks">Zadania</Link>
+                {((user?.progress ? user.progress : 0) >= 5 || user?.isAdmin) && (
+                  <ul className={`dropdown-menu ${activeDropdown === 'task' ? 'show' : ''}`}>
+                    <li><Link to="/admin/task/overwatch">Sprawdzaj zadania</Link></li>
+                  </ul>
+                )}
+              </li>
               
               <li className="nav-item"><Link to="/shop">Sklep</Link></li>
               
@@ -75,7 +85,7 @@ const Header: React.FC = () => {
               )}
 
               <li className="nav-item">
-                <button className="logout-btn" onClick={logout}>Wyloguj</button>
+                <Link to="/"><button className="logout-btn" onClick={logout}>Wyloguj</button></Link>
               </li>
             </>
           )}

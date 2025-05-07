@@ -9,6 +9,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import styles from '../../../stylePage/admin/adminTask.module.css';
 import NotAdmin from '../../Additional/NotAdmin';
 import { PaginationResponse } from '../../../services/headers';
+import NotQualificated from '../../Additional/NotQualificated';
+import NotAuthenticated from '../../Additional/NotAuthenticated';
 
 
 
@@ -61,17 +63,12 @@ const AdminTaskAllVerification = () => {
   };
 
   if (!isAuthenticated) {
-    return (
-        <div>
-            <Header/>
-            <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>
-            <Footer/>
-        </div>
+    return (<NotAuthenticated/>
     );   
 }
 
-  if(!user?.isAdmin){
-    return (<NotAdmin/>) 
+  if(((user?.progress ? user.progress : 0) < 5 && !user?.isAdmin)){
+    return (<NotQualificated/>) 
   } 
 
 

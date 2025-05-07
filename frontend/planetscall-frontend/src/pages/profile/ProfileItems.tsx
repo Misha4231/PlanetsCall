@@ -30,7 +30,6 @@ const [categories, setCategories] = useState<Category[]>([]);
 const [items, setItems] = useState<Items[]>([]);
 const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 const [selectedItems, setSelectedItems] = useState<Items[]>([]);
-const [selectedItem, setSelectedItem] = useState<Items | null>(null);
 const [pagination, setPagination] = useState<PaginationResponse<Items> | null>(null); 
 const [currentPage, setCurrentPage] = useState<number>(1); 
     
@@ -41,9 +40,8 @@ const [currentPage, setCurrentPage] = useState<number>(1);
 
     const fetchData = async () => {
       try {
-        const [categoriesData, userData] = await Promise.all([
-          getCategories(token),
-          getFullUser(token)
+        const [categoriesData] = await Promise.all([
+          getCategories(token)
         ]);
         setCategories(categoriesData);
         if (categoriesData.length > 0 && selectedCategory === null) {
@@ -64,6 +62,15 @@ const [currentPage, setCurrentPage] = useState<number>(1);
           for (const category of categories) {
             const response = await getUserSelectedItems(token, category.id, 1);
             allItems.push(...response.items);
+                  
+            setPagination({
+                pageIndex: response.pageIndex,
+                totalPages: response.totalPages,
+                hasPreviousPage: response.hasPreviousPage,
+                hasNextPage: response.hasNextPage,
+                items: response.items
+            });
+            
           }
       
           setSelectedItems(allItems);
@@ -97,7 +104,11 @@ const [currentPage, setCurrentPage] = useState<number>(1);
     fetchItems();
   }, [selectedCategory, token]);
 
-
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= (pagination?.totalPages || 1)) {
+        setCurrentPage(page);
+    }
+};
 
   const isItemSelected = (itemId: number) => {
     return selectedItems.some(si => si.id === itemId);
@@ -189,6 +200,27 @@ const [currentPage, setCurrentPage] = useState<number>(1);
 
                       </div>
                     </div>
+                    {pagination && pagination.totalPages!=1 && (
+                        <div className={styles.pagination}>
+                            <button 
+                                onClick={() => goToPage(currentPage - 1)} 
+                                disabled={!pagination.hasPreviousPage}
+                            >
+                                Poprzednia
+                            </button>
+                            
+                            <span>
+                                Strona {pagination.pageIndex} z {pagination.totalPages}
+                            </span>
+                            
+                            <button 
+                                onClick={() => goToPage(currentPage + 1)} 
+                                disabled={!pagination.hasNextPage}
+                            >
+                                Następna
+                            </button>
+                        </div>
+                    )}
                   </div>
                 ))}
               </div>
