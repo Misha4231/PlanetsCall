@@ -16,6 +16,7 @@ RUN dotnet restore
 COPY Core/. ./Core/
 COPY Data/. ./Data/
 COPY PlanetsCall/. ./PlanetsCall/
+COPY PlanetsCall/wwwroot ./wwwroot
 
 # install neccessary packages for entrypoint.sh
 RUN apt-get update && apt-get install -y postgresql-client && apt-get install -y curl
