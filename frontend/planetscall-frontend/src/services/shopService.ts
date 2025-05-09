@@ -1,12 +1,15 @@
 
 import { authHeader, PaginationResponse }  from  "./headers";
 
+
+type RarityType = "Common" | "Rare" | "Epic";
+
 export interface Items {
     "id": number, 
     "categoryId": number,
     "price": number,
     "image": string,
-    "rarity": string,
+    "rarity": RarityType,
     "title": string
 }
 
@@ -142,7 +145,9 @@ export const addItems = async (authToken: string, formData: any) => {
     throw new Error(errorData.errors.CustomValidation[0] || 'Błąd logowania');
   }
 
-  return true;
+  const data = await response.json();
+
+  return data;
 };
 
 //

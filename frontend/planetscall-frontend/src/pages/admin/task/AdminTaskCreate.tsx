@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Organisation } from '../../community/communityTypes';
 import { useAuth } from '../../../context/AuthContext';
 import styles from '../../../stylePage/admin/adminTask.module.css';
+import authStyles from '../../../stylePage/auth.module.css';
 import NotAdmin from '../../Additional/NotAdmin';
 
 
@@ -13,6 +14,7 @@ const AdminTaskCreate = () => {
     const { user, isAuthenticated, token } = useAuth();
     
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingForm, setLoadingForm] = useState<boolean>(false);
     const [organisation, setOrganisation] = useState<Organisation[]>([]);
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -64,7 +66,7 @@ const AdminTaskCreate = () => {
       e.preventDefault();
       if (!token) return;
       
-      setLoading(true);
+      setLoadingForm(true);
       setError(null);
       setSuccess(null);
       
@@ -79,11 +81,12 @@ const AdminTaskCreate = () => {
           
           if(await createTemplateTask(token, taskToSend)){
             setSuccess('Nowe zadanie zostało pomyślnie utworzone!');
+            setTimeout(() => navigate('/admin/tasks'), 1000);
           }
       } catch (err: any) {
           setError(err.message || 'Nie udało się utworzyć zadania');
       } finally {
-          setLoading(false);
+        setLoadingForm(false);
       }
   };
   
@@ -99,14 +102,17 @@ const AdminTaskCreate = () => {
   return (
       <div className="app-container dark-theme">
         <Header />
-        <section className={styles.taskAdminContainer}>
+        <section className={styles.taskAdminTaskContainer}>
           <div className={styles.taskAdminContent}>
             <h1 className={styles.taskAdminTitle}>Utwórz nowe zadanie</h1>
+          <Link to="/admin/tasks" className={styles.backButton}>
+            <i className="fas fa-arrow-left"></i> Powrót
+          </Link>
+            {success && <div className={styles.successMessage}>{success}</div>}
+            {error && <p className={styles.errorMessage}>{error}</p>}
             
             {loading ? (
               <p>Ładowanie...</p>
-            ) : error ? (
-              <div className="error-message">{error}</div>
             ) : (
               <>
                 <div className={styles.taskForm}>
@@ -157,20 +163,33 @@ const AdminTaskCreate = () => {
                       </select>
                     </div>
                     
-                    <div className={`${styles.taskFormGroup} ${styles.taskFormCheckbox}`}>
+                    <div className={`${styles.taskFormGroup} ${authStyles.checkboxLabel}`}>
                       <input
                         type="checkbox"
                         id="isGroup"
                         checked={newTask.isGroup}
+                        className={authStyles.checkbox}
                         onChange={(e) => setNewTask({...newTask, isGroup: e.target.checked})}
                       />
                       <label htmlFor="isGroup" className={styles.taskFormLabel}>Zadanie grupowe</label>
                     </div>
                     
-                    <div className={styles.taskFormSubmit}>
-                      <button type="submit" className="submit-button" disabled={loading}>
-                        {loading ? 'Tworzenie...' : 'Utwórz zadanie'}
-                      </button>
+                    <div className={styles.taskFormSubmit}>                      
+                    <button 
+                            type="submit" 
+                            className={styles.primaryButton}
+                            disabled={loadingForm}
+                        >
+                            {loadingForm ? (
+                                <>
+                                    <i className="fas fa-spinner fa-spin"></i> Tworzenie...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-plus"></i> Stwórz kategorię
+                                </>
+                            )}
+                        </button>
                     </div>
                   </form>
                 </div>

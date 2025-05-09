@@ -15,6 +15,7 @@ import Footer from '../../components/Footer/Footer';
 import { imageUrl } from '../../services/imageConvert';
 import Ecorus from '../../components/Ecorus';
 import { PaginationResponse } from '../../services/headers';
+import { RarityType } from '../shop/Shop';
 
 
 interface Category {
@@ -28,6 +29,7 @@ const ProfileItems: React.FC = () => {
 const { token, isAuthenticated, user } = useAuth();
 const [categories, setCategories] = useState<Category[]>([]);
 const [items, setItems] = useState<Items[]>([]);
+  const [selectedRarities, setSelectedRarities] = useState<RarityType[]>([]);
 const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 const [selectedItems, setSelectedItems] = useState<Items[]>([]);
 const [pagination, setPagination] = useState<PaginationResponse<Items> | null>(null); 
@@ -114,6 +116,18 @@ const [currentPage, setCurrentPage] = useState<number>(1);
     return selectedItems.some(si => si.id === itemId);
   };
 
+  const toggleRarityFilter = (rarity: RarityType) => {
+    setSelectedRarities(prev =>
+      prev.includes(rarity)
+        ? prev.filter(r => r !== rarity)
+        : [...prev, rarity]
+    );
+  };
+  
+  const filteredItems = selectedRarities.length === 0
+  ? items
+  : items.filter(item => selectedRarities.includes(item.rarity));
+
  
   return (
     <div className="app-container">
@@ -123,23 +137,20 @@ const [currentPage, setCurrentPage] = useState<number>(1);
             <div className={styles.sidebar}>
               <h2>Kategoria:</h2>
               <div className={styles.categoryList}>
-                {categories.map((category) => (
+              {categories.map((category) => (
                   <div 
                     key={category.id} 
                     className={`${styles.categoryItem} ${selectedCategory === category.id ? styles.active : ''}`}
                     onClick={() => setSelectedCategory(category.id)}
                   > 
-                  <div className={styles.characterContainer}>
-                    <div className={styles.imageWrapper}>
-                      <Ecorus className={styles.characterBody} />
-                      <img 
-                        src={imageUrl() + category.image} 
-                        alt={category.title} 
-                        className={` ${styles.characterClothes}`}
-                      />
+                    <div className={styles.categoryContainer}>
+                        <img 
+                          src={imageUrl() + category.image} 
+                          alt={category.title} 
+                          className={`${styles.categoryIcons}`}
+                        />
                     </div>
-                  </div>
-                    <span>{category.title}</span>
+                      <span>{category.title}</span>
                   </div>
                 ))}
               </div>
@@ -153,6 +164,18 @@ const [currentPage, setCurrentPage] = useState<number>(1);
               <h2 className={styles.title}>
                 {categories.find(c => c.id === selectedCategory)?.title || 'Wybierz kategorię'}
               </h2>
+              <div className={styles.filterBar}>
+              <span>Filtruj po rzadkości:</span>
+              {(["Common", "Rare", "Epic"] as RarityType[]).map(rarity => (
+                <button
+                  key={rarity}
+                  className={`${styles.filterButton} ${selectedRarities.includes(rarity) ? styles.active : ''}`}
+                  onClick={() => toggleRarityFilter(rarity)}
+                >
+                  {rarity}
+                </button>
+              ))}
+            </div>
               
               <div className={styles.itemsGrid}>
                 {items.map((item) => (

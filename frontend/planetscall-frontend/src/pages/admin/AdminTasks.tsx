@@ -12,6 +12,8 @@ const AdminTasks = () => {
   const { user, isAuthenticated, token } = useAuth();
   
   const [loading, setLoading] = useState<boolean>(false);
+  const [activityFilter, setActivityFilter] = useState<'active' | 'inactive' | null>(null);
+  const [typeFilters, setTypeFilters] = useState<TaskType[]>([]);
   const [organisation, setOrganisation] = useState<Organisation[]>([]);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -48,6 +50,29 @@ const AdminTasks = () => {
       setLoading(false);
   }
   };
+
+  const toggleActivityFilter = (filter: 'active' | 'inactive') => {
+    setActivityFilter(prev => prev === filter ? null : filter);
+  };
+  
+  const toggleTypeFilter = (type: TaskType) => {
+    setTypeFilters(prev => 
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    );
+  };
+  
+  const filteredTasks = tasks.filter(task => {
+    const matchesActivity =
+      activityFilter === null ||
+      (activityFilter === 'active' && task.isActive) ||
+      (activityFilter === 'inactive' && !task.isActive);
+  
+    const matchesType =
+      typeFilters.length === 0 || typeFilters.includes(task.type);
+  
+    return matchesActivity && matchesType;
+  });
+  
 
   if (!isAuthenticated) {
       return (
@@ -101,34 +126,82 @@ return (
     <div className="app-container dark-theme">
       <Header />
       <section className={styles.taskAdminContainer}>
-        <div className={styles.taskAdminContent}>
-          <h1 className={styles.taskAdminTitle}>Zarządzanie zadaniami szablonowymi</h1>
-          
+        <div className={styles.taskAdminContent}>          
           {loading ? (
             <p>Ładowanie...</p>
           ) : error ? (
             <div className="error-message">{error}</div>
           ) : (
             <>
-              <Link to={`/admin/task/create`}>Stwórz</Link>
-              <Link to={`/admin/task/overwatch`}>Werifikacja</Link>
+            <div className={styles.headerSection}>
+              <h2 className={styles.searchTitle}>Zarządzanie zadaniami szablonowymi</h2>
+              <div className={styles.organisationActions}>
+              <Link to="/admin/task/create" className={styles.createButton}>
+                <i className="fas fa-plus"></i> Stwórz zadanie
+              </Link>
+                <Link to="/admin/task/overwatch" className={styles.searchButton}>
+                  <i className="fas fa-search"></i> Werifikacja zadań
+                </Link>
+              </div>
+            </div>
+          <Link to="/admin/" className={styles.backButton}>
+            <i className="fas fa-arrow-left"></i> Powrót
+          </Link>
               <div className={styles.taskList}>
                 <h3 className={styles.taskListTitle}>Lista zadań szablonowych</h3>
-                {tasks.length > 0 ? (
+                <div className={styles.taskFilters}>
+                <div className={styles.filterGroup}>
+                  <button
+                    className={`${styles.filterButton} ${activityFilter === 'active' ? styles.active : ''}`}
+                    onClick={() => toggleActivityFilter('active')}
+                  >
+                    Aktywne
+                  </button>
+                  <button
+                    className={`${styles.filterButton} ${activityFilter === 'inactive' ? styles.active : ''}`}
+                    onClick={() => toggleActivityFilter('inactive')}
+                  >
+                    Nieaktywne
+                  </button>
+                </div>
+
+                <div className={styles.filterGroup}>
+                  <button
+                    className={`${styles.filterButton} ${typeFilters.includes(1) ? styles.active : ''}`}
+                    onClick={() => toggleTypeFilter(1)}
+                  >
+                    Łatwe (dzienne)
+                  </button>
+                  <button
+                    className={`${styles.filterButton} ${typeFilters.includes(2) ? styles.active : ''}`}
+                    onClick={() => toggleTypeFilter(2)}
+                  >
+                    Trudne (tygodniowe)
+                  </button>
+                  <button
+                    className={`${styles.filterButton} ${typeFilters.includes(3) ? styles.active : ''}`}
+                    onClick={() => toggleTypeFilter(3)}
+                  >
+                    Organizacyjne
+                  </button>
+                </div>
+              </div>
+
+                {filteredTasks.length > 0 ? (
                   <div className={styles.taskListItems}>
-                    {tasks.map((task) => (
-                      <div key={task.id} className={styles.taskListItem}>
-                        <Link to={`/admin/organisations/task/${task.id}`}>
-                          <h4 className={styles.taskListItemTitle}>{task.title}</h4>
-                        </Link>
-                        <p className={styles.taskListItemDescription}>{task.description}</p>
-                        <div className={styles.taskListItemMeta}>
-                          <span>{getTypeName(task.type)} • {task.reward} punktów</span>
-                          <span className={`${styles.taskListItemStatus} ${task.isActive ? 'active' : 'inactive'}`}>
-                            {task.isActive ? 'Aktywne' : 'Nieaktywne'}
-                          </span>
+                    {filteredTasks.map((task) => (
+                      <Link to={`/admin/organisations/task/${task.id}`}  className={styles.hiddenLink}>
+                        <div key={task.id} className={styles.taskListItem}>
+                            <h4 className={styles.taskListItemTitle}>{task.title}</h4>
+                          <p className={styles.taskListItemDescription}>{task.description}</p>
+                          <div className={styles.taskListItemMeta}>
+                            <span>{getTypeName(task.type)} • {task.reward} punktów</span>
+                            <span className={`${styles.taskListItemStatus} ${task.isActive ? 'active' : 'inactive'}`}>
+                              {task.isActive ? 'Aktywne' : 'Nieaktywne'}
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 ) : (

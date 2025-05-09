@@ -7,6 +7,7 @@ import { Organisation } from '../../community/communityTypes';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styles from '../../../stylePage/admin/adminTask.module.css';
 import NotAdmin from '../../Additional/NotAdmin';
+import Loading from '../../Additional/Loading';
 
 const AdminTaskInfo = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -72,6 +73,7 @@ const AdminTaskInfo = () => {
               if (action === 'activate') {
                   await activateTemplateTask(token, id);
                   setSuccess('Zadanie zostało aktywowane!');
+                  setTimeout(() => navigate('/admin/tasks'), 1000);
               } else {
                   await deleteTemplateTask(token, id);
                   navigate('/admin/organisations');
@@ -88,11 +90,10 @@ const AdminTaskInfo = () => {
         <div className="app-container dark-theme">
           <Header />
           <section className={styles.taskAdminContainer}>
-            <div className={styles.taskAdminContent}>
-              {loading ? (
-                <p>Ładowanie...</p>
-              ) : error ? (
-                <div className="error-message">{error}</div>
+            <div className={styles.taskAdminContent}> 
+            {success && <div className={styles.successMessage}>{success}</div>}
+            {error && <p className={styles.errorMessage}>{error}</p>}
+              {loading ? (<Loading/>
               ) : task ? (
                 <>
                   <div className={styles.taskInfoHeader}>
@@ -113,11 +114,14 @@ const AdminTaskInfo = () => {
                     </div>
                     <Link 
                       to={`/admin/organisations/task/${taskId}/settings`}
-                      className="edit-button"
+                      className={`${styles.actionButton} ${styles.editButton}`}
                     >
                       <i className="fas fa-edit"></i> Edytuj
                     </Link>
                   </div>
+                    <Link to="/admin/tasks" className={styles.backButton}>
+                        <i className="fas fa-arrow-left"></i> Powrót
+                    </Link>
     
                   <div className={styles.taskInfoDescription}>
                     <h3>Opis zadania</h3>
@@ -125,17 +129,18 @@ const AdminTaskInfo = () => {
                   </div>
     
                   <div className={styles.taskInfoActions}>
+                  {!task.isActive && (                    
                     <button
                       onClick={() => task.id && handleTaskAction(task.id, 'activate')}
-                      disabled={loading || task.isActive}
-                      className={`action-button ${task.isActive ? 'disabled' : ''}`}
+                      className={`${styles.actionButton} ${styles.primaryButton}`}
                     >
                       <i className="fas fa-power-off"></i> Aktywuj
                     </button>
+                  )}
                     <button
                       onClick={() => task.id && handleTaskAction(task.id, 'delete')}
                       disabled={loading}
-                      className="delete-button"
+                      className={`${styles.actionButton} ${styles.deleteButton}`}
                     >
                       <i className="fas fa-trash"></i> Usuń
                     </button>

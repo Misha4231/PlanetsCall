@@ -80,6 +80,7 @@ const AdminShopCreateCategory = () => {
 
       { /* Sending data to create category */} 
       await addCategory(token, formData.title, formData.image);
+      setSuccess('Kategoria została dodana');
       setTimeout(() => navigate('/admin/shop'), 1000);
     } catch (err: any) {
       setError(err.message || 'Wystąpił błąd podczas tworzenia kategorii.');
@@ -103,32 +104,18 @@ const AdminShopCreateCategory = () => {
         <section className={styles.adminContainer}>
             <div className={styles.adminContent}>
                 <div className={styles.adminHeader}>
-                    <h1 className={styles.sectionTitle}>Stwórz Nową kategorię</h1>
-                    <button 
-                        onClick={() => navigate('/community')}
-                        className={styles.secondaryButton}
-                    >
+                    <h1 className={styles.categoryTitle}>Stwórz Nową kategorię</h1>
+                    <Link to="/admin/shop" className={styles.backButton}>
                         <i className="fas fa-arrow-left"></i> Powrót
-                    </button>
+                    </Link>
                 </div>
 
-                {error && <div className={styles.errorMessage}>{error}</div>}
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                {success && <p className={styles.successMessage}>{success}</p>}
 
                 <form onSubmit={handleSubmit} className={styles.settingsForm}>
                     <div className={styles.formGrid}>
                         <div className={styles.formColumn}>
-
-                            <div className={styles.formGroup}>
-                                <label className={styles.formLabel}>Nazwa:</label>
-                                <input
-                                    type="text"
-                                    name="title"
-                                    value={formData.title}
-                                    onChange={handleInputChange}
-                                    className={styles.formInput}
-                                    required
-                                />
-                            </div>
                             <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                                 <label className={styles.formLabel}>Znaczek kategorii:</label>
                                 <div className={styles.imageUploadContainer}>
@@ -154,6 +141,17 @@ const AdminShopCreateCategory = () => {
                             </div>
                             
                         </div>
+                    <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Nazwa:</label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleInputChange}
+                            className={styles.formInput}
+                            required
+                        />
+                    </div>
                     </div>
 
                     <div className={styles.formActions}>

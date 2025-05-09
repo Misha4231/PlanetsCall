@@ -5,14 +5,16 @@ import { getCategories, updateCategory} from '../../../services/shopService';
 import Header from '../../../components/shared/Header';
 import Footer from '../../../components/Footer/Footer';
 import NotAdmin from '../../Additional/NotAdmin';
-import styles from '../../../stylePage/admin/adminShop.module.css';
+import styles from '../../../stylePage/organisation/organisationAdmin.module.css';
 import { convertImageToBase64, imageUrl } from '../../../services/imageConvert';
+import Loading from '../../Additional/Loading';
 
 
 const AdminShopEditCategory = () => {
     const { id } = useParams<{ id: string }>();
     const { user, isAuthenticated, token } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingForm, setLoadingForm] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [formData, setFormData] = useState({
@@ -78,7 +80,7 @@ const AdminShopEditCategory = () => {
       if (!token || !id) return;
       
       try {
-        setLoading(true);
+        setLoadingForm(true);
         await updateCategory(
           token,
           parseInt(id),
@@ -90,7 +92,7 @@ const AdminShopEditCategory = () => {
       } catch (err: any) {
         setError(err.message);
       } finally {
-        setLoading(false);
+        setLoadingForm(false);
       }
     };
   
@@ -113,25 +115,19 @@ const AdminShopEditCategory = () => {
         <Header />
         <section className={styles.adminContainer}>
           <div className={styles.adminContent}>
+          <div className={styles.adminHeader}>
             <h1>Edytuj kategorię</h1>
-            <Link to={`/admin/shop/category/${id}`} className={styles.backLink}>Powrót</Link>
+              <Link to={`/admin/shop/category/${id}`} className={styles.backButton}>
+                  <i className="fas fa-arrow-left"></i> Powrót
+              </Link>
+          </div>
   
             {error && <p className={styles.errorMessage}>{error}</p>}
             {success && <p className={styles.successMessage}>{success}</p>}
-            {loading && <p>Ładowanie...</p>}
+            {loading && <Loading/>}
   
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Tytuł:</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  required
-                />
-              </div>
+            <form onSubmit={handleSubmit} className={styles.settingsForm}>
+            <div className={styles.formGrid}>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Obraz:</label>
                 <div className={styles.imageUploadContainer}>
@@ -153,18 +149,37 @@ const AdminShopEditCategory = () => {
                     />
                     <span className={styles.fileInputButton}>Wybierz nowy obraz</span>
                   </label>
-                  {!isNewImage && previewImage && (
-                    <p className={styles.imageNote}>Obecny obraz pozostanie niezmieniony</p>
-                  )}
                 </div>
+                </div>
+              <div className={styles.formColumn}>
+                <label className={styles.formLabel}>Tytuł:</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className={styles.formInput}
+                  required
+                />
               </div>
-              <button 
-                type="submit" 
-                className={styles.submitButton}
-                disabled={loading}
-              >
-                Zapisz zmiany
-              </button>
+              </div>
+                <div className={styles.formActions}>
+                    <button 
+                        type="submit" 
+                        className={styles.primaryButton}
+                        disabled={loadingForm}
+                    >
+                        {loadingForm ? (
+                            <>
+                                <i className="fas fa-spinner fa-spin"></i> Zapisywanie...
+                            </>
+                        ) : (
+                            <>
+                                <i className="fas fa-save"></i> Zapisz zmiany
+                            </>
+                        )}
+                    </button>
+                  </div>
             </form>
           </div>
         </section>

@@ -129,12 +129,9 @@ const AdminShopCreateItem = () => {
             <div className={styles.adminContent}>
                 <div className={styles.adminHeader}>
                     <h1 className={styles.sectionTitle}>Stwórz Nową kategorię</h1>
-                    <button 
-                        onClick={() => navigate('/community')}
-                        className={styles.secondaryButton}
-                    >
+                    <Link to="/admin/" className={styles.backButton}>
                         <i className="fas fa-arrow-left"></i> Powrót
-                    </button>
+                    </Link>
                 </div>
 
                 {error && <div className={styles.errorMessage}>{error}</div>}

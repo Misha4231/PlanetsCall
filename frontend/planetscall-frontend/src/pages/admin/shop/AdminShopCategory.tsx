@@ -112,7 +112,37 @@ const AdminShopCategory = () => {
       <Header />
       <section className={styles.adminContainer}>
       <div className={styles.adminContent}>
+          <div className={styles.categoryHeaderWrapper}>
         <h1 className={styles.categoryPageTitle}>Zarządzanie kategorią: {category.title}</h1>
+            <div className={styles.categoryInfo}>
+              <div className={styles.categoryImageContainer}>
+                <div className={styles.categoryContainer}>
+                    <img 
+                      src={imageUrl() + category.image} 
+                      alt={category.title} 
+                      className={`${styles.categoryIcons}`}
+                    />
+              </div>
+            </div>
+
+            </div>
+            <div className={styles.categoryActionsWrapper}>
+              <Link 
+                to={`/admin/shop/category/${category.id}/edit`}
+                className={`${styles.actionButton} ${styles.editButton}`}
+              >
+                <i className="fas fa-edit"></i> Edytuj kategorię
+              </Link>
+              <button 
+                onClick={handleDeleteCategory}
+                className={`${styles.actionButton} ${styles.deleteButton}`}
+                disabled={loading}
+              >
+                <i className="fas fa-trash"></i> Usuń kategorię
+              </button>
+            </div>
+          </div>
+          
         <Link to="/admin/shop" className={styles.backButton}>
           <i className="fas fa-arrow-left"></i> Powrót do panelu sklepu
         </Link>
@@ -126,39 +156,10 @@ const AdminShopCategory = () => {
         )}
 
         <div className={styles.categoryManagementContainer}>
-          <div className={styles.categoryHeaderWrapper}>
-            <div className={styles.categoryImageContainer}>
-              <div className={styles.characterContainer}>
-                <div className={styles.imageWrapper}>
-                  <Ecorus className={styles.characterBody} />
-                  <img 
-                    src={imageUrl() + category.image} 
-                    alt={category.title} 
-                    className={styles.characterClothes}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className={styles.categoryActionsWrapper}>
-              <Link 
-                to={`/admin/shop/category/${category.id}/edit`}
-                className={`${styles.actionButton} ${styles.editButton}`}
-              >
-                Edytuj kategorię
-              </Link>
-              <button 
-                onClick={handleDeleteCategory}
-                className={`${styles.actionButton} ${styles.deleteButton}`}
-                disabled={loading}
-              >
-                Usuń kategorię
-              </button>
-            </div>
-          </div>
 
           <div className={styles.itemsSection}>
             <div className={styles.sectionTitle}>
-              <h2>Przedmioty w kategorii</h2>
+              <h2>Przedmioty kategorii</h2>
               <Link 
                 to={`/admin/shop/category/${id}/create-item/`}
                 className={styles.primaryButton}
@@ -174,7 +175,7 @@ const AdminShopCategory = () => {
                     <h3 className={styles.itemTitle}>{item.title}</h3>
                     <p className={styles.itemPrice}>Cena: {item.price} zł</p>
                     <p className={styles.itemRarity}>Rzadkość: {item.rarity}</p>
-                    <div className={styles.imageContainer}>
+                    <div className={styles.imageWrapper }>
                       <div className={styles.characterContainer}>
                         <div className={styles.imageWrapper}>
                           <Ecorus className={styles.characterBody} />
@@ -191,14 +192,14 @@ const AdminShopCategory = () => {
                         to={`/admin/shop/category/${id}/item/${item.id}/edit`}
                         className={`${styles.actionButton} ${styles.editButton}`}
                       >
-                        Edytuj
+                        <i className="fas fa-edit"></i> Edytuj
                       </Link>
                       <button
                         onClick={() => handleDeleteItem(item.id)}
                         className={`${styles.actionButton} ${styles.deleteButton}`}
                         disabled={loading}
                       >
-                        Usuń
+                        <i className="fas fa-trash"></i> Usuń
                       </button>
                     </div>
                   </div>

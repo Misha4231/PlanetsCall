@@ -78,7 +78,7 @@
     border: 1px solid #2c2c2c;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 230px;
     max-width: 280px;
 }
 
@@ -106,7 +106,6 @@
     font-size: 13px;
     margin: 0 0 15px 0;
     line-height: 1.5;
-    display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
     flex-grow: 1;

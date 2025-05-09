@@ -60,7 +60,7 @@ const AdminShop: React.FC = () => {
         <div className={styles.adminContent}>
           <h1 className={styles.categoryPageTitle}>Panel administracyjny sklepu</h1>
           <Link to="/admin/" className={styles.backButton}>
-            <i className="fas fa-arrow-left"></i> Powrót do panelu admina
+            <i className="fas fa-arrow-left"></i> Powrót
           </Link>
 
           {error && <p className={styles.errorMessage}>{error}</p>}
@@ -86,16 +86,13 @@ const AdminShop: React.FC = () => {
                 <div className={styles.itemsGrid}>
                   {categories.map(category => (
                     <div key={category.id} className={styles.itemCard}>
-                      <div className={styles.characterContainer}>
-                        <div className={styles.imageWrapper}>
-                        <Ecorus className={styles.characterBody} />
+                      <div className={styles.categoryContainer}>
                         <img 
                           src={imageUrl() + category.image} 
                           alt={category.title} 
-                          className={styles.characterClothes}
+                          className={`${styles.categoryIcons}`}
                         />
-                        </div>
-                      </div>
+                    </div>
                       <div className={styles.itemDetails}>
                         <h3 className={styles.itemTitle}>{category.title}</h3>
                       </div>

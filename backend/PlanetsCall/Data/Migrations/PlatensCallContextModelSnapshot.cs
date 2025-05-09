@@ -278,8 +278,8 @@ namespace Data.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
+                    b.Property<long>("Price")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Rarity")
                         .IsRequired()
@@ -288,8 +288,8 @@ namespace Data.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
 

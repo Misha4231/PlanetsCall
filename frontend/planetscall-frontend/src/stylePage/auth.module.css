@@ -168,8 +168,6 @@
   border-left: 4px solid #4CAF50;
 }
 
-/* ... (include all the other auth styles from your original CSS) ... */
-
 @media (max-width: 768px) {
   .blockCode {
     padding: 0 20px;

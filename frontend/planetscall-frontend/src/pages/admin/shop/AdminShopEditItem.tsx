@@ -5,8 +5,9 @@ import { getItemsByCategory, getCategories, updateItem} from '../../../services/
 import Header from '../../../components/shared/Header';
 import Footer from '../../../components/Footer/Footer';
 import NotAdmin from '../../Additional/NotAdmin';
-import styles from '../../../stylePage/admin/adminShop.module.css';
+import styles from '../../../stylePage/organisation/organisationAdmin.module.css';
 import { convertImageToBase64, imageUrl } from '../../../services/imageConvert';
+import Loading from '../../Additional/Loading';
 
 interface Category {
   id: number;
@@ -16,14 +17,17 @@ interface ItemShop {
   "categoryId": number,
   "price": number,
   "image": string,
-  "rarity": string,
+  "rarity": RarityType,
   "title": string
 }
+
+type RarityType = "Common" | "Rare" | "Epic";
 
 const AdminShopEditItem = () => {
   const {categoryIdParm, itemId} = useParams();
     const { user, isAuthenticated, token } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingForm, setLoadingForm] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -31,7 +35,7 @@ const AdminShopEditItem = () => {
       categoryId: categoryIdParm ? parseInt(categoryIdParm) : 0,
       price: 0,
       image: '',
-      rarity: '',
+      "rarity": "Common" as RarityType,
       title: ''
     });
     console.log(categoryIdParm);
@@ -106,7 +110,7 @@ const AdminShopEditItem = () => {
       if (!token || !itemId) return;
       
       try {
-        setLoading(true);
+        setLoadingForm(true);
         await updateItem(
           token,
           parseInt(itemId),
@@ -121,7 +125,7 @@ const AdminShopEditItem = () => {
       } catch (err: any) {
         setError(err.message);
       } finally {
-        setLoading(false);
+        setLoadingForm(false);
       }
     };
   
@@ -144,19 +148,21 @@ const AdminShopEditItem = () => {
         <Header />
         <section className={styles.adminContainer}>
           <div className={styles.adminContent}>
+          <div className={styles.adminHeader}>
             <h1>Edytuj przedmiot</h1>
-            <Link 
+              <Link 
               to={formData.categoryId ? `/admin/shop/category/${formData.categoryId}` : '/admin/shop'} 
-              className={styles.backLink}
-            >
-              Powrót
-            </Link>
+              className={styles.backButton}>
+                  <i className="fas fa-arrow-left"></i> Powrót
+              </Link>
+          </div>
   
             {error && <p className={styles.errorMessage}>{error}</p>}
             {success && <p className={styles.successMessage}>{success}</p>}
-            {loading && <p>Ładowanie...</p>}
+            {loading && <Loading/>}
   
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <form onSubmit={handleSubmit} className={styles.settingsForm}>
+            <div className={styles.formGrid}>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Tytuł:</label>
                 <input
@@ -200,23 +206,23 @@ const AdminShopEditItem = () => {
                     />
                     <span className={styles.fileInputButton}>Wybierz nowy obraz</span>
                   </label>
-                  {!isNewImage && previewImage && (
-                    <p className={styles.imageNote}>Obecny obraz pozostanie niezmieniony</p>
-                  )}
                 </div>
               </div>
+              <div className={styles.formColumn}>
+                
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Rzadkość:</label>
-                <input
-                  type="text"
-                  name="rarity"
-                  value={formData.rarity}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  required
-                />
+                  <label className={styles.formLabel}>Rzadkosc:</label>                            
+                  <select
+                    name="rarity"
+                    value={formData.rarity}
+                    onChange={handleInputChange}
+                    className={styles.formSelect}
+                  >
+                    <option value={"Common"}>Common</option>
+                    <option value={"Rare"}>Rare</option>
+                    <option value={"Epic"}>Epic</option>
+                  </select>
               </div>
-              <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Kategoria:</label>
                 <select
                   name="categoryId"
@@ -232,13 +238,24 @@ const AdminShopEditItem = () => {
                   ))}
                 </select>
               </div>
-              <button 
-                type="submit" 
-                className={styles.submitButton}
-                disabled={loading}
-              >
-                Zapisz zmiany
-              </button>
+              </div>
+                <div className={styles.formActions}>
+                    <button 
+                        type="submit" 
+                        className={styles.primaryButton}
+                        disabled={loadingForm}
+                    >
+                        {loadingForm ? (
+                            <>
+                                <i className="fas fa-spinner fa-spin"></i> Zapisywanie...
+                            </>
+                        ) : (
+                            <>
+                                <i className="fas fa-save"></i> Zapisz zmiany
+                            </>
+                        )}
+                    </button>
+                  </div>
             </form>
           </div>
         </section>

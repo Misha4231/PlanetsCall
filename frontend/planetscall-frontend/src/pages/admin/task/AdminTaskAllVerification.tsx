@@ -11,6 +11,7 @@ import NotAdmin from '../../Additional/NotAdmin';
 import { PaginationResponse } from '../../../services/headers';
 import NotQualificated from '../../Additional/NotQualificated';
 import NotAuthenticated from '../../Additional/NotAuthenticated';
+import Loading from '../../Additional/Loading';
 
 
 
@@ -79,20 +80,16 @@ const AdminTaskAllVerification = () => {
           <section className={styles.taskAdminContainer}>
               <div className={styles.taskAdminContent}>
                   <h1>Weryfikacje zadań</h1>
+                    <Link to="/admin/tasks" className={styles.backButton}>
+                        <i className="fas fa-arrow-left"></i> Powrót
+                    </Link>
                   
-                  {loading && <p>Ładowanie...</p>}
+                  {loading && <Loading/>}
                   {error && <div className="error-message">{error}</div>}
                   
                   {verifications.length > 0 ? (
                       <>
                           <div className={styles.taskList}>
-                              {verifications.map((verification) => (
-                                  <div key={verification.id} className={styles.taskItem}>
-                                      <h3>ID: {verification.id}</h3>
-                                      <p>Wykonawca: {verification.executor?.username || 'Brak danych'}</p>
-                                      <p>Data ukończenia: {new Date(verification.completedAt).toLocaleString()}</p>
-                                  </div>
-                              ))}
                               {verifications.map((verification) => (
                                 <div key={verification.id} className={styles.taskListItem}>
                                     <Link to={`/admin/task/overwatch/${verification.id}`}>

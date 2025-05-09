@@ -8,6 +8,7 @@ COPY *.sln .
 COPY Core/*.csproj ./Core/
 COPY Data/*.csproj ./Data/
 COPY PlanetsCall/*.csproj ./PlanetsCall/
+COPY PlanetsCall/wwwroot ./wwwroot
 
 # restore dependencies
 RUN dotnet restore

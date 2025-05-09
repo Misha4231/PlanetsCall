@@ -7,6 +7,7 @@ import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
 import Footer from '../../components/Footer/Footer';
 import styles from '../../stylePage/profile.module.css';
 import NotAuthenticated from '../Additional/NotAuthenticated';
+import Loading from '../Additional/Loading';
 
 type ThemeType = 0 | 1 | 2;
 
@@ -127,8 +128,7 @@ const Settings: React.FC = () => {
     <div className="app-container dark-theme">
       <Header/>
       <section className={`${styles.profileContainer} app-container dark-theme`}>
-        {loading ? (
-          <p className={styles.loadingText}>Ładowanie...</p>
+        {loading ? (<Loading/>
         ) : (
           <div className={styles.profileContent}>
             <h1 className={styles.settingsTitle}>Ustawienia Profilu</h1>

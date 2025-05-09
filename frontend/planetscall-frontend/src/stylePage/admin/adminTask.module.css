@@ -1,12 +1,19 @@
 /* adminTasks.module.css */
 
 .taskAdminContainer {
-    max-width: 1200px;
+    max-width: 1600px;
+    min-width: 50vw;
     margin: 0 auto;
     padding: 20px;
     min-height: calc(100vh - 120px);
 }
-
+.taskAdminTaskContainer{
+    max-width: 1600px;
+    min-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: calc(100vh - 120px);
+}
 .taskAdminContent {
     background-color: #1a1a1a;
     border-radius: 12px;
@@ -66,9 +73,9 @@
 }
 
 .taskForm {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
     margin-top: 20px;
 }
 
@@ -76,9 +83,6 @@
     margin-bottom: 20px;
 }
 
-.taskFormGroup.fullWidth {
-    grid-column: span 2;
-}
 
 .taskFormLabel {
     display: block;
@@ -90,7 +94,6 @@
 .taskFormInput,
 .taskFormSelect,
 .taskFormTextarea {
-    width: 100%;
     padding: 10px 15px;
     background-color: #212121;
     border: 1px solid #2c2c2c;
@@ -100,8 +103,23 @@
     transition: all 0.3s ease;
 }
 
+
+.taskFormInput{
+    width: auto;
+}
+
+.taskFormSelect{
+    width: auto;
+}
+
+.taskFormTextarea {
+    width: 300px;
+}
+
+
 .taskFormTextarea {
     min-height: 120px;
+    max-height: 220px;
     resize: vertical;
 }
 
@@ -129,7 +147,7 @@
 }
 
 .taskList {
-    margin-top: 40px;
+    margin-top: 24spx;
 }
 
 .taskListTitle {
@@ -147,6 +165,7 @@
 }
 
 .taskListItem {
+    height: 75%;
     background-color: #212121;
     border-radius: 8px;
     padding: 20px;
@@ -247,3 +266,197 @@
         gap: 10px;
     }
 }
+
+
+
+
+.createButton, .searchButton {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  
+  .createButton:hover, .searchButton:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+  }
+   
+  .organisationActions {
+    display: flex;
+    gap: 10px;
+  }
+  
+.searchTitle {
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+
+.headerSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+
+  
+.hiddenLink {
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+  }
+
+
+  .taskFilters {
+    display: flex;
+  }
+
+
+  .filterGroup {
+    display: flex;
+    gap: 10px;
+    margin: 0px 20px 20px 0px;
+  }
+  
+  .filterButton {
+    padding: 0.5rem 1rem;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .filterButton:hover {
+    background-color: #666;
+    transform: translateY(-2px);
+  }
+  
+  .filterButton.active {
+    font-weight: bold;
+    background-color: #45a049;
+  }
+  
+
+  .backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #212121;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 1px solid #2c2c2c;
+}
+
+.backButton:hover {
+    background-color: #4CAF50;
+    transform: translateX(-3px);
+}
+
+.deleteButton:hover:not(:disabled) {
+    font-weight: bold;
+    transform: translateY(-2px);
+    background-color: #b62929;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.deleteButton{
+    background-color: #b62929;
+    font-weight: bold;
+}
+
+.isActive{
+    background-color: #b62929;
+    cursor: pointer;
+}
+
+
+.primaryButton {
+    padding: 12px 24px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    text-decoration: none;
+    font-size: 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.primaryButton:hover:not(:disabled) {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.actionButton{
+    padding: 8px 1cqh;
+    color: white;
+    border: none;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 1px 5px 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+}
+.actionButton:hover:not(:disabled) {
+    font-weight: bold;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.editButton{
+    background-color: #45a049;
+}
+
+
+.successMessage {
+    color: #4CAF50;
+    background-color: rgba(76, 175, 80, 0.1);
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 28px;
+    text-align: center;
+    font-size: 15px;
+    border-left: 4px solid #4CAF50;
+  }
+
+  .errorMessage {
+    color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.1);
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 28px;
+    text-align: center;
+    font-size: 15px;
+    border-left: 4px solid #ff6b6b;
+  }
+  

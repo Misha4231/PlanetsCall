@@ -19,18 +19,22 @@ interface Category {
   image: string;
 }
 
-interface ItemShop {   
+
+export type RarityType = "Common" | "Rare" | "Epic";
+
+export interface ItemShop {   
   "id": number, 
   "categoryId": number,
   "price": number,
   "image": string,
-  "rarity": string,
+  "rarity": RarityType,
   "title": string
 }
 
 const Shop: React.FC = () => {  
   const { token, isAuthenticated, user } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedRarities, setSelectedRarities] = useState<RarityType[]>([]);
   const [items, setItems] = useState<ItemShop[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [currency, setCurrency] = useState<number>(0);
@@ -105,6 +109,18 @@ const Shop: React.FC = () => {
     setSelectedItem(null);
   };
 
+  const toggleRarityFilter = (rarity: RarityType) => {
+    setSelectedRarities(prev =>
+      prev.includes(rarity)
+        ? prev.filter(r => r !== rarity)
+        : [...prev, rarity]
+    );
+  };
+  
+  const filteredItems = selectedRarities.length === 0
+  ? items
+  : items.filter(item => selectedRarities.includes(item.rarity));
+
  
   return (
     <div className="app-container">
@@ -114,6 +130,7 @@ const Shop: React.FC = () => {
           <div className={styles.shopLayout}>
             <div className={styles.sidebar}>
               <h2>Kategoria:</h2>
+
               <div className={styles.categoryList}>
                 {categories.map((category) => (
                   <div 
@@ -121,17 +138,14 @@ const Shop: React.FC = () => {
                     className={`${styles.categoryItem} ${selectedCategory === category.id ? styles.active : ''}`}
                     onClick={() => setSelectedCategory(category.id)}
                   > 
-                  <div className={styles.characterContainer}>
-                    <div className={styles.imageWrapper}>
-                      <Ecorus className={styles.characterBody} />
-                      <img 
-                        src={imageUrl() + category.image} 
-                        alt={category.title} 
-                        className={` ${styles.characterClothes}`}
-                      />
+                    <div className={styles.categoryContainer}>
+                        <img 
+                          src={imageUrl() + category.image} 
+                          alt={category.title} 
+                          className={`${styles.categoryIcons}`}
+                        />
                     </div>
-                  </div>
-                    <span>{category.title}</span>
+                      <span>{category.title}</span>
                   </div>
                 ))}
               </div>
@@ -146,14 +160,27 @@ const Shop: React.FC = () => {
               <h2 className={styles.title}>
                 {categories.find(c => c.id === selectedCategory)?.title || 'Wybierz kategorię'}
               </h2>
+              <div className={styles.filterBar}>
+                <span>Filtruj po rzadkości:</span>
+                {(["Common", "Rare", "Epic"] as RarityType[]).map(rarity => (
+                  <button
+                    key={rarity}
+                    className={`${styles.filterButton} ${selectedRarities.includes(rarity) ? styles.active : ''}`}
+                    onClick={() => toggleRarityFilter(rarity)}
+                  >
+                    {rarity}
+                  </button>
+                ))}
+              </div>
               
               <div className={styles.itemsGrid}>
-                {items.map((item) => (
+                {filteredItems.map((item) => (
                   <div key={item.id} className={styles.shopItem}>
                     <img src={imageUrl()+item.image} alt={item.title} className={styles.itemImage} />
                     <div className={styles.itemDetails}>
                       <h3 className={styles.itemTitle}>{item.title}</h3>
-                      <p className={styles.itemPrice}>Price: {item.price}</p>
+                      <p className={styles.itemRarity}>Rzadkość: {item.rarity}</p>
+                      <p className={styles.itemPrice}>Cena: {item.price}</p>
                       <div className={styles.itemActions}>
                         <button 
                           className={`${styles.actionButton} ${styles.buyButton}`}

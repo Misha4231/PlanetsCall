@@ -6,20 +6,23 @@ import Header from '../../../components/shared/Header';
 import Footer from '../../../components/Footer/Footer';
 import { convertImageToBase64, imageUrl } from '../../../services/imageConvert';
 import NotAdmin from '../../Additional/NotAdmin';
-import styles from '../../../stylePage/admin/adminShop.module.css';
+import styles from '../../../stylePage/organisation/organisationAdmin.module.css';
 import NotAuthenticated from '../../Additional/NotAuthenticated';
 
 interface ItemShop {    
   "categoryId": number,
   "price": number,
   "image": string,
-  "rarity": string,
+  "rarity": RarityType,
   "title": string
 }
+
+type RarityType = "Common" | "Rare" | "Epic";
 
 const AdminShopCreateItem = () => {
   const { user, isAuthenticated, token } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingForm, setLoadingForm] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -32,7 +35,7 @@ const AdminShopCreateItem = () => {
     "categoryId": 0,
     "price": 0,
     "image": "",
-    "rarity": "",
+    "rarity": "Common" as RarityType,
     "title": ""
   });
 
@@ -97,19 +100,20 @@ const AdminShopCreateItem = () => {
     }
 
     try {
-      setLoading(true);
+      setLoadingForm(true);
       setError(null);
       setSuccess(null);
     if(!token || !categoryId) return;
 
       { /* Sending data to create category */} 
       console.log(formData);
-      await addItems(token, formData);
-      setTimeout(() => navigate('/admin/shop'), 1000);
+      const newItemData: ItemShop = await addItems(token, formData);
+      setSuccess('Item został dodany');
+      setTimeout(() => navigate(`/admin/shop/category/${newItemData.categoryId}`), 1000);
     } catch (err: any) {
       setError(err.message || 'Wystąpił błąd podczas tworzenia kategorii.');
     } finally {
-      setLoading(false);
+      setLoadingForm(false);
     }
   };
 
@@ -128,16 +132,14 @@ const AdminShopCreateItem = () => {
         <section className={styles.adminContainer}>
             <div className={styles.adminContent}>
                 <div className={styles.adminHeader}>
-                    <h1 className={styles.sectionTitle}>Stwórz Nową kategorię</h1>
-                    <button 
-                        onClick={() => navigate('/community')}
-                        className={styles.secondaryButton}
-                    >
+                    <h1 className={styles.categoryTitle}>Stwórz Nową kategorię</h1>
+                    <Link to={`/admin/shop/category/${categoryId}`} className={styles.backButton}>
                         <i className="fas fa-arrow-left"></i> Powrót
-                    </button>
+                    </Link>
                 </div>
 
                 {error && <div className={styles.errorMessage}>{error}</div>}
+                {success && <p className={styles.successMessage}>{success}</p>}
 
                 <form onSubmit={handleSubmit} className={styles.settingsForm}>
                     <div className={styles.formGrid}>
@@ -156,7 +158,7 @@ const AdminShopCreateItem = () => {
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.formLabel}>Cena:</label>
+                                <label className={styles.formLabel}>Koszt:</label>
                                 <input
                                     type="number"
                                     name="price"
@@ -168,16 +170,20 @@ const AdminShopCreateItem = () => {
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.formLabel}>Rzadkosc:</label>
-                                <input
-                                    type="text"
-                                    name="rarity"
-                                    value={formData.rarity}
-                                    onChange={handleInputChange}
-                                    className={styles.formInput}
-                                    required
-                                />
+                                <label className={styles.formLabel}>Rzadkosc:</label>                            
+                                <select
+                                  name="rarity"
+                                  value={formData.rarity}
+                                  onChange={handleInputChange}
+                                  className={styles.formSelect}
+                                >
+                                  <option value={"Common"}>Common</option>
+                                  <option value={"Rare"}>Rare</option>
+                                  <option value={"Epic"}>Epic</option>
+                                </select>
                             </div>
+                            
+                        </div>
                             <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                                 <label className={styles.formLabel}>Znaczek kategorii:</label>
                                 <div className={styles.imageUploadContainer}>
@@ -201,17 +207,15 @@ const AdminShopCreateItem = () => {
                                     </label>
                                 </div>
                             </div>
-                            
-                        </div>
                     </div>
 
                     <div className={styles.formActions}>
                         <button 
                             type="submit" 
                             className={styles.primaryButton}
-                            disabled={loading}
+                            disabled={loadingForm}
                         >
-                            {loading ? (
+                            {loadingForm ? (
                                 <>
                                     <i className="fas fa-spinner fa-spin"></i> Tworzenie...
                                 </>
