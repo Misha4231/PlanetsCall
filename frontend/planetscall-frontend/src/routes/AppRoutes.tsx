@@ -17,8 +17,6 @@ import SignUp from '../pages/auth/SignUp';
 import Profile from '../pages/profile/Profile';
 import UserProfile from '../pages/people/UsersProfile';
 import Statistics from '../pages/profile/Statistics';
-import Achievements from '../pages/profile/Achievements';
-import LevelTree from '../pages/profile/LevelTree';
 import ChangePassword from '../pages/auth/ChangePassword';
 import ForgotPassword from '../pages/auth/ForgotPassword';
 import ActivateAccount from '../pages/auth/ActivateAccount';
@@ -108,29 +106,14 @@ const router = createBrowserRouter([
         handle: { title: "Mój profil | Planet's Call" }
       },
       {
-        path: '/profile/level',
-        element: <LevelTree />,
-        handle: { title: "Poziom | Planet's Call" }
-      },
-      {
         path: '/profile/ecorus',
         element: <ProfileItems />,
         handle: { title: "Ecorus | Planet's Call" }
       },
       {
-        path: '/profile/achievements',
-        element: <Achievements />,
-        handle: { title: "Osiągnięcia | Planet's Call" }
-      },
-      {
         path: '/profile/statistics',
         element: <Statistics />,
         handle: { title: "Statystyki | Planet's Call" }
-      },
-      {
-        path: '/profile/level-tree',
-        element: <LevelTree />,
-        handle: { title: "Drzewko poziomów | Planet's Call" }
       },
     
       // COMMUNITY
@@ -282,6 +265,16 @@ const router = createBrowserRouter([
       },
       {
         path: '/admin/task/overwatch/:verId',
+        element: <AdminVerificationInfo />,
+        handle: { title: "Szczegóły weryfikacji | Planet's Call" }
+      },
+      {
+        path: '/task/overwatch',
+        element: <AdminTaskAllVerification />,
+        handle: { title: "Weryfikacje zadań | Planet's Call" }
+      },
+      {
+        path: '/task/overwatch/:verId',
         element: <AdminVerificationInfo />,
         handle: { title: "Szczegóły weryfikacji | Planet's Call" }
       },
