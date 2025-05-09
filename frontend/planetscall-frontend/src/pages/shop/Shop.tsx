@@ -20,7 +20,7 @@ interface Category {
 }
 
 
-export type RarityType = "Common" | "Rare" | "Epic";
+export type RarityType = "Common" | "Rare" | "Epic"| "Uncommon";
 
 export interface ItemShop {   
   "id": number, 
@@ -162,7 +162,7 @@ const Shop: React.FC = () => {
               </h2>
               <div className={styles.filterBar}>
                 <span>Filtruj po rzadkości:</span>
-                {(["Common", "Rare", "Epic"] as RarityType[]).map(rarity => (
+                {(["Common", "Rare", "Epic", "Uncommon"] as RarityType[]).map(rarity => (
                   <button
                     key={rarity}
                     className={`${styles.filterButton} ${selectedRarities.includes(rarity) ? styles.active : ''}`}

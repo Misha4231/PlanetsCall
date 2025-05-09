@@ -17,7 +17,7 @@ interface ItemShop {
   "title": string
 }
 
-type RarityType = "Common" | "Rare" | "Epic";
+type RarityType = "Common" | "Rare" | "Epic" | "Uncommon";
 
 const AdminShopCreateItem = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -180,6 +180,7 @@ const AdminShopCreateItem = () => {
                                   <option value={"Common"}>Common</option>
                                   <option value={"Rare"}>Rare</option>
                                   <option value={"Epic"}>Epic</option>
+                                  <option value={"Uncommon"}>Uncommon</option>
                                 </select>
                             </div>
                             

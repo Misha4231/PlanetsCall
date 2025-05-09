@@ -166,7 +166,7 @@ const [currentPage, setCurrentPage] = useState<number>(1);
               </h2>
               <div className={styles.filterBar}>
               <span>Filtruj po rzadkości:</span>
-              {(["Common", "Rare", "Epic"] as RarityType[]).map(rarity => (
+              {(["Common", "Rare", "Epic", "Uncommon"] as RarityType[]).map(rarity => (
                 <button
                   key={rarity}
                   className={`${styles.filterButton} ${selectedRarities.includes(rarity) ? styles.active : ''}`}

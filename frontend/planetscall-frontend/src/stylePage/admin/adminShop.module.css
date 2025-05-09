@@ -564,3 +564,32 @@
 
 
   
+
+  .filterBar {
+    margin: 10px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-style: italic;
+    flex-wrap: wrap;
+  }
+  
+  .filterButton {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  
+  .filterButton:hover {
+    background-color: #ddd;
+  }
+  
+  .filterButton.active {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+  }
+  

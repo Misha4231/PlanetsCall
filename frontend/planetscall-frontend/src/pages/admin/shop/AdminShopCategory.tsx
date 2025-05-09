@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { getItemsByCategory, getCategories, removeCategory, removeItems} from '../../../services/shopService';
 import Header from '../../../components/shared/Header';
@@ -8,13 +8,16 @@ import { convertImageToBase64, imageUrl } from '../../../services/imageConvert';
 import NotAdmin from '../../Additional/NotAdmin';
 import styles from '../../../stylePage/admin/adminShop.module.css';
 import Ecorus from '../../../components/Ecorus';
+import { RarityType } from '../../shop/Shop';
+import NotAuthenticated from '../../Additional/NotAuthenticated';
+import Loading from '../../Additional/Loading';
 
 interface Item {
   id: number;
   title: string;
   price: number;
   image: string;
-  rarity: string;
+  rarity: RarityType;
   categoryId: number;
 }
 
@@ -28,10 +31,12 @@ const AdminShopCategory = () => {
   const { id } = useParams<{ id: string }>();
   const { user, isAuthenticated, token } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedRarities, setSelectedRarities] = useState<RarityType[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
+    const navigate = useNavigate();
 
   useEffect(() => {
     if (token && user?.isAdmin && id) {
@@ -81,7 +86,7 @@ const AdminShopCategory = () => {
       await removeCategory(token, category.id);
       setSuccess('Kategoria została usunięta pomyślnie');
       // Redirect after deletion
-      window.location.href = '/admin/shop';
+      setTimeout(() => navigate('/admin/shop'), 1000);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -89,13 +94,23 @@ const AdminShopCategory = () => {
     }
   };
 
+  const toggleRarityFilter = (rarity: RarityType) => {
+    setSelectedRarities(prev =>
+      prev.includes(rarity)
+        ? prev.filter(r => r !== rarity)
+        : [...prev, rarity]
+    );
+  };
+  
+  const filteredItems = selectedRarities.length === 0
+  ? items
+  : items.filter(item => selectedRarities.includes(item.rarity));
+
+
+
   if (!isAuthenticated) {
     return (
-      <div>
-        <Header/>
-        <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>
-        <Footer/>
-      </div>
+      <NotAuthenticated/>
     );   
   }
 
@@ -104,7 +119,7 @@ const AdminShopCategory = () => {
   }
 
   if (!category) {
-    return <div>Ładowanie...</div>;
+    return <Loading/>;
   }
 
   return (
@@ -160,6 +175,18 @@ const AdminShopCategory = () => {
           <div className={styles.itemsSection}>
             <div className={styles.sectionTitle}>
               <h2>Przedmioty kategorii</h2>
+              <div className={styles.filterBar}>
+                <span>Filtruj po rzadkości:</span>
+                {(["Common", "Rare", "Epic", "Uncommon"] as RarityType[]).map(rarity => (
+                  <button
+                    key={rarity}
+                    className={`${styles.filterButton} ${selectedRarities.includes(rarity) ? styles.active : ''}`}
+                    onClick={() => toggleRarityFilter(rarity)}
+                  >
+                    {rarity}
+                  </button>
+                ))}
+              </div>
               <Link 
                 to={`/admin/shop/category/${id}/create-item/`}
                 className={styles.primaryButton}
@@ -169,8 +196,8 @@ const AdminShopCategory = () => {
             </div>
 
             <div className={styles.itemsGrid}>
-              {items.length > 0 ? (
-                items.map(item => (
+              {filteredItems.length > 0 ? (
+                filteredItems.map(item => (
                   <div key={item.id} className={styles.itemCard}>
                     <h3 className={styles.itemTitle}>{item.title}</h3>
                     <p className={styles.itemPrice}>Cena: {item.price} zł</p>

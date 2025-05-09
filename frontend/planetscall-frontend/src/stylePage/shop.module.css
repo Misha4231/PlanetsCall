@@ -494,6 +494,7 @@
     margin: 10px 0 20px;
     display: flex;
     align-items: center;
+    font-style: italic;
     gap: 10px;
     flex-wrap: wrap;
   }
