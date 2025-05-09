@@ -153,9 +153,9 @@ useEffect(() => {
                   </Link>
               
               {users.length > 0 ? (
-                <ul className={styles.adminList}>
+                <div className={styles.adminUsers}>
                   {users.map((us) => (
-                    <li key={us.id} className={styles.adminListItem}>
+                    <div key={us.id} className={styles.adminUser}>
                       <div className={styles.adminListItemContent}>
                         <Link 
                           to={`/user/${us.username}`} 
@@ -191,9 +191,9 @@ useEffect(() => {
                           <i className="fas fa-key"></i> Resetuj hasło
                         </button>
                       </div>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <div className={styles.adminEmpty}>
                   <i className="fas fa-user-slash"></i>

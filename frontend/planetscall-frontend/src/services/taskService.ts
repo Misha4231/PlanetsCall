@@ -152,11 +152,14 @@ export const addOverwatchReaction = async (authToken: string, formData: any) => 
      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
 
+  console.log(authToken)
+  console.log(formData)
+
   const response = await fetch(`${authHeader()}api/Overwatch/reaction`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${authToken}`,
-      'Content-Type': 'application/json-patch+json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(formData),
   });
@@ -185,7 +188,7 @@ export const getOverwatchFeed = async (authToken: string, page: number): Promise
   });
 
   if (!response.ok) {
-    const errorData = await response.json();  
+    const errorData = await response. json();  
     console.log(errorData)
     throw new Error(errorData.errors.CustomValidation[0] ||
     'Nie udało się pobrać listy żądan werifikacji zadań.');

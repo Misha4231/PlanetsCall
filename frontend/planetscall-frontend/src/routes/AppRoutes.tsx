@@ -281,7 +281,7 @@ const router = createBrowserRouter([
         handle: { title: "Weryfikacje zadań | Planet's Call" }
       },
       {
-        path: '/admin/task/overwatch/:verificationId',
+        path: '/admin/task/overwatch/:verId',
         element: <AdminVerificationInfo />,
         handle: { title: "Szczegóły weryfikacji | Planet's Call" }
       },

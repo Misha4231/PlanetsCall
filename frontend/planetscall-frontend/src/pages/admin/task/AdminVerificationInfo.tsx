@@ -22,7 +22,7 @@ const AdminVerificationInfo = () => {
     const [success, setSuccess] = useState<string | null>(sessionStorage.getItem('successInfo'));
     const [error, setError] = useState<string | null>(null);
     const [verification, setVerification] = useState<OverwatchTaskItem>();
-    const { verificationId } = useParams<{ verificationId: string }>();
+    const { verId } = useParams<{ verId: string }>();
     const [formData, setFormData] = useState<exportOverwatchVerification>({
         verificationId: 0,
         reaction: false,
@@ -34,13 +34,14 @@ const AdminVerificationInfo = () => {
     sessionStorage.setItem('successInfo', "");
     
     useEffect(() => {
-        if (token && user?.isAdmin && verificationId) {
+        if (token && user?.isAdmin && verId) {
             const fetchData = async () => {  
                 try {
                     setLoading(true);
-                    const taskData = await getOverwatchSpecificFeed(token, verificationId);
+                    const taskData = await getOverwatchSpecificFeed(token, verId);
                     console.log(taskData);
                     setVerification(taskData);
+          
                     setError(null);
                 } catch (err: any) {
                     setError(err.message);
@@ -50,7 +51,7 @@ const AdminVerificationInfo = () => {
             };
             fetchData();
         }    
-    }, [token, user?.isAdmin, verificationId]);
+    }, [token, user?.isAdmin, verId]);
   
 
 
@@ -68,7 +69,7 @@ const AdminVerificationInfo = () => {
       return (<NotAdmin/>) 
     } 
 
-    const handleOverwatchReaction = async (id: number, action: boolean) => {
+    const handleOverwatchReaction = async (data: exportOverwatchVerification) => {
               if (!token) return;
               
               setLoading(true);
@@ -76,7 +77,8 @@ const AdminVerificationInfo = () => {
               setSuccess(null);
 
               try {
-                await addOverwatchReaction(token, formData);
+                console.log(data);
+                await addOverwatchReaction(token, data);
                 setSuccess('Pomyślnie dodano ocenienie');
                 setTimeout(() => navigate('/admin/task/overwatch'), 1000);
       
@@ -94,20 +96,11 @@ const AdminVerificationInfo = () => {
           <Header />
           <section className={styles.taskAdminContainer}>
             <div className={styles.taskAdminContent}>
-            {success && <div className={styles.successMessage}>{success}</div>}
-            {error && <p className={styles.errorMessage}>{error}</p>}
               
               {loading ? (
                 <p>Ładowanie...</p>
               ) : verification ? (
                 <>
-                  <div className={styles.taskInfoHeader}>
-                    <div>
-                      <h1 className={styles.taskInfoTitle}>{verification.insector?.username}</h1>
-                      <div className={styles.taskInfoMeta}>
-                      </div>
-                    </div>
-                  </div>
               <div className={styles.headerSection}>
                 <h2 className={styles.searchTitle}>Wykonane zadanie użytkownika {verification.executor.username}</h2>
                 <div className={styles.organisationActions}>
@@ -116,6 +109,8 @@ const AdminVerificationInfo = () => {
                 </Link>
                 </div>
               </div>
+              {success && <div className={styles.successMessage}>{success}</div>}
+              {error && <p className={styles.errorMessage}>{error}</p>}
     
                   <div className={styles.taskInfoDescription}>
                     <h3>Opis zadania</h3>
@@ -148,8 +143,11 @@ const AdminVerificationInfo = () => {
                   <div className={styles.taskInfoActions}>
                     <button
                       onClick={() => {
-                        setFormData(prev => ({ ...prev, verificationId: verification.id!, reaction: true }));
-                        handleOverwatchReaction(verification.id!, true);
+                        handleOverwatchReaction({
+                          verificationId: parseInt(verId!),
+                          reaction: true,
+                          message: formData.message,
+                        });
                       }}
                       disabled={loading || verification.isApproved}
                       className={`${styles.actionButton} ${styles.primaryButton}`}
@@ -158,8 +156,11 @@ const AdminVerificationInfo = () => {
                     </button>
                     <button
                       onClick={() => {
-                        setFormData(prev => ({ ...prev, verificationId: verification.id!, reaction: false }));
-                        handleOverwatchReaction(verification.id!, false);
+                        handleOverwatchReaction({
+                          verificationId: parseInt(verId!),
+                          reaction: true,
+                          message: formData.message,
+                        });
                       }}
                       disabled={loading}
                       className={`${styles.actionButton} ${styles.deleteButton}`}
