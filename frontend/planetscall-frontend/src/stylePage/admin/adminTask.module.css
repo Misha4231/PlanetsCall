@@ -155,7 +155,6 @@
     font-size: 20px;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #2c2c2c;
 }
 
 .taskListItems {
@@ -189,7 +188,6 @@
     color: #aaa;
     font-size: 14px;
     margin: 0 0 15px 0;
-    display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -308,9 +306,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
     flex-wrap: wrap;
     gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #2c2c2c;
   }
 
 
@@ -460,3 +460,16 @@
     border-left: 4px solid #ff6b6b;
   }
   
+
+
+  .proofPreview {
+    margin-top: 20px;
+    max-width: 600px;
+  }
+  
+  .proofMedia {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 8px;
+  }

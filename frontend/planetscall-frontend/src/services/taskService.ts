@@ -148,7 +148,6 @@ export const getCompletedTasks = async (authToken: string) => {
 
 
 export const addOverwatchReaction = async (authToken: string, formData: any) => {
-  console.log(formData)
   if (!authToken) {
      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -157,16 +156,19 @@ export const addOverwatchReaction = async (authToken: string, formData: any) => 
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json-patch+json',
     },
-    body: formData,
+    body: JSON.stringify(formData),
   });
 
   if (!response.ok) {
     const errorData = await response.json();  
     console.log(errorData)
-    throw new Error(`Nie udało się wysłać reakcji na wykonanie zadania.`);
+    throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się wysłać reakcji na wykonanie zadania.`);
   }
 
+  const data = await response.json();
+  console.log(data);
   return true;
 };
 

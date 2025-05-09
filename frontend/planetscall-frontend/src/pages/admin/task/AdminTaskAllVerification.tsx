@@ -79,30 +79,34 @@ const AdminTaskAllVerification = () => {
           <Header />
           <section className={styles.taskAdminContainer}>
               <div className={styles.taskAdminContent}>
-                  <h1>Weryfikacje zadań</h1>
-                    <Link to="/admin/tasks" className={styles.backButton}>
-                        <i className="fas fa-arrow-left"></i> Powrót
-                    </Link>
+                    <div className={styles.headerSection}>
+                        <h2 className={styles.searchTitle}>Weryfikacje zadań</h2>
+                        <div className={styles.organisationActions}>
+                            <Link to="/tasks" className={styles.backButton}>
+                                <i className="fas fa-arrow-left"></i> Powrót
+                            </Link>
+                        </div>
+                    </div>
                   
-                  {loading && <Loading/>}
+                  {success && <div className={styles.successMessage}>{success}</div>}
                   {error && <div className="error-message">{error}</div>}
                   
-                  {verifications.length > 0 ? (
+                    {loading ? (<Loading/>
+                    ) : verifications.length > 0 ? (
                       <>
-                          <div className={styles.taskList}>
+                        <div className={styles.taskListItems}>
                               {verifications.map((verification) => (
-                                <div key={verification.id} className={styles.taskListItem}>
-                                    <Link to={`/admin/task/overwatch/${verification.id}`}>
+                                <Link to={`/admin/task/overwatch/${verification.id}`} className={styles.hiddenLink}>
+                                    <div key={verification.id} className={styles.taskListItem}>
                                         <h4 className={styles.taskListItemTitle}>{verification.executor.username} - {new Date(verification.completedAt).toLocaleString()}</h4>
-                                    </Link>
-                                    {verification.message ? (
-                                        <p className={styles.taskListItemDescription}>{verification.message}</p>
-                                    ) : (
-                                        <p className={styles.taskListItemDescription}>Brak informacji</p>
-                                    )}
-                                    <div className={styles.taskListItemMeta}>
+                                        
+                                        {verification.message ? (
+                                            <p className={styles.taskListItemDescription}>{verification.message}</p>
+                                        ) : (
+                                            <p className={styles.taskListItemDescription}>Brak informacji</p>
+                                        )}
                                     </div>
-                                </div>
+                                </Link>
                                 ))}
                           </div>
                           

@@ -7,6 +7,7 @@ import { Organisation } from '../community/communityTypes';
 import { useAuth } from '../../context/AuthContext';
 import styles from '../../stylePage/admin/adminTask.module.css';
 import NotAdmin from '../Additional/NotAdmin';
+import NotAuthenticated from '../Additional/NotAuthenticated';
 
 const AdminTasks = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -75,15 +76,9 @@ const AdminTasks = () => {
   
 
   if (!isAuthenticated) {
-      return (
-          <div>
-              <Header/>
-              <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>
-              <Footer/>
-          </div>
-      );   
-  }
-
+    return (<NotAuthenticated/>
+    );   
+}
   if(!user?.isAdmin){
     return (<NotAdmin/>) 
   } 
@@ -127,6 +122,9 @@ return (
       <Header />
       <section className={styles.taskAdminContainer}>
         <div className={styles.taskAdminContent}>          
+            {success && <div className={styles.successMessage}>{success}</div>}
+            {error && <p className={styles.errorMessage}>{error}</p>}
+              
           {loading ? (
             <p>Ładowanie...</p>
           ) : error ? (

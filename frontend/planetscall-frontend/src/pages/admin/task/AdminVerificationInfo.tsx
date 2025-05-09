@@ -8,11 +8,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import styles from '../../../stylePage/admin/adminTask.module.css';
 import NotAdmin from '../../Additional/NotAdmin';
 import { addOverwatchReaction, getOverwatchSpecificFeed, OverwatchTaskItem } from '../../../services/taskService';
+import { imageUrl } from '../../../services/imageConvert';
 
 interface exportOverwatchVerification {
     verificationId: number,
     reaction: boolean,
-    message: string | null,
+    message: string,
 }
 
 const AdminVerificationInfo = () => {
@@ -73,14 +74,11 @@ const AdminVerificationInfo = () => {
               setLoading(true);
               setError(null);
               setSuccess(null);
-              setFormData({
-                verificationId: id,
-                reaction: action,
-                message: "",
-            });
 
               try {
                 await addOverwatchReaction(token, formData);
+                setSuccess('Pomyślnie dodano ocenienie');
+                setTimeout(() => navigate('/admin/task/overwatch'), 1000);
       
               } catch (err: any) {
                   setError(err.message);
@@ -96,10 +94,11 @@ const AdminVerificationInfo = () => {
           <Header />
           <section className={styles.taskAdminContainer}>
             <div className={styles.taskAdminContent}>
+            {success && <div className={styles.successMessage}>{success}</div>}
+            {error && <p className={styles.errorMessage}>{error}</p>}
+              
               {loading ? (
                 <p>Ładowanie...</p>
-              ) : error ? (
-                <div className="error-message">{error}</div>
               ) : verification ? (
                 <>
                   <div className={styles.taskInfoHeader}>
@@ -109,25 +108,62 @@ const AdminVerificationInfo = () => {
                       </div>
                     </div>
                   </div>
+              <div className={styles.headerSection}>
+                <h2 className={styles.searchTitle}>Wykonane zadanie użytkownika {verification.executor.username}</h2>
+                <div className={styles.organisationActions}>
+                <Link to="/admin/task/overwatch" className={styles.backButton}>
+                  <i className="fas fa-arrow-left"></i> Powrót
+                </Link>
+                </div>
+              </div>
     
                   <div className={styles.taskInfoDescription}>
                     <h3>Opis zadania</h3>
                     <p>{verification.message}</p>
                         <span className={styles.taskInfoMetaItem}>
-                          <i className="fas fa-star"></i> {verification.proof} punktów
+                        {verification.proof && (
+                          <div className={styles.proofPreview}>
+                            {verification.proof.endsWith('.mp4') ? (
+                              <video controls className={styles.proofMedia}>
+                                <source src={imageUrl() + verification.proof} type="video/mp4" />
+                                Twój przeglądarka nie obsługuje odtwarzacza video.
+                              </video>
+                            ) : (
+                              <img src={imageUrl() + verification.proof} alt="Dowód" className={styles.proofMedia} />
+                            )}
+                          </div>
+                        )}
+
                         </span>
                   </div>
-    
+                  <div className={styles.taskFormGroup}>
+                    <textarea
+                      id="message"
+                      value={formData.message || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                      placeholder="Dodaj wiadomość dla wykonawcy (opcjonalne)"
+                      className={styles.taskFormInput}
+                    />
+                  </div>
                   <div className={styles.taskInfoActions}>
                     <button
-                      onClick={() => verification.id && handleOverwatchReaction(verification.id, true)}
+                      onClick={() => {
+                        setFormData(prev => ({ ...prev, verificationId: verification.id!, reaction: true }));
+                        handleOverwatchReaction(verification.id!, true);
+                      }}
                       disabled={loading || verification.isApproved}
+                      className={`${styles.actionButton} ${styles.primaryButton}`}
                     >
-                      <i className="fas fa-power-off"></i> Potwierdź
+                      <i className="fas fa-check"></i> Potwierdź
                     </button>
                     <button
-                      onClick={() => verification.id && handleOverwatchReaction(verification.id, false)}
+                      onClick={() => {
+                        setFormData(prev => ({ ...prev, verificationId: verification.id!, reaction: false }));
+                        handleOverwatchReaction(verification.id!, false);
+                      }}
                       disabled={loading}
+                      className={`${styles.actionButton} ${styles.deleteButton}`}
+                    
                     >
                       <i className="fas fa-trash"></i> Odrzuć
                     </button>

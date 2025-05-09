@@ -378,3 +378,101 @@
         margin-bottom: 20px;
     }
 }
+
+
+.headerSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .searchTitle {
+      color: #fff;
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: 600;
+  }
+  .organisationActions {
+    display: flex;
+    gap: 10px;
+  }
+
+  
+.createButton, .searchButton {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  
+  .createButton:hover, .searchButton:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+  }
+   
+  .organisationActions {
+    display: flex;
+    gap: 10px;
+  }
+  
+
+  .backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #212121;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 1px solid #2c2c2c;
+}
+
+.backButton:hover {
+    background-color: #4CAF50;
+    transform: translateX(-3px);
+}
+
+
+
+.taskFilters {
+    display: flex;
+  }
+
+
+  .filterGroup {
+    display: flex;
+    gap: 10px;
+    margin: 0px 20px 20px 0px;
+  }
+  
+  .filterButton {
+    padding: 0.5rem 1rem;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .filterButton:hover {
+    background-color: #666;
+    transform: translateY(-2px);
+  }
+  
+  .filterButton.active {
+    font-weight: bold;
+    background-color: #45a049;
+  }
