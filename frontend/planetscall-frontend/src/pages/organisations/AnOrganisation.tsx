@@ -8,6 +8,7 @@ import Footer from '../../components/Footer/Footer';
 import { imageUrl } from '../../services/imageConvert';
 import { Member, Organisation } from '../community/communityTypes';
 import styles from '../../stylePage/organisation/organisation.module.css';
+import Loading from '../Additional/Loading';
 
 const AnOrganisation = () => {
   const { user, isAuthenticated, token, loadingUser } = useAuth();
@@ -78,7 +79,7 @@ const AnOrganisation = () => {
       <Header />
       <section className={styles.organisationContainer}>
         {loading ? (
-          <div className={styles.loading}>Ładowanie...</div>
+          <Loading/>
         ) : (
           <>
             {error && <div className={styles.error}>{error}</div>}
@@ -115,15 +116,15 @@ const AnOrganisation = () => {
                     <div className={styles.metaInfo}>
                       <div className={styles.metaItem}>
                         <i className="fas fa-user"></i>
-                        <span>{users.length} members</span>
+                        <span>{users.length} Członkowie</span>
                       </div>
                       <div className={styles.metaItem}>
                         <i className="fas fa-calendar-alt"></i>
-                        <span>Created {new Date(organisation.createdAt).toLocaleDateString()}</span>
+                        <span>Utworzono {new Date(organisation.createdAt).toLocaleDateString()}</span>
                       </div>
                       <div className={styles.metaItem}>
                         <i className="fas fa-lock"></i>
-                        <span>{organisation.isPrivate ? 'Private' : 'Public'} group</span>
+                        <span>{organisation.isPrivate ? 'Private' : 'Public'} grupa</span>
                       </div>
                     </div>
   
@@ -132,14 +133,14 @@ const AnOrganisation = () => {
                         to={`/community/organisation/${organisation.uniqueName}/admin`} 
                         className={styles.adminLink}
                       >
-                        <i className="fas fa-cog"></i> Manage Organization
+                        <i className="fas fa-cog"></i> Zarządzaj organizacją
                       </Link>
                     )}
                   </div>
                 </div>
   
                 <div className={styles.descriptionSection}>
-                  <h2 className={styles.sectionTitle}>About</h2>
+                  <h2 className={styles.sectionTitle}>Opis</h2>
                   <p className={styles.organisationDescription}>
                     {organisation.description || 'No description provided.'}
                   </p>
@@ -170,7 +171,7 @@ const AnOrganisation = () => {
   
                 <div className={styles.membersSection}>
                   <div className={styles.sectionHeader}>
-                    <h2 className={styles.sectionTitle}>Members ({users.length})</h2>
+                    <h2 className={styles.sectionTitle}>Członkowie ({users.length})</h2>
                   </div>
                   
                   {users.length > 0 ? (

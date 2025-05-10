@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getFullUser, updateUserSettings } from '../../services/userService';
 import Header from '../../components/shared/Header';
@@ -132,6 +132,9 @@ const Settings: React.FC = () => {
         ) : (
           <div className={styles.profileContent}>
             <h1 className={styles.settingsTitle}>Ustawienia Profilu</h1>
+            <Link to={`/profile`} className={styles.backButton}>
+              <i className="fas fa-arrow-left"></i> Powrót
+            </Link>
             {success && <div className={styles.successMessage}>{success}</div>}
             {error && <p className={styles.errorMessage}>{error}</p>}
             <form onSubmit={handleSubmit} className={styles.settingsForm}>

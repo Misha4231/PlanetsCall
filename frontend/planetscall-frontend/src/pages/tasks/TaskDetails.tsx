@@ -54,6 +54,9 @@ const TaskDetails = () => {
       setTimeout(() => navigate('/tasks'), 2000); 
     } catch (err: any) {
       setError(err.message);
+      if(err.message == "Zadanie zostału już wysłane"){
+        setTimeout(() => navigate('/tasks'), 2000); 
+      }
       setUploadSuccess(false);
     } finally {
       setLoading(false);

@@ -12,6 +12,7 @@ import { getOrganisationData, getOrganisationRoles,
      deleteOrganisation } from '../../../services/communityService';
 import { imageUrl } from '../../../services/imageConvert';
 import NotAdmin from '../../Additional/NotAdmin';
+import Loading from '../../Additional/Loading';
 
 
 
@@ -228,7 +229,7 @@ return (
       {error && <div className={styles.errorMessage}>{error}</div>}
       
       {loading ? (
-        <div className={styles.loading}>Ładowanie...</div>
+        <Loading/>
       ) : (
         <div className={styles.adminContent}>
           <div className={styles.adminHeader}>

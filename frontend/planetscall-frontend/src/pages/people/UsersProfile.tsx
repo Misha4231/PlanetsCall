@@ -163,6 +163,9 @@ const UsersProfile = () => {
                       )}
                       {success && <p style={{ color: 'green' }}>{success}</p>}
                       {error && <p style={{ color: 'red' }}>{error}</p>}
+                      <Link to={`/profile/${anotherUser.username}/statistics`}>
+                        <button className={`${styles.editButton} ${styles.smallerButton} ${styles.statystyka}`}>Statystyka</button>
+                      </Link>
                     </div>
                   </div>
                 </section>

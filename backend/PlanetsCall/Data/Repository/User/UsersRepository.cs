@@ -225,8 +225,8 @@ public class UsersRepository(
 
     public void UpdateUserPoints(int userId, int points)
     {
-        var user = GetUserById(userId);
-        if (user is null || user.Points == 0) return;
+        var user = GetUserById(userId);        
+        if (user is null) return;
         
         int pointsPerLevel = Configuration.GetSection("Settings:PointsPerLevel").Get<int>();
         user.Points += points;
@@ -236,5 +236,6 @@ public class UsersRepository(
         user.Progress = level;
         
         Context.Users.Update(user);
+        Context.SaveChanges();
     }
 }

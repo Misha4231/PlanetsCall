@@ -111,7 +111,7 @@ const router = createBrowserRouter([
         handle: { title: "Ecorus | Planet's Call" }
       },
       {
-        path: '/profile/statistics',
+        path: '/profile/:username/statistics',
         element: <Statistics />,
         handle: { title: "Statystyki | Planet's Call" }
       },

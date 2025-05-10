@@ -2,6 +2,7 @@ import exp from 'constants';
 import { TaskType } from './adminOrgService';
 import { authHeader, PaginationResponse } from './headers'; 
 import { AnotherUser, User } from '../types/userTypes';
+import { exportOverwatchVerification } from '../pages/admin/task/AdminVerificationInfo';
 
 export interface Task {
   id: number;
@@ -85,7 +86,7 @@ export const getTaskById = async (authToken: string, taskId: string) => {
 };
 
 
-export const uploadTaskProof = async (authToken: string, taskId: string, file: File) => {
+export const uploadTaskProof = async (authToken: string, taskId: string, file: File): Promise<PaginationResponse<OverwatchTaskItem>> => {
   if (!authToken) {
      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -102,6 +103,11 @@ export const uploadTaskProof = async (authToken: string, taskId: string, file: F
   });
 
   if (!response.ok) {
+    const dataText = await response.text();
+    if(dataText == "The proof of task is already approved"){
+      throw new Error("Zadanie zostału już wysłane");
+
+    }
     const errorData = await response.json();  
     console.log(errorData)
     throw new Error(errorData.errors.CustomValidation[0] ||
@@ -133,6 +139,7 @@ export const getCompletedTasks = async (authToken: string) => {
   }
 
   const data = await response.json();
+  console.log(data);
   return data;
 };
 
@@ -143,11 +150,36 @@ export const getCompletedTasks = async (authToken: string) => {
 //Overwatch
 
 
+/*
+
+export const sentVerificationRequest = async (authToken: string, organisationUniqueName: string, verificationMessage:string ) => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+  
+  const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/request-verification`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(verificationMessage),
+  });
 
 
+  if (!response.ok) {
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||errorData.errors.CustomValidation[0] ||'Nie udało się nadać wysłać żądania.');
+  }
+  const data = await response.json(); 
 
+  return data;
+};
 
-export const addOverwatchReaction = async (authToken: string, formData: any) => {
+*/
+
+export const addOverwatchReaction = async (authToken: string, formData: exportOverwatchVerification) => {
   if (!authToken) {
      throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -163,6 +195,12 @@ export const addOverwatchReaction = async (authToken: string, formData: any) => 
     },
     body: JSON.stringify(formData),
   });
+  const det = await response.text();
+  //console.log(det);
+
+  if(det == "One of the proofs of task is already approved"){
+    throw new Error(`Już jeden dowód został zaakceptowany.`);
+  }
 
   if (!response.ok) {
     const errorData = await response.json();  
@@ -170,8 +208,6 @@ export const addOverwatchReaction = async (authToken: string, formData: any) => 
     throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się wysłać reakcji na wykonanie zadania.`);
   }
 
-  const data = await response.json();
-  console.log(data);
   return true;
 };
 

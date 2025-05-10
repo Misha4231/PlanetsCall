@@ -412,9 +412,9 @@ export const sentVerificationRequest = async (authToken: string, organisationUni
     console.log(errorData)
     throw new Error(errorData.errors.CustomValidation[0] ||errorData.errors.CustomValidation[0] ||'Nie udało się nadać wysłać żądania.');
   }
-  const data = await response.json(); 
+  const data = await response; 
 
-  return data;
+  return true;
 };
 
 

@@ -67,7 +67,7 @@ useEffect(() => {
                                 <i className="fas fa-sitemap"></i>
                             </div>
                             <h3>Organizacje</h3>
-                            <p>Przeglądaj i zarządzaj organizacjami</p>
+                            <p>Zarządzaj organizacjami</p>
                         </Link>
                         
                         <Link to="/admin/users" className={styles.card}>

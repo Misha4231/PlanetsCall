@@ -166,7 +166,10 @@ useEffect(() => {
                 <div className={styles.avatarControls}>
                   {/*<button className={styles.editButton}>Zmień awatar</button>*/}
                   <Link to="/profile/ecorus"  className={styles.settingsLink}>
-                    <button className={styles.editButton}>Zarządzaj itemami</button>
+                    <button className={`${styles.editButton} ${styles.smallerButton}`}>Zarządzaj itemami</button>
+                  </Link>
+                  <Link to={`/profile/${user.username}/statistics`}>
+                    <button className={`${styles.editButton} ${styles.smallerButton} ${styles.statystyka}`}>Statystyka</button>
                   </Link>
                 </div>
               </div>

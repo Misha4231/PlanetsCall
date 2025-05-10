@@ -105,15 +105,15 @@
 
 
 .taskFormInput{
-    width: auto;
+    width: 150px;
 }
 
 .taskFormSelect{
-    width: auto;
+    min-width: 100px;
 }
 
 .taskFormTextarea {
-    width: 300px;
+    width: 250px;
 }
 
 
@@ -387,6 +387,10 @@
     cursor: pointer;
 }
 
+.taskActions{
+    margin-top: 10px;
+}
+
 
 .primaryButton {
     padding: 12px 24px;
@@ -473,3 +477,27 @@
     object-fit: contain;
     border-radius: 8px;
   }
+
+
+  
+
+.taskListItemsOrg {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.taskListItemOrg {
+    height: auto;
+    background-color: #212121;
+    border-radius: 8px;
+    padding: 12px;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.taskListItemOrg:hover {
+    border-left-color: #4CAF50;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}

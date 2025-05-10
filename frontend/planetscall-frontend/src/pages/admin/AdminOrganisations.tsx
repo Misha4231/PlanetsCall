@@ -5,9 +5,10 @@ import { getOrganisationVerifications, sentResponseToOrganisationVerification, c
 import { useAuth } from '../../context/AuthContext';
 import { Organisation } from '../community/communityTypes';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from '../../stylePage/admin/admin.module.css';
+import styles from '../../stylePage/admin/adminUser.module.css';
 import NotAdmin from '../Additional/NotAdmin';
 import NotAuthenticated from '../Additional/NotAuthenticated';
+import { imageUrl } from '../../services/imageConvert';
 
 interface OrganisationVerification {
   description:string,
@@ -93,58 +94,87 @@ const AdminOrganisations = () => {
               
               {loading ? (
                 <p>Ładowanie...</p>
-              ) : error ? (
-                <div className={`${styles.adminMessage} ${styles.adminError}`}>{error}</div>
               ) : organisations.length > 0 ? (
-                <ul className={styles.adminList}>
+                <div className={styles.usersList}>
+                {success && <div className={styles.successMessage}>{success}</div>}
+                {error && <p className={styles.errorMessage}>{error}</p>}
                   {organisations.map((org) => (
-                    <li key={org.id} className={styles.adminListItem}>
-                      <div className={styles.adminListItemContent}>
-                        <Link 
-                          to={`/community/organisation/${org.organisation.uniqueName}`} 
-                          className={styles.adminListItemLink}
-                        >
-                          {org.organisation.name}
-                        </Link>
-                        <span>@{org.organisation.uniqueName}</span>
-                      </div>
-                      
-                      {org.description && (
-                        <div className={styles.adminDescriptionContainer}>
-                          <button 
-                            onClick={() => toggleDescription(org.id)}
-                            className={styles.adminShowMoreButton}
-                          >
-                            <i className={`fas fa-${expandedDescriptions[org.id] ? 'chevron-up' : 'chevron-down'}`}></i>
-                            {expandedDescriptions[org.id] ? 'Pokaż mniej' : 'Pokaż więcej'}
-                          </button>
-                          {expandedDescriptions[org.id] && (
-                            <p className={styles.adminDescriptionText}>
-                              {org.description}
-                            </p>
+                    <div className={styles.orgCard}>
+                    <div key={org.id}  className={styles.userCard}>
+                      <Link 
+                        to={`/community/organisation/${org.organisation.uniqueName}`} 
+                        className={styles.adminListItemLink}
+                      >
+                        <div className={styles.avatarContainer}>
+                          {org.organisation.organizationLogo ? (
+                            <img
+                              src={imageUrl() + org.organisation.organizationLogo}
+                              alt={`Logo ${org.organisation.name}`}
+                              className={styles.avatarImage}
+                            />
+                          ) : (
+                            <div className={styles.organisationAvatarPlaceholder}>
+                              <i className="fas fa-building"></i>
+                            </div>
                           )}
                         </div>
-                      )}
-                      
-                      <div className={styles.adminButtonGroup}>
-                        <button
-                          onClick={() => handleSentResponse(org.organisation.uniqueName, "reject")}
-                          disabled={loading}
-                          className={`${styles.adminButton} ${styles.adminButtonDanger}`}
-                        >
-                          <i className="fas fa-times"></i> Odrzuć
-                        </button>
-                        <button
-                          onClick={() => handleSentResponse(org.organisation.uniqueName, "approve")}
-                          disabled={loading}
-                          className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
-                        >
-                          <i className="fas fa-check"></i> Zaakceptuj
-                        </button>
+                      </Link>
+                      <div className={styles.userInfo}>
+                      <Link 
+                        to={`/community/organisation/${org.organisation.uniqueName}`} 
+                        className={styles.adminListItemLink}
+                      >
+                        <div className={styles.nameSection}>
+                          <h3 className={styles.username}>
+                            {org.organisation.name}
+                          </h3>
+                          <p className={styles.fullName}>@{org.organisation.uniqueName}</p>
+                        </div>
+                      </Link>
+
+                        <div className={styles.adminButtonGroup}>
+                          <button
+                            onClick={() => handleSentResponse(org.organisation.uniqueName, "reject")}
+                            disabled={loading}
+                            className={`${styles.adminButton} ${styles.adminButtonDanger}`}
+                          >
+                            <i className="fas fa-times"></i> Odrzuć
+                          </button>
+                          <button
+                            onClick={() => handleSentResponse(org.organisation.uniqueName, "approve")}
+                            disabled={loading}
+                            className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
+                          >
+                            <i className="fas fa-check"></i> Zaakceptuj
+                          </button>
+
+                        {org.description && (
+                          <div className={styles.organisationDescriptionToggle}>
+                            <button 
+                              onClick={() => toggleDescription(org.id)}
+                              className={`${styles.adminButton} ${styles.adminButtonShow}`}
+                            >
+                              <i className={`fas fa-${expandedDescriptions[org.id] ? 'chevron-up' : 'chevron-down'}`}></i>
+                              {expandedDescriptions[org.id] ? 'Ukryj opis' : 'Pokaż opis'}
+                            </button>
+                          </div>
+                        )}
+                        </div>
                       </div>
-                    </li>
+                    </div>
+
+                        {org.description && (
+                          <div>
+                            {expandedDescriptions[org.id] && (
+                              <p className={styles.organisationDescriptionText}>
+                                {org.description}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <div className={styles.adminEmpty}>
                   <i className="fas fa-folder-open"></i>

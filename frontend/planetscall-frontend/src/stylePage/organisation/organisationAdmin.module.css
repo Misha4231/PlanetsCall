@@ -443,6 +443,7 @@
   .formTextarea {
     resize: vertical;
     min-height: 100px;
+    max-width: 90%;
   }
   
   .formSelect {

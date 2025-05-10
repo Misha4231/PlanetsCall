@@ -101,6 +101,19 @@
     color: #4CAF50;
 }
 
+.taskProof {
+    color: #fff;
+    font-size: 14px;
+    text-align: right;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.taskProof:hover {
+    color: #4CAF50;
+}
+
 .taskCardDescription {
     color: #aaa;
     font-size: 13px;
@@ -261,7 +274,7 @@
 }
 
 .completedTaskDate {
-    color: #4CAF50;
+    color: #93b868;
     font-weight: 500;
     margin-bottom: 15px;
     display: flex;
@@ -476,3 +489,38 @@
     font-weight: bold;
     background-color: #45a049;
   }
+
+
+  
+.adminPagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.adminPaginationButton {
+    padding: 8px 15px;
+    background-color: #212121;
+    border: 1px solid #2c2c2c;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.adminPaginationButton:hover:not(:disabled) {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.adminPaginationButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.adminPaginationInfo {
+    color: #aaa;
+    font-size: 14px;
+}

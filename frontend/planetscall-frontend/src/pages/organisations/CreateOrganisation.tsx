@@ -96,9 +96,6 @@ const CreateOrganisation = () => {
     );   
   }
 
-  if(!user?.isAdmin) {
-    return <NotAdmin/>;
-  }
   return (
     <div className="app-container dark-theme">
         <Header />

@@ -7,24 +7,24 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { 
   getOrganizationTasks,
   deleteOrganizationTask,
-  createOrganizationTask,
   activateOrganizationTask,
-  OrganizationTask
+  OrganizationTask,
+  TaskType
 } from '../../../services/adminOrgService';
 import { getOrganisationData } from '../../../services/communityService';
 import NotAdmin from '../../Additional/NotAdmin';
+import styles from '../../../stylePage/admin/adminTask.module.css';
+import NotAuthenticated from '../../Additional/NotAuthenticated';
 
 const OrganisationTaskManagement = () => {
     const { user, isAuthenticated, token } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingForm, setLoadingForm] = useState<boolean>(false);
+    const [activityFilter, setActivityFilter] = useState<'active' | 'inactive' | null>(null);
     const [success, setSuccess] = useState<string | null>(sessionStorage.getItem('successInfo'));
     const [organisation, setOrganisation] = useState<Organisation | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [tasks, setTasks] = useState<OrganizationTask[]>([]);
-    const [newTask, setNewTask] = useState({
-        title: '',
-        description: ''
-    });
     
     const { organisationUniqueName } = useParams<{ organisationUniqueName: string }>();
     const navigate = useNavigate();
@@ -55,12 +55,7 @@ const OrganisationTaskManagement = () => {
     }, [token, organisationUniqueName]);
 
     if (!isAuthenticated) {
-        return (
-            <div>
-                <Header/>
-                <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>
-                <Footer/>
-            </div>
+    return (<NotAuthenticated/>
         );   
     }
 
@@ -72,7 +67,7 @@ const OrganisationTaskManagement = () => {
     const handleTaskAction = async (id: number, action: 'activate' | 'delete') => {
         if (!token || !organisationUniqueName) return;
         
-        setLoading(true);
+        setLoadingForm(true);
         setError(null);
         setSuccess(null);
         
@@ -90,38 +85,7 @@ const OrganisationTaskManagement = () => {
         } catch (err: any) {
             setError(err.message);
         } finally {
-            setLoading(false);
-        }
-    };
-
-    { /* Function to create task */}
-    const handleCreateTask = async () => {
-        if (!token || !organisationUniqueName) {
-            setError('Brak tokenu lub nazwy organizacji');
-            return;
-        }
-        
-        setLoading(true);
-        setError(null);
-        setSuccess(null);
-        
-        try {
-            const createdTask = await createOrganizationTask(
-                token, 
-                organisationUniqueName, 
-                {
-                    title: newTask.title,
-                    description: newTask.description
-                }
-            );
-            
-            setTasks([...tasks, createdTask]);
-            setNewTask({ title: '', description: '' });
-            setSuccess('Zadanie zostało utworzone!');
-        } catch (err: any) {
-            setError(err.message || 'Wystąpił błąd podczas tworzenia zadania');
-        } finally {
-            setLoading(false);
+            setLoadingForm(false);
         }
     };
 
@@ -133,79 +97,119 @@ const OrganisationTaskManagement = () => {
         return 'Nieaktywne';
     };
 
+      const getTypeName = (type: TaskType): string => {
+        switch(type) {
+            case 1: return 'Łatwe (dzienne)';
+            case 2: return 'Trudne (tygodniowe)';
+            case 3: return 'Organizacyjne';
+        }
+    };
+
+
+    
+      const toggleActivityFilter = (filter: 'active' | 'inactive') => {
+        setActivityFilter(prev => prev === filter ? null : filter);
+      };
+      
+      
+      const filteredTasks = tasks.filter(task => {
+        const matchesActivity =
+          activityFilter === null ||
+          (activityFilter === 'active' && task.isActive) ||
+          (activityFilter === 'inactive' && !task.isActive);
+      
+        return matchesActivity ;
+      });
+
     return (
         <div className="app-container">
-            <Header/>
+            <Header />
+      <section className={styles.taskAdminContainer}>
+        <div className={styles.taskAdminContent}>          
+            {success && <div className={styles.successMessage}>{success}</div>}
+            {error && <p className={styles.errorMessage}>{error}</p>}
+              
+          {loading ? (
+            <p>Ładowanie...</p>
+          ) : error ? (
+            <div className="error-message">{error}</div>
+          ) : (
+            <>
+            <div className={styles.headerSection}>
+              <h2 className={styles.searchTitle}>Zarządzanie zadaniami </h2>
+              <div className={styles.organisationActions}>
+              <Link to={`/community/organisation/${organisationUniqueName}/tasks/create`} className={styles.createButton}>
+                <i className="fas fa-plus"></i> Stwórz zadanie
+              </Link>
+              </div>
+            </div>
+          <Link to={`/community/organisation/${organisationUniqueName}/settings`} className={styles.backButton}>
+            <i className="fas fa-arrow-left"></i> Powrót
+          </Link>
+               <div className={styles.taskList}>
+                <h3 className={styles.taskListTitle}>Lista zadań szablonowych</h3>
+                <div className={styles.taskFilters}>
+                <div className={styles.filterGroup}>
+                  <button
+                    className={`${styles.filterButton} ${activityFilter === 'active' ? styles.active : ''}`}
+                    onClick={() => toggleActivityFilter('active')}
+                  >
+                    Aktywne
+                  </button>
+                  <button
+                    className={`${styles.filterButton} ${activityFilter === 'inactive' ? styles.active : ''}`}
+                    onClick={() => toggleActivityFilter('inactive')}
+                  >
+                    Nieaktywne
+                  </button>
+                </div>
+              </div>
 
-            <section className="blockCode">        
-                {loading ? (
-                    <p>Ładowanie...</p>
-                ) : (
-                    <>
-                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                        {success && <p style={{ color: 'green' }}>{success}</p>}
-                        
-                        <h2>Zarządzanie zadaniami organizacji</h2>
-                        
-                        <div>
-                            <h3>Utwórz nowe zadanie</h3>
-                            <div >
-                                <input
-                                    type="text"
-                                    placeholder="Tytuł zadania"
-                                    value={newTask.title}
-                                    onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                                />
-                            </div>
-                            <div >
-                                <textarea
-                                    placeholder="Opis zadania"
-                                    value={newTask.description}
-                                    onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                                />
-                            </div>
-                            <button 
-                                onClick={handleCreateTask} 
-                                disabled={loading || !newTask.title}
+                {filteredTasks.length > 0 ? (
+                  <div className={styles.taskListItemsOrg}>
+                    {filteredTasks.map((task) => (
+                      <div className={styles.hiddenLink}>
+                        <div key={task.id} className={styles.taskListItemOrg}>
+                            <h4 className={styles.taskListItemTitle}>{task.title}</h4>
+                          <p className={styles.taskListItemDescription}>{task.description}</p>
+                          <div className={styles.taskListItemMeta}>
+                            <span className={`${styles.taskListItemStatus} ${task.isActive ? 'active' : 'inactive'}`}>
+                              {task.isActive ? 'Aktywne' : 'Nieaktywne'}
+                            </span>
+                          </div>
+                        <div className={styles.taskActions}>
+                            {!task.isActive && (
+                            <button
+                                onClick={() => handleTaskAction(task.id, 'activate')}
+                                disabled={loading}
+                                className={`${styles.actionButton} ${styles.primaryButton}`}
                             >
-                                Utwórz zadanie
+                                <i className="fas fa-power-off"></i>  Aktywuj na 3 dni
+                            </button>
+                            )}
+                            <button
+                            onClick={() => handleTaskAction(task.id, 'delete')}
+                            disabled={loading}
+                            className={`${styles.actionButton} ${styles.deleteButton}`}
+                            >
+                            <i className="fas fa-trash"></i> Usuń 
                             </button>
                         </div>
-
-                        <h3>Lista zadań</h3>
-                        {tasks.length > 0 ? (
-                            <div >
-                                {tasks.map(task => (
-                                    <div key={task.id}>
-                                        <h4>{task.title}</h4>
-                                        <p>{task.description}</p>
-                                        <p>Status: {getStatusInfo(task)}</p>
-                                        <p>Utworzono: {new Date(task.createdAt).toLocaleString()}</p>
-                                        
-                                        <div>
-                                            <button
-                                                onClick={() => handleTaskAction(task.id, 'activate')}
-                                                disabled={loading || task.isActive}
-                                    
-                                            >
-                                                Aktywuj
-                                            </button>
-                                            <button
-                                                onClick={() => handleTaskAction(task.id, 'delete')}
-                                                disabled={loading}
-                                            >
-                                                Usuń
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p>Brak zadań dla tej organizacji</p>
-                        )}
-                    </>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.taskEmptyState}>
+                    <i className="fas fa-tasks"></i>
+                    <p>Brak zadań szablonowych</p>
+                  </div>
                 )}
-            </section>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
             <Footer/>
         </div>
     );

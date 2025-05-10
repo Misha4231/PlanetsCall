@@ -10,7 +10,7 @@ import NotAdmin from '../../Additional/NotAdmin';
 import { addOverwatchReaction, getOverwatchSpecificFeed, OverwatchTaskItem } from '../../../services/taskService';
 import { imageUrl } from '../../../services/imageConvert';
 
-interface exportOverwatchVerification {
+export interface exportOverwatchVerification {
     verificationId: number,
     reaction: boolean,
     message: string,

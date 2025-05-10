@@ -84,30 +84,6 @@ const AdminTasks = () => {
   } 
 
 
-  const handleTaskAction = async (id: number, action: 'activate' | 'delete') => {
-      if (!token) return;
-      
-      setLoading(true);
-      setError(null);
-      setSuccess(null);
-      
-      try {
-          if (action === 'activate') {
-              await activateTemplateTask(token, id);
-              setSuccess('Zadanie zostało aktywowane!');
-          } else {
-              await deleteTemplateTask(token, id);
-              setSuccess('Zadanie zostało usunięte!');
-          }
-
-          const updatedTasks = await getAllTemplateTasks(token);
-          setTasks(updatedTasks);
-      } catch (err: any) {
-          setError(err.message);
-      } finally {
-          setLoading(false);
-      }
-  };
 
   const getTypeName = (type: TaskType): string => {
     switch(type) {

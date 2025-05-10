@@ -8,6 +8,8 @@ import { useAuth } from '../../../context/AuthContext';
 import styles from '../../../stylePage/admin/adminTask.module.css';
 import authStyles from '../../../stylePage/auth.module.css';
 import NotAdmin from '../../Additional/NotAdmin';
+import Loading from '../../Additional/Loading';
+import NotAuthenticated from '../../Additional/NotAuthenticated';
 
 
 const AdminTaskCreate = () => {
@@ -46,12 +48,7 @@ const AdminTaskCreate = () => {
   
     
     if (!isAuthenticated) {
-        return (
-            <div>
-                <Header/>
-                <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>
-                <Footer/>
-            </div>
+        return (<NotAuthenticated/>
         );   
     }
   
@@ -112,7 +109,7 @@ const AdminTaskCreate = () => {
             {error && <p className={styles.errorMessage}>{error}</p>}
             
             {loading ? (
-              <p>Ładowanie...</p>
+              <Loading/>
             ) : (
               <>
                 <div className={styles.taskForm}>
