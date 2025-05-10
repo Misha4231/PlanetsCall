@@ -1,4 +1,4 @@
-import { authHeader }  from  "./authHeader";
+import { authHeader }  from  "./headers";
 
 /*
   - VERIFICATIONS
@@ -31,6 +31,8 @@ export interface OrganizationTask {
   id: number;
   title: string;
   description: string;
+  reward: number;
+  type: TaskType;
   isActive: boolean;
   createdAt: string;
   expiresAt: string | null;
@@ -52,12 +54,14 @@ export const getOrganisationVerifications = async (authToken: string ) => {
   
   
     if (!response.ok) {
-      throw new Error('Nie udało się pobrać listy organizacji do weryfikacji.');
+      const errorData = await response.json();  
+      console.log(errorData)
+      throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać listy organizacji do weryfikacji.');
     }
   
   
     const data = await response.json();
-  
+    //console.log(data);
     return data;
 
   };
@@ -66,22 +70,27 @@ export const getOrganisationVerifications = async (authToken: string ) => {
     if (!authToken) {
       throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
     }
+    console.log(action)
     
   
     const response = await fetch(`${authHeader()}api/admin/organisations/Verification/${organisationUniqueName}/${action}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
       },
     });
+    
   
     if (!response.ok) {
-      throw new Error('Nie udało wysłać żądania.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało wysłać żądania.');
     }
   
-    const data = await response.json();
+    const data = await response;
   
-    return data;
+    return true;
   };
 
 
@@ -104,7 +113,9 @@ export const createTemplateTask = async (authToken: string, taskData: any) => {
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się utworzyć szablonu zadania.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się utworzyć szablonu zadania.');
   }
 
   const data = await response;
@@ -125,10 +136,13 @@ export const getAllTemplateTasks = async (authToken: string) => {
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać listy szablonów zadań.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać listy szablonów zadań.');
   }
 
   const data = await response.json();
+  //console.log(data);
   
   return data;
 };
@@ -146,7 +160,9 @@ export const getTemplateTaskById = async (authToken: string, id: string) => {
   });
 
   if (!response.ok) {
-    throw new Error(`Nie udało się pobrać szablonu zadania o ID: ${id}.`);
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się pobrać szablonu zadania o ID: ${id}.`);
   }
 
   
@@ -170,7 +186,9 @@ export const updateTemplateTask = async (authToken: string, id: string, taskData
   });
 
   if (!response.ok) {
-    throw new Error(`Nie udało się zaktualizować szablonu zadania o ID: ${id}.`);
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się zaktualizować szablonu zadania o ID: ${id}.`);
   }
 
   
@@ -192,7 +210,9 @@ export const deleteTemplateTask = async (authToken: string, id: number) => {
   });
 
   if (!response.ok) {
-    throw new Error(`Nie udało się usunąć szablonu zadania o ID: ${id}.`);
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się usunąć szablonu zadania o ID: ${id}.`);
   }
 
     
@@ -212,14 +232,14 @@ export const activateTemplateTask = async (authToken: string, id: number) => {
   });
 
   if (!response.ok) {
-    throw new Error(`Nie udało się aktywować szablonu zadania o ID: ${id}.`);
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się aktywować szablonu zadania o ID: ${id}.`);
   }
 
   
   const data = await response;
-  console.log(data)
-  const d = data.json();
-  return d;
+  return true;
 };
 
 export const getOrganizationTasks = async (authToken: string, organizationName: string) => {
@@ -235,7 +255,9 @@ export const getOrganizationTasks = async (authToken: string, organizationName: 
   });
 
   if (!response.ok) {
-    throw new Error(`Nie udało się pobrać zadań dla organizacji: ${organizationName}.`);
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się pobrać zadań dla organizacji: ${organizationName}.`);
   }
 
   
@@ -257,7 +279,9 @@ export const deleteOrganizationTask = async (authToken: string, organizationName
   });
 
   if (!response.ok) {
-    throw new Error(`Nie udało się usunąć zadania o ID: ${id} dla organizacji: ${organizationName}.`);
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się usunąć zadania o ID: ${id} dla organizacji: ${organizationName}.`);
   }
 
   
@@ -280,13 +304,13 @@ export const createOrganizationTask = async (authToken: string, organizationName
   });
 
   if (!response.ok) {
-    throw new Error(`Nie udało się utworzyć zadania dla organizacji: ${organizationName}.`);
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się utworzyć zadania dla organizacji: ${organizationName}.`);
   }
-
-  
-  const data = await response.json();
-  
-  return data;
+  const data = await response;
+  console.log(data);
+  return await true;
 };
 
 export const activateOrganizationTask = async (authToken: string, organizationName: string, id: number) => {
@@ -302,7 +326,9 @@ export const activateOrganizationTask = async (authToken: string, organizationNa
   });
 
   if (!response.ok) {
-    throw new Error(`Nie udało się aktywować zadania o ID: ${id} dla organizacji: ${organizationName}.`);
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||`Nie udało się aktywować zadania o ID: ${id} dla organizacji: ${organizationName}.`);
   }
 
   

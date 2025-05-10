@@ -1,0 +1,131 @@
+.heroContainer {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 160px); 
+    max-width: 1600px;
+    margin: 0 auto;
+    overflow: hidden;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .heroImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 12px;
+    filter: brightness(0.6);
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    z-index: 2;
+  }
+  
+  .title {
+    color: #fff;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 3px #000;
+  }
+  
+  .subtitle {
+    color: #ccc;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    text-shadow: 1px 1px 2px #000;
+  }
+  
+  .startButton {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .startButton:hover {
+    background-color: #43a047;
+    box-shadow: 0 0 10px #4CAF50;
+  }
+  
+  .startLink {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.3s ease;
+  }
+  
+
+  
+  
+  @media (max-width: 992px) {
+    .heroContainer {
+      padding: 16px;
+    }
+  
+    .title {
+      font-size: 2.2rem;
+    }
+  
+    .subtitle {
+      font-size: 1.2rem;
+    }
+  
+    .startButton {
+      font-size: 0.95rem;
+      padding: 0.65rem 1.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .title {
+      font-size: 2rem;
+    }
+  
+    .subtitle {
+      font-size: 1rem;
+    }
+  
+    .startButton {
+      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .title {
+      font-size: 1.6rem;
+    }
+  
+    .subtitle {
+      font-size: 0.9rem;
+    }
+  
+    .startButton {
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+    }
+  }
+  

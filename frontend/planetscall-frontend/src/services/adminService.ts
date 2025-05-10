@@ -1,4 +1,4 @@
-import { authHeader }  from  "./authHeader";
+import { authHeader }  from  "./headers";
 
 export const getUsersAdmin = async (authToken: string, page: number ) => {
     if (!authToken) {
@@ -148,7 +148,7 @@ export const getListOfTask = async (authToken: string) => {
     throw new Error('Nie udało się pobrać listy zadań.');
   }
 
-  //console.log('API zwróciło:', data);
+  console.log('API zwróciło:', data);
 
   return data.items ?? []; 
 };

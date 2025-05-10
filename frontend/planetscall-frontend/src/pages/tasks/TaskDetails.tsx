@@ -6,6 +6,7 @@ import { getTaskById, uploadTaskProof, Task } from '../../services/taskService';
 import Footer from '../../components/Footer/Footer';
 import { TaskType } from '../../services/adminOrgService';
 import styles from '../../stylePage/task/task.module.css';
+import NotAuthenticated from '../Additional/NotAuthenticated';
 
 const TaskDetails = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -53,6 +54,9 @@ const TaskDetails = () => {
       setTimeout(() => navigate('/tasks'), 2000); 
     } catch (err: any) {
       setError(err.message);
+      if(err.message == "Zadanie zostału już wysłane"){
+        setTimeout(() => navigate('/tasks'), 2000); 
+      }
       setUploadSuccess(false);
     } finally {
       setLoading(false);
@@ -66,6 +70,11 @@ const TaskDetails = () => {
           case 3: return 'Organizacyjne';
       }
   };
+
+  if (!isAuthenticated) {
+      return (<NotAuthenticated/>
+      );   
+  }
 
   return (
     <div className="app-container dark-theme">

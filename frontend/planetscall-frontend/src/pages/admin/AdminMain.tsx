@@ -6,7 +6,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { blockUserAdmin, getUsersAdmin, resetUserAdmin, unblockUserAdmin } from '../../services/adminService';
 import { UserAdmin, UsersResponseAdmin } from '../../types/adminTypes';
 import { isBlock } from 'typescript';
-import styles from '../../stylePage/admin/admin.module.css';
+import styles from '../../stylePage/styles.module.css';
+import Loading from '../Additional/Loading';
+import NotAdmin from '../Additional/NotAdmin';
 
 const AdminMain = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -43,12 +45,7 @@ useEffect(() => {
   }
 
   if(!user?.isAdmin){
-    return (<div>
-      <Header/>
-      <p style={{ color: 'red' }}>Nie masz uprawnień administratora.</p>
-      <Footer/>
-
-    </div>);  
+    return (<NotAdmin/>) 
   } 
 
 
@@ -56,37 +53,53 @@ useEffect(() => {
 
   return (
     <div className="app-container dark-theme">
-      <Header />
-      <section className={styles.adminContainer}>
-        {loading ? (
-          <p>Ładowanie...</p>
-        ) : (
-          <div className={styles.adminContent}>
-            {success && <div className={`${styles.adminMessage} ${styles.adminSuccess}`}>{success}</div>}
-            {error && <div className={`${styles.adminMessage} ${styles.adminError}`}>{error}</div>}
-            
-            <h1 className={styles.adminTitle}>Panel Administracyjny</h1>
-            
-            <nav className={styles.adminNav}>
-              <Link to="/admin/organisations" className={styles.adminNavLink}>
-                <i className="fas fa-sitemap"></i>
-                Organizacje
-              </Link>
-              <Link to="/admin/users" className={styles.adminNavLink}>
-                <i className="fas fa-users"></i>
-                Użytkownicy
-              </Link>
-              <Link to="/admin/tasks" className={styles.adminNavLink}>
-                <i className="fas fa-tasks"></i>
-                Zadania
-              </Link>
-            </nav>
-          </div>
-        )}
-      </section>
-      <Footer />
+        <Header />
+        <section className={styles.container}>
+            {loading ? (
+                <Loading />
+            ) : (
+                <div className={styles.content}>
+                    <h2 className={styles.title}>Panel Administracyjny</h2>
+                    
+                    <div className={styles.grid}>
+                        <Link to="/admin/organisations" className={styles.card}>
+                            <div className={styles.icon}>
+                                <i className="fas fa-sitemap"></i>
+                            </div>
+                            <h3>Organizacje</h3>
+                            <p>Zarządzaj organizacjami</p>
+                        </Link>
+                        
+                        <Link to="/admin/users" className={styles.card}>
+                            <div className={styles.icon}>
+                                <i className="fas fa-users"></i>
+                            </div>
+                            <h3>Użytkownicy</h3>
+                            <p>Przeglądaj i zarządzaj użytkownikami</p>
+                        </Link>
+                        
+                        <Link to="/admin/tasks" className={styles.card}>
+                            <div className={styles.icon}>
+                                <i className="fas fa-tasks"></i>
+                            </div>
+                            <h3>Zadania</h3>
+                            <p>Przeglądaj i zarządzaj zadaniami</p>
+                        </Link>
+                        
+                        <Link to="/admin/shop" className={styles.card}>
+                            <div className={styles.icon}>
+                                <i className="fas fa-store"></i>
+                            </div>
+                            <h3>Sklep</h3>
+                            <p>Przeglądaj i zarządzaj asortymentem sklepu</p>
+                        </Link>
+                    </div>
+                </div>
+            )}
+        </section>
+        <Footer />
     </div>
-  )
-};;
+);
+};
 
 export default AdminMain

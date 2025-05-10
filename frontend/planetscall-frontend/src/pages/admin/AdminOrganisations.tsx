@@ -5,14 +5,23 @@ import { getOrganisationVerifications, sentResponseToOrganisationVerification, c
 import { useAuth } from '../../context/AuthContext';
 import { Organisation } from '../community/communityTypes';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from '../../stylePage/admin/admin.module.css';
+import styles from '../../stylePage/admin/adminUser.module.css';
+import NotAdmin from '../Additional/NotAdmin';
+import NotAuthenticated from '../Additional/NotAuthenticated';
+import { imageUrl } from '../../services/imageConvert';
 
+interface OrganisationVerification {
+  description:string,
+  id : number,
+  organisation: Organisation,
+}
 
 const AdminOrganisations = () => {
     const { user, isAuthenticated, token } = useAuth();
     
     const [loading, setLoading] = useState<boolean>(false);
-    const [organisation, setOrganisation] = useState<Organisation[]>([]);
+    const [organisations, setOrganisations] = useState<OrganisationVerification[]>([]);
+    const [expandedDescriptions, setExpandedDescriptions] = useState<Record<number, boolean>>({});
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -23,7 +32,8 @@ const AdminOrganisations = () => {
                 try {
                     setLoading(true);
                     const org = await getOrganisationVerifications(token);
-                    setOrganisation(org);
+                    console.log(org);
+                    setOrganisations(org);
                     setError(null);
                 } catch (err: any) {
                     setError(err.message);
@@ -35,25 +45,20 @@ const AdminOrganisations = () => {
         }    
     }, [token, user?.isAdmin]);
   
+    const toggleDescription = (id: number) => {
+        setExpandedDescriptions(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
+  
 
     if (!isAuthenticated) {
-        return (
-            <div>
-                <Header/>
-                <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>
-                <Footer/>
-            </div>
-        );   
+        return (<NotAuthenticated/>);   
     }
 
     if(!user?.isAdmin){
-        return (
-            <div>
-                <Header/>
-                <p style={{ color: 'red' }}>Nie masz uprawnień administratora.</p>
-                <Footer/>
-            </div>
-        );  
+      return (<NotAdmin/>) 
     } 
 
     const handleSentResponse = async (organisationUniqueName: string, action: string) => {
@@ -66,7 +71,7 @@ const AdminOrganisations = () => {
             setSuccess(`Weryfikacja organizacji ${organisationUniqueName} zostało wysłana.`);
 
             const org = await getOrganisationVerifications(token);
-            setOrganisation(org);
+            setOrganisations(org);
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -89,40 +94,87 @@ const AdminOrganisations = () => {
               
               {loading ? (
                 <p>Ładowanie...</p>
-              ) : error ? (
-                <div className={`${styles.adminMessage} ${styles.adminError}`}>{error}</div>
-              ) : organisation.length > 0 ? (
-                <ul className={styles.adminList}>
-                  {organisation.map((org) => (
-                    <li key={org.id} className={styles.adminListItem}>
-                      <div className={styles.adminListItemContent}>
-                        <Link 
-                          to={`/community/organisation/${org.uniqueName}`} 
-                          className={styles.adminListItemLink}
-                        >
-                          {org.name}
-                        </Link>
-                        <span>@{org.uniqueName}</span>
+              ) : organisations.length > 0 ? (
+                <div className={styles.usersList}>
+                {success && <div className={styles.successMessage}>{success}</div>}
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                  {organisations.map((org) => (
+                    <div className={styles.orgCard}>
+                    <div key={org.id}  className={styles.userCard}>
+                      <Link 
+                        to={`/community/organisation/${org.organisation.uniqueName}`} 
+                        className={styles.adminListItemLink}
+                      >
+                        <div className={styles.avatarContainer}>
+                          {org.organisation.organizationLogo ? (
+                            <img
+                              src={imageUrl() + org.organisation.organizationLogo}
+                              alt={`Logo ${org.organisation.name}`}
+                              className={styles.avatarImage}
+                            />
+                          ) : (
+                            <div className={styles.organisationAvatarPlaceholder}>
+                              <i className="fas fa-building"></i>
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                      <div className={styles.userInfo}>
+                      <Link 
+                        to={`/community/organisation/${org.organisation.uniqueName}`} 
+                        className={styles.adminListItemLink}
+                      >
+                        <div className={styles.nameSection}>
+                          <h3 className={styles.username}>
+                            {org.organisation.name}
+                          </h3>
+                          <p className={styles.fullName}>@{org.organisation.uniqueName}</p>
+                        </div>
+                      </Link>
+
+                        <div className={styles.adminButtonGroup}>
+                          <button
+                            onClick={() => handleSentResponse(org.organisation.uniqueName, "reject")}
+                            disabled={loading}
+                            className={`${styles.adminButton} ${styles.adminButtonDanger}`}
+                          >
+                            <i className="fas fa-times"></i> Odrzuć
+                          </button>
+                          <button
+                            onClick={() => handleSentResponse(org.organisation.uniqueName, "approve")}
+                            disabled={loading}
+                            className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
+                          >
+                            <i className="fas fa-check"></i> Zaakceptuj
+                          </button>
+
+                        {org.description && (
+                          <div className={styles.organisationDescriptionToggle}>
+                            <button 
+                              onClick={() => toggleDescription(org.id)}
+                              className={`${styles.adminButton} ${styles.adminButtonShow}`}
+                            >
+                              <i className={`fas fa-${expandedDescriptions[org.id] ? 'chevron-up' : 'chevron-down'}`}></i>
+                              {expandedDescriptions[org.id] ? 'Ukryj opis' : 'Pokaż opis'}
+                            </button>
+                          </div>
+                        )}
+                        </div>
                       </div>
-                      <div className={styles.adminButtonGroup}>
-                        <button
-                          onClick={() => handleSentResponse(org.uniqueName, "reject")}
-                          disabled={loading}
-                          className={`${styles.adminButton} ${styles.adminButtonDanger}`}
-                        >
-                          <i className="fas fa-times"></i> Odrzuć
-                        </button>
-                        <button
-                          onClick={() => handleSentResponse(org.uniqueName, "approve")}
-                          disabled={loading}
-                          className={`${styles.adminButton} ${styles.adminButtonPrimary}`}
-                        >
-                          <i className="fas fa-check"></i> Zaakceptuj
-                        </button>
-                      </div>
-                    </li>
+                    </div>
+
+                        {org.description && (
+                          <div>
+                            {expandedDescriptions[org.id] && (
+                              <p className={styles.organisationDescriptionText}>
+                                {org.description}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <div className={styles.adminEmpty}>
                   <i className="fas fa-folder-open"></i>

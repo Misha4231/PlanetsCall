@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/shared/Header';
-import styles from '../../stylePage/communityMain.module.css';
+import styles from '../../stylePage/styles.module.css';
 import { useAuth } from '../../context/AuthContext';
 import Loading from '../Additional/Loading';
 

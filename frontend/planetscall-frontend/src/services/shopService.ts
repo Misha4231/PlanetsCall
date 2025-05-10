@@ -1,5 +1,17 @@
 
-import { authHeader }  from  "./authHeader";
+import { authHeader, PaginationResponse }  from  "./headers";
+
+
+type RarityType = "Common" | "Rare" | "Epic";
+
+export interface Items {
+    "id": number, 
+    "categoryId": number,
+    "price": number,
+    "image": string,
+    "rarity": RarityType,
+    "title": string
+}
 
 export const getCategories = async (authToken: string) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
@@ -22,9 +34,18 @@ export const getItemsByCategory = async (authToken: string, categoryId: number, 
     headers: { Authorization: `Bearer ${authToken}` },
   });
 
-  if (!response.ok) throw new Error('Nie udało się pobrać przedmiotów.');
+  if (!response.ok) {
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się pobrać przedmiotów.');
+  }
 
-  return await response.json();
+  const data = await response.json();
+  console.log(data);
+
+
+  
+  return data.items ?? []; 
 };
 
 //
@@ -42,14 +63,14 @@ export const buyItem = async (authToken: string, itemId: number) => {
   });
 
   if (!response.ok) {
-    
-    const errorData = await response.json();
-    console.log(errorData.error);
+    const errorData = await response.json();  
     console.log(errorData);
-    throw new Error('Nie udało się kupić przedmiotu.');
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd podczas usuwania kategorii.');
   }
 
-  return await response.json();
+  const data = await response;
+  console.log(data);
+  return true;
 };
 
 //
@@ -70,88 +91,90 @@ export const addCategory = async (authToken: string, title: string, image: strin
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.log(errorData.error);
+    const errorData = await response.json();  
     console.log(errorData);
-    throw new Error(`Błąd: ${response.status} - ${response.statusText}`);
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd podczas usuwania kategorii.');
   }
-
-//console.log(await response.text());
+  const data = await response;
+  console.log(data);
 // const text = await response.text();
 // return text ? JSON.parse(text) : null;
-return await response.json();
+return true;
 };
 
 //
 
-export const removeCategory = async (authToken: string) => {
+export const removeCategory = async (authToken: string, categoryId: number) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch(`${authHeader()}api/Items/categories`, {
+  const response = await fetch(`${authHeader()}api/Items/categories/${categoryId}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
   });
 
+
   if (!response.ok) {
-    throw new Error(`Błąd: ${response.status} - ${response.statusText}`);
+    const errorData = await response.json();  
+    console.log(errorData);
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd podczas usuwania kategorii.');
   }
 
-  return await response.json();
+  return true;
 
 };
 
 //
 
-export const addItems = async (authToken: string, categoryId: number, price: number, image: string, rarity: string, title: string) => {
+export const addItems = async (authToken: string, formData: any) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch(`${authHeader()}/api/Items`, {
+  const response = await fetch(`${authHeader()}api/Items`, {
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${authToken}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      categoryId,
-      price,
-      image,
-      rarity,
-      title
-    }),
+    body: JSON.stringify(formData),
   });
 
   if (!response.ok) {
     const errorData = await response.json();  
-    throw new Error(errorData.message || 'Błąd logowania');
+    console.log(errorData);
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd logowania');
   }
 
   const data = await response.json();
+
+  return data;
 };
 
 //
 
-export const removeItems = async (authToken: string) => {
+export const removeItems = async (authToken: string, itemId: number) => {
   if (!authToken) throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
 
-  const response = await fetch(`${authHeader()}/api/Items`, {
+  const response = await fetch(`${authHeader()}api/Items/${itemId}`, {
     method: 'DELETE',
     headers: {
+      'Authorization': `Bearer ${authToken}`,
       'Content-Type': 'application/json',
     },
   });
 
   if (!response.ok) {
     const errorData = await response.json();  
-    throw new Error(errorData.message || 'Błąd logowania');
+    console.log(errorData);
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd logowania');
   }
 
-  const data = await response.json();
+  return true;
 };
 
 //
 
-export const updteItem = async (
+export const updateItem = async (
   authToken: string,
   itemId: number,  
   categoryId: number,
@@ -181,16 +204,17 @@ export const updteItem = async (
   if (!response.ok) {
     const errorData = await response.json();
     console.log(errorData.error);
+console.log(errorData);
     console.log(errorData);
-    throw new Error(errorData.message || 'Błąd aktualizacji itemu');
+    throw new Error(errorData.errors.CustomValidation[0] || 'Błąd aktualizacji itemu');
   }
 
-  return await response.json();
+  return true;
 };
 
 //
 
-export const updteCategory = async (
+export const updateCategory = async (
 authToken: string,
 categoryId: number,
 title: string,
@@ -202,7 +226,7 @@ image: string,
   }
 
   
-  const response = await fetch(`${authHeader()}api/Items/category/${categoryId}`, {
+  const response = await fetch(`${authHeader()}api/Items/categories/${categoryId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -215,11 +239,34 @@ image: string,
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.log(errorData.error);
-    console.log(errorData);
-    throw new Error(errorData.message || 'Błąd aktualizacji kategorii');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Błąd aktualizacji kategorii');
   }
 
-  return await response.json();
+  return true;
+};
+
+
+export const getUserItems  = async (authToken: string, categoryId: number, page: number): Promise<PaginationResponse<Items>> => {
+  if (!authToken) {
+    throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
+  }
+  const response = await fetch(`${authHeader()}api/Items/my-items?categoryId=${categoryId}&?page=${page}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się pobrać itemów');
+  }
+
+  const data = await response.json();
+  console.log(data);
+
+  return data;
 };

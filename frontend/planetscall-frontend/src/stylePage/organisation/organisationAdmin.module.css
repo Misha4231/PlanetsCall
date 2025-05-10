@@ -24,6 +24,7 @@
     border-bottom: 1px solid #2c2c2c;
   }
   
+
   .adminNav {
     display: flex;
     gap: 15px;
@@ -86,6 +87,13 @@
     margin-bottom: 16px;
     padding-bottom: 8px;
     border-bottom: 1px solid #2c2c2c;
+  }
+
+  
+  .categoryTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   
   .requestList, .memberList {
@@ -393,6 +401,25 @@
     font-weight: 500;
   }
   
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: #212121;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border: 1px solid #2c2c2c;
+  margin-bottom: 20px;
+}
+
+.backButton:hover {
+  background-color: #4CAF50;
+  transform: translateX(-3px);
+}
+
   .formInput, .formSelect, .formTextarea {
     background-color: #212121;
     border: 1px solid #333;
@@ -416,6 +443,7 @@
   .formTextarea {
     resize: vertical;
     min-height: 100px;
+    max-width: 90%;
   }
   
   .formSelect {
@@ -582,3 +610,87 @@
     border: none;
   }
   
+
+
+
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background-color: #1a1a1a;
+    padding: 30px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid #2c2c2c;
+}
+
+.modalTitle {
+    margin-top: 0;
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.modalButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modalCancelButton {
+    background-color: #333;
+    color: #fff;
+}
+
+.modalCancelButton:hover {
+    background-color: #444;
+}
+
+.formTextarea {
+    width: 100%;
+    padding: 10px;
+    background-color: #212121;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #fff;
+    resize: vertical;
+    min-height: 100px;
+}
+
+
+
+
+
+.errorMessage {
+  color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.1);
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 28px;
+  text-align: center;
+  font-size: 15px;
+  border-left: 4px solid #ff6b6b;
+}
+
+.successMessage {
+  color: #4CAF50;
+  background-color: rgba(76, 175, 80, 0.1);
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 28px;
+  text-align: center;
+  font-size: 15px;
+  border-left: 4px solid #4CAF50;
+}

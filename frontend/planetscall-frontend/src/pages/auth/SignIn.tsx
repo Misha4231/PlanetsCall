@@ -5,9 +5,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../../services/authService'; 
 import { useAuth } from '../../context/AuthContext';
 import authStyles from '../../stylePage/auth.module.css';
+import { getAddAttendance } from '../../services/userService';
 
 const SignIn = () => {
-  const { login: loginUser, isAuthenticated } = useAuth();
+  const { token, login: loginUser, isAuthenticated } = useAuth();
   const [uniqueIdentifier, setUniqueIdentifier] = useState(''); 
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -32,6 +33,8 @@ const SignIn = () => {
       setLoadingUser(false);
     }
   };
+
+
 
   if(isAuthenticated){
     navigate('/profile'); 
@@ -85,17 +88,18 @@ const SignIn = () => {
                 )}
                 </button>
               </form>
-              
+
               <div className={authStyles.linksContainer}>
                 <ul className={authStyles.linksList}>
                   <li className={authStyles.linkItem}>
-                    <Link to="/auth/sign-up" className={authStyles.link}>Zarejestruj się</Link>
+                    <Link to="/auth/sign-up" className={authStyles.link}><i className="fas fa-user-plus"></i> Zarejestruj się</Link>
                   </li>
                   <li className={authStyles.linkItem}>
-                    <Link to="/auth/forgot-password" className={authStyles.link}>Nie pamiętam hasła</Link>
+                    <Link to="/auth/forgot-password" className={authStyles.link}><i className="fas fa-key"></i>Nie pamiętam hasła</Link>
                   </li>
                 </ul>
               </div>
+
             </>
           )}
         </section>

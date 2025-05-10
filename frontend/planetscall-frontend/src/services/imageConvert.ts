@@ -1,3 +1,5 @@
+import { authHeader } from "./headers";
+
 export const convertImageToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -7,7 +9,11 @@ export const convertImageToBase64 = (file: File): Promise<string> => {
   });
 };
 
+
+
 export const imageUrl = () => {
-  const linkToImage = "http://localhost:8080/";
+  const linkToImage = authHeader();
+  //const linkToImage = "https://localhost:7000/";
+  //const linkToImage = "http://localhost:8080/";
   return linkToImage;
 };

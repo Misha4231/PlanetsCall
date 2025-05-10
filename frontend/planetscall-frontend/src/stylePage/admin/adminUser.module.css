@@ -1,0 +1,643 @@
+/* admin.module.css */
+
+.adminContainer {
+    max-width: 1200px;
+    min-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: calc(100vh - 120px);
+}
+
+@media (max-width: 992px) {
+    .adminContainer {
+      padding: 16px;
+      min-width: 600px;
+    }
+  }
+
+.adminContent {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.adminTitle {
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 30px;
+    font-weight: 600;
+    text-align: center;
+}
+.adminNavGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 10px;
+  }
+  
+.adminListItemLink {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.adminListItemLink:hover {
+    color: #4CAF50;
+}
+
+.adminButtonGroup {
+    display: flex;
+    gap: 10px;
+}
+
+.adminButton {
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.adminButton i {
+    font-size: 14px;
+}
+
+.adminButtonPrimary {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.adminButtonPrimary:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.adminButtonDanger {
+    background-color: #d32f2f;
+    color: white;
+}
+
+.adminButtonDanger:hover {
+    transform: translateY(-2px);
+}
+
+.adminButtonWarning {
+    background-color: #c76306;
+    color: white;
+}
+
+.adminButtonWarning:hover {
+    transform: translateY(-2px);
+}
+
+.adminButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.adminPagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.adminPaginationButton {
+    padding: 8px 15px;
+    background-color: #212121;
+    border: 1px solid #2c2c2c;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.adminPaginationButton:hover:not(:disabled) {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.adminPaginationButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.adminPaginationInfo {
+    color: #aaa;
+    font-size: 14px;
+}
+
+.adminMessage {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.adminSuccess {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+}
+
+.adminError {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+}
+
+.adminEmpty {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.adminEmpty i {
+    font-size: 40px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .adminContainer {
+        min-width: 0px;
+    }
+    .adminNav {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .adminListItem {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .adminButtonGroup {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .adminPagination {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .adminContent {
+        padding: 20px;
+    }
+    
+    .adminButtonGroup {
+        flex-direction: column;
+    }
+    
+    .adminButton {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+.adminBackButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background-color: #212121;
+    border-radius: 6px;
+    color: #fff;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    border: 1px solid #2c2c2c;
+}
+
+.adminBackButton:hover {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    transform: translateX(-3px);
+}
+
+.adminBackButton i {
+    font-size: 14px;
+}
+
+.adminButtonGroup {
+    display: flex;
+    gap: 10px;
+}
+
+.blockButton {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .blockButton:hover {
+    background-color: #d32f2f;
+  }
+  
+  .unblockButton {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .unblockButton:hover {
+    background-color: #45a049;
+  }
+
+
+
+
+
+
+
+
+
+
+
+  
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-grow: 1;
+    min-width: 0; 
+  }
+  
+  .username {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+  }
+  
+  .memberItem, .requestItem {
+    padding: 12px 16px;
+  }
+  
+  .actions {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background-color: #1a1a1a;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid #2c2c2c;
+  }
+  
+  .modalTitle {
+    margin-top: 0;
+    color: #fff;
+  }
+  
+  .modalButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .modalCancelButton {
+    background-color: #2c2c2c;
+    color: #fff;
+  }
+  
+  .modalCancelButton:hover {
+    background-color: #3c3c3c;
+  }
+
+
+
+  
+
+.adminUsers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+
+
+
+
+
+.searchForm {
+    margin-bottom: 30px;
+}
+
+.searchGroup {
+    margin-bottom: 20px;
+}
+
+.searchLabel {
+    display: block;
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.searchInputWrapper {
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #212121;
+    border: 1px solid #2c2c2c;
+    transition: all 0.3s ease;
+}
+
+.searchInputWrapper:focus-within {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.searchInput {
+    flex: 1;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 15px;
+}
+
+.searchInput::placeholder {
+    color: #555;
+}
+
+.searchButton {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.searchButton:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.searchButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.errorMessage {
+    color: #f44336;
+    background-color: rgba(244, 67, 54, 0.1);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.usersList {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    
+    gap: 15px;
+}
+
+.userCard {
+    display: flex;
+    align-items: center;
+    background-color: #212121;
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #2c2c2c;
+}
+
+.userCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-color: #4CAF50;
+}
+
+.avatarContainer {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 20px;
+    flex-shrink: 0;
+    background-color: #2c2c2c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarPlaceholder {
+    color: #555;
+    font-size: 24px;
+}
+
+.userInfo {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nameSection {
+    flex: 1;
+}
+
+.username {
+    color: #fff;
+    font-size: 18px;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.adminBadge {
+    background-color: #ff9800;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.fullName {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0;
+}
+
+.blockedStatus {
+    color: #f44336;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.progressSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 150px;
+}
+
+.progressContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.progressBar {
+    flex: 1;
+    height: 8px;
+    background-color: #2c2c2c;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background-color: #4CAF50;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.progressText {
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: right;
+}
+
+.pointsBadge {
+    background-color: #333;
+    color: #ffc107;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+.noResults {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+.noResults i {
+    font-size: 24px;
+    margin-bottom: 10px;
+    display: block;
+    color: #4CAF50;
+}
+
+.noResults p {
+    margin: 0;
+}
+
+
+
+.taskTabs {
+    display: flex;
+    border-bottom: 1px solid #2c2c2c;
+    margin-bottom: 30px;
+    gap: 5px;
+}
+
+.taskTab {
+    padding: 12px 25px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #bbb;
+    background-color: transparent;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.taskTab:hover {
+    color: #fff;
+    background-color: #2c2c2c;
+}
+
+.taskTab.active {
+    color: #fff;
+    background-color: #2c2c2c;
+    position: relative;
+}
+
+.taskTab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #4CAF50;
+}
+
+
+.orgCard {
+    display: block;
+    align-items: center;
+    background-color: #212121;
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #2c2c2c;
+}
+
+.orgCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}

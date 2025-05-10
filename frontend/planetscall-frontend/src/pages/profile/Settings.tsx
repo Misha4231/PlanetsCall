@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { updateUserSettings } from '../../services/userService';
+import { getFullUser, updateUserSettings } from '../../services/userService';
 import Header from '../../components/shared/Header';
 import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
 import Footer from '../../components/Footer/Footer';
 import styles from '../../stylePage/profile.module.css';
+import NotAuthenticated from '../Additional/NotAuthenticated';
+import Loading from '../Additional/Loading';
+
+type ThemeType = 0 | 1 | 2;
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, token } = useAuth();
-    const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -23,7 +29,7 @@ const Settings: React.FC = () => {
     instagramLink: '',
     linkedinLink: '',
     youtubeLink: '',
-    themePreference: 0,
+    themePreference: 0 as ThemeType,
     mailsSubscribed: false,
   });
 
@@ -37,7 +43,7 @@ const Settings: React.FC = () => {
         username: user.username || '',
         firstName: user.firstName || '',
         lastName: user.lastName || '',
-        profileImage: user.profileImage || '',
+        profileImage: (user.profileImage || ''),
         preferredLanguage: user.preferredLanguage || '',
         isNotifiable: user.isNotifiable ?? false,
         isVisible: user.isVisible ?? false,
@@ -49,7 +55,7 @@ const Settings: React.FC = () => {
         mailsSubscribed: user.mailsSubscribed ?? false,
       });
       if (user.profileImage) {
-        setPreviewImage(imageUrl());
+        setPreviewImage(imageUrl() + user.profileImage);
       }
     }
   }, [user]);
@@ -104,33 +110,33 @@ const Settings: React.FC = () => {
         alert('Nie można zaktualizować ustawień: brak identyfikatora użytkownika');
         return;
       }
-    
-      console.log('Auth Token:', authToken);
-      console.log('User ID:', userId);
 
       await updateUserSettings(authToken, userId, formData);
-
-
-      alert('Dane zostały zaktualizowane!');
-      navigate('/profile');  
+      setSuccess("Pomyślnie zaktulizowano ustawienia");
+      setTimeout(() => navigate('/profile'), 1000);
     } catch (err: any) {
       alert(err.message || 'Nie udało się zapisać ustawień');
     }
   };
 
-  if (!isAuthenticated) {
-    return <p>Nie jesteś zalogowany!</p>;
+  if (!isAuthenticated || !user) {
+    return (<NotAuthenticated/>
+    );   
   }
 
   return (
     <div className="app-container dark-theme">
       <Header/>
       <section className={`${styles.profileContainer} app-container dark-theme`}>
-        {loading ? (
-          <p className={styles.loadingText}>Ładowanie...</p>
+        {loading ? (<Loading/>
         ) : (
           <div className={styles.profileContent}>
             <h1 className={styles.settingsTitle}>Ustawienia Profilu</h1>
+            <Link to={`/profile`} className={styles.backButton}>
+              <i className="fas fa-arrow-left"></i> Powrót
+            </Link>
+            {success && <div className={styles.successMessage}>{success}</div>}
+            {error && <p className={styles.errorMessage}>{error}</p>}
             <form onSubmit={handleSubmit} className={styles.settingsForm}>
               <div className={styles.formGrid}>
                 <div className={styles.formColumn}>
@@ -154,9 +160,6 @@ const Settings: React.FC = () => {
                           className={styles.fileInput}
                         />
                         <span className={styles.fileInputButton}>Wybierz zdjęcie</span>
-                        {previewImage && (
-                          <span className={styles.fileName}>{previewImage || "Wybrane zdjęcie"}</span>
-                        )}
                       </label>
                     </div>
                   </div>
@@ -245,13 +248,11 @@ const Settings: React.FC = () => {
                       value={formData.description}
                       onChange={handleInputChange}
                       className={styles.formTextarea}
+                      maxLength={300}
                       placeholder="Dodaj opis swojego profilu"
                     />
                   </div>
-                </div>
-              </div>
-
-              <div className={styles.formSection}>
+                  <div className={styles.formSection}>
                 <h3 className={styles.sectionTitle}>Preferencje</h3>
                 <div className={styles.checkboxGroupContainer}>
                   <div className={styles.checkboxGroup}>
@@ -297,6 +298,10 @@ const Settings: React.FC = () => {
                   </div>
                 </div>
               </div>
+                </div>
+              </div>
+
+
 
               <div className={styles.socialLinksSection}>
                 <h3 className={styles.sectionTitle}>Linki społecznościowe</h3>
@@ -320,6 +325,17 @@ const Settings: React.FC = () => {
                     onChange={handleInputChange}
                     className={styles.formInput}
                     placeholder="https://linkedin.com/in/twojprofil"
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Youtube:</label>
+                  <input
+                    type="url"
+                    name="youtubeLink"
+                    value={formData.youtubeLink}
+                    onChange={handleInputChange}
+                    className={styles.formInput}
+                    placeholder="https://youtube.com/twojprofil"
                   />
                 </div>
               </div>

@@ -48,6 +48,7 @@ const SearchOrganisation = () => {
     );   
   }
 
+  { /* Function to search organisations by search phrase */} 
   const handleSearch = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!isAuthenticated || !token || !searchPhrase.trim()) return;
@@ -70,6 +71,7 @@ const SearchOrganisation = () => {
     }
   };
 
+  { /* Function to join organisation or sending request */} 
   const handleJoinOrganisation = async (organisationUniqueName: string, isPrivate: boolean) => {
     if (!isAuthenticated || !token) return;
   
@@ -93,6 +95,7 @@ const SearchOrganisation = () => {
     }
   };
 
+  { /* Function to check if user is a member of organisation */} 
   const checkMembership = async (organisationUniqueName: string) => {
     if (!isAuthenticated || !token) return false;
   

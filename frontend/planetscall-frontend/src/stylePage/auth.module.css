@@ -20,7 +20,7 @@
   background-color: #1e1e1e;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  padding: 50px;
+  padding: 20px 50px 50px;
   border: 1px solid #333;
   position: relative;
   overflow: hidden;
@@ -39,7 +39,7 @@
 .title {
   color: #fff;
   font-size: 32px;
-  margin-bottom: 40px;
+  margin-bottom: 23px;
   text-align: center;
   font-weight: 700;
   position: relative;
@@ -63,7 +63,7 @@
 
 .label {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 7px;
   color: #bbb;
   font-size: 15px;
   font-weight: 500;
@@ -168,8 +168,6 @@
   border-left: 4px solid #4CAF50;
 }
 
-/* ... (include all the other auth styles from your original CSS) ... */
-
 @media (max-width: 768px) {
   .blockCode {
     padding: 0 20px;
@@ -213,4 +211,47 @@
 .input:disabled {
   background-color: #f0f0f0;
   cursor: not-allowed;
+}
+
+
+
+
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: #bbb;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  accent-color: #4CAF50; 
+  flex-shrink: 0;
+}
+
+.termsLink {
+  color: #4CAF50;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+}
+
+.termsLink:hover {
+  color: #66bb6a;
+  text-decoration: underline;
+}
+
+.checkboxError {
+  color: #ff6b6b;
+  border-left: 3px solid #ff6b6b;
+  padding-left: 10px;
+  margin-top: -15px;
+  margin-bottom: 20px;
+  font-size: 14px;
 }

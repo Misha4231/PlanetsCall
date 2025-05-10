@@ -1,5 +1,5 @@
 
-import { authHeader }  from  "./authHeader";
+import { authHeader }  from  "./headers";
 /*Podzial
 
   - FRIENDS,
@@ -26,10 +26,9 @@ export const getFriends = async (authToken: string, page: number, search: string
   // const d = await response.text();
   // console.log("items" + "\n" + d);
   if (!response.ok) {
-    const errorData = await response.json();
-    console.log(errorData.error);
-    console.log(errorData);
-    throw new Error(errorData.message || 'Nie udało się pobrać listy znajomych.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się pobrać listy znajomych.');
   }
 
   //console.log('API zwróciło:', data);
@@ -52,9 +51,9 @@ export const addFriend = async (authToken: string,  username: string) => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      //console.log("BladA: " + errorText);
-      throw new Error(errorText || 'Nie udało się dodać znajomego');
+      const errorData = await response.json();  
+      console.log(errorData)
+      throw new Error(errorData.errors.CustomValidation[0] || 'Nie udało się dodać znajomego');
     }
   
     //console.log(username);
@@ -107,7 +106,9 @@ export const getMyOrganisations = async (authToken: string, page: number) => {
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać twojej listy organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać twojej listy organizacji.');
   }
 
   const data = await response.json();
@@ -171,10 +172,14 @@ export const createOrganisation = async (authToken: string, organisationData: an
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się utworzyć organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się utworzyć organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const getOrganisationRequests = async (authToken: string, organisationUniqueName: string) => {
@@ -189,11 +194,15 @@ export const getOrganisationRequests = async (authToken: string, organisationUni
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać listy próśb o dołączenie.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać listy próśb o dołączenie.');
   }
   
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const acceptOrganisationRequest = async (authToken: string, organisationUniqueName: string, userId: number) => {
@@ -209,7 +218,9 @@ export const acceptOrganisationRequest = async (authToken: string, organisationU
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się zaakceptować prośby o dołączenie.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się zaakceptować prośby o dołączenie.');
   }
 
   const data = await response;
@@ -230,7 +241,9 @@ export const rejectOrganisationRequest = async (authToken: string, organisationU
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się zaakceptować prośby o dołączenie.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się zaakceptować prośby o dołączenie.');
   }
 
   const data = await response;
@@ -250,10 +263,14 @@ export const getOrganisationUsers = async (authToken: string, organisationUnique
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać listy użytkowników organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać listy użytkowników organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const removeOrganisationUser = async (authToken: string, organisationUniqueName: string, userId: number) => {
@@ -269,7 +286,9 @@ export const removeOrganisationUser = async (authToken: string, organisationUniq
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się usunąć użytkownika z organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się usunąć użytkownika z organizacji.');
   }
 
   const data = await response;
@@ -290,7 +309,9 @@ export const searchOrganisations = async (authToken: string, searchPhrase: strin
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się wyszukać organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się wyszukać organizacji.');
   }  
 
   const data = await response.json();
@@ -311,10 +332,14 @@ export const getOrganisationSettings = async (authToken: string, organisationUni
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać ustawień organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać ustawień organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const updateOrganisationSettings = async (authToken: string, organisationUniqueName: string, settingsData: any) => {
@@ -332,10 +357,14 @@ export const updateOrganisationSettings = async (authToken: string, organisation
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się zaktualizować ustawień organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się zaktualizować ustawień organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const deleteOrganisation = async (authToken: string, organisationUniqueName: string) => {
@@ -351,7 +380,9 @@ export const deleteOrganisation = async (authToken: string, organisationUniqueNa
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się usunąć organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się usunąć organizacji.');
   }
 
   const data = await response; 
@@ -361,7 +392,7 @@ export const deleteOrganisation = async (authToken: string, organisationUniqueNa
 };
 
 
-export const sentVerificationRequest = async (authToken: string, organisationUniqueName: string ) => {
+export const sentVerificationRequest = async (authToken: string, organisationUniqueName: string, verificationMessage:string ) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
@@ -369,17 +400,21 @@ export const sentVerificationRequest = async (authToken: string, organisationUni
   const response = await fetch(`${authHeader()}api/community/Organisations/${organisationUniqueName}/request-verification`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
     },
+    body: JSON.stringify(verificationMessage),
   });
 
 
   if (!response.ok) {
-    throw new Error('Nie udało się nadać wysłać żądania.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||errorData.errors.CustomValidation[0] ||'Nie udało się nadać wysłać żądania.');
   }
-  const data = await response.json(); 
+  const data = await response; 
 
-  return data;
+  return true;
 };
 
 
@@ -403,10 +438,14 @@ export const getOrganisationData = async (authToken: string, organisationUniqueN
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać danych organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać danych organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const getOrganisationRoles = async (authToken: string, organisationName: string) => {
@@ -421,7 +460,9 @@ export const getOrganisationRoles = async (authToken: string, organisationName: 
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się pobrać ról organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się pobrać ról organizacji.');
   }
 
   const data = await response.json();
@@ -443,10 +484,14 @@ export const createOrganisationRole = async (authToken: string, organisationName
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się utworzyć roli w organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się utworzyć roli w organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const updateOrganisationRole = async (authToken: string, organisationName: string, roleId: number, roleData: any) => {
@@ -464,10 +509,14 @@ export const updateOrganisationRole = async (authToken: string, organisationName
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się zaktualizować roli w organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się zaktualizować roli w organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const deleteOrganisationRole = async (authToken: string, organisationName: string, roleId: number) => {
@@ -483,10 +532,14 @@ export const deleteOrganisationRole = async (authToken: string, organisationName
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się usunąć roli w organizacji.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się usunąć roli w organizacji.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const grantOrganisationRole = async (authToken: string, organisationName: string, roleId: number, userId: number ) => {
@@ -502,10 +555,14 @@ export const grantOrganisationRole = async (authToken: string, organisationName:
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się nadać roli użytkownikowi.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się nadać roli użytkownikowi.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };
 
 export const revokeOrganisationRole = async (authToken: string, organisationName: string, roleId: number, userId: number ) => {
@@ -521,8 +578,12 @@ export const revokeOrganisationRole = async (authToken: string, organisationName
   });
 
   if (!response.ok) {
-    throw new Error('Nie udało się odebrać roli użytkownikowi.');
+    const errorData = await response.json();  
+    console.log(errorData)
+    throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało się odebrać roli użytkownikowi.');
   }
 
-  return await response.json();
+  const data = await response.json();
+//console.log(data);
+return data;
 };

@@ -225,7 +225,7 @@ public class UsersRepository(
 
     public void UpdateUserPoints(int userId, int points)
     {
-        var user = GetUserById(userId);
+        var user = GetUserById(userId);        
         if (user is null) return;
         
         int pointsPerLevel = Configuration.GetSection("Settings:PointsPerLevel").Get<int>();

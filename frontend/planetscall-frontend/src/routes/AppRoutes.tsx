@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Home from '../pages/home/Home';
 import '../stylePage/styles.css';
 
-import { createBrowserRouter, Link, RouterProvider, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, Link, RouterProvider, useLocation, useMatches, useNavigate } from 'react-router-dom';
 
 //import NotFound from '../pages/NotFound/NotFound';
 
@@ -17,8 +17,6 @@ import SignUp from '../pages/auth/SignUp';
 import Profile from '../pages/profile/Profile';
 import UserProfile from '../pages/people/UsersProfile';
 import Statistics from '../pages/profile/Statistics';
-import Achievements from '../pages/profile/Achievements';
-import LevelTree from '../pages/profile/LevelTree';
 import ChangePassword from '../pages/auth/ChangePassword';
 import ForgotPassword from '../pages/auth/ForgotPassword';
 import ActivateAccount from '../pages/auth/ActivateAccount';
@@ -29,175 +27,278 @@ import CommunitySettings from '../pages/community/CommunitySettings';
 import Organisations from '../pages/organisations/Organisations';
 import CreateOrganisation from '../pages/organisations/CreateOrganisation';
 import AnOrganisation from '../pages/organisations/AnOrganisation';
-import OrganisationAdmin from '../pages/organisations/OrganisationAdmin';
-import OrganisationSettings from '../pages/organisations/OrganisationSettings';
+import OrganisationAdmin from '../pages/organisations/organisationAdmin/OrganisationAdmin';
+import OrganisationSettings from '../pages/organisations/organisationAdmin/OrganisationSettings';
 import TaskList from '../pages/tasks/TaskList';
 import TaskDetails from '../pages/tasks/TaskDetails';
 import AdminMain from '../pages/admin/AdminMain';
-import Verification from '../pages/admin/AdminOrganisations';
-import Task from '../pages/admin/AdminTaskInfo';
-import TaskSettings from '../pages/admin/AdminTaskSettings';
-import OrganisationTaskManagement from '../pages/organisations/OrganisationTaskManagement';
+import OrganisationTaskManagement from '../pages/organisations/organisationAdmin/OrganisationTask';
 import AdminOrganisations from '../pages/admin/AdminOrganisations';
 import AdminUsers from '../pages/admin/AdminUsers';
 import AdminTasks from '../pages/admin/AdminTasks';
-import AdminTaskInfo from '../pages/admin/AdminTaskInfo';
-import AdminTaskSettings from '../pages/admin/AdminTaskSettings';
+import AdminTaskInfo from '../pages/admin/task/AdminTaskInfo';
+import AdminTaskSettings from '../pages/admin/task/AdminTaskSettings';
 import People from '../pages/people/People';
 import SearchOrganisation from '../pages/organisations/SearchOrganisation';
+import AdminShop from '../pages/admin/AdminShop';
+import AdminShopCategory from '../pages/admin/shop/AdminShopCategory';
+import AdminShopCreateCategory from '../pages/admin/shop/AdminShopCreateCategory';
+import AdminShopEditCategory from '../pages/admin/shop/AdminShopEditCategory';
+import AdminShopEditItem from '../pages/admin/shop/AdminShopEditItem';
+import OrganisationCreateTask from '../pages/organisations/organisationAdmin/OrganisationCreateTask';
+import AdminTaskCreate from '../pages/admin/task/AdminTaskCreate';
+import AdminTaskAllVerification from '../pages/admin/task/AdminTaskAllVerification';
+import AdminVerificationInfo from '../pages/admin/task/AdminVerificationInfo';
+import AdminShopCreateItem from '../pages/admin/shop/AdminShopCreateItem';
+import TitleUpdater from '../hooks/TitleChanger';
+import RootLayout from '../components/RootLayout';
+import ProfileItems from '../pages/profile/ProfileItems';
 
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Home />,
-    /*errorElement: <NotFound/>*/
-  },
-
-  //LOGIN
-  {
-    path: '/auth/sign-in',
-    element: <SignIn />,
-  },
-  {
-    path: '/auth/sign-up',
-    element: <SignUp />,
-  },
-  {
-    path: '/auth/change-password',
-    element: <ChangePassword />,
-  },
-  {
-    path: '/auth/forgot-password',
-    element: <ForgotPassword />,
-  },
-  {
-    path: '/auth/activate-account',
-    element: <ActivateAccount />,
-  },
-
-
-  {
-    path: '/profile/settings',
-    element: <Settings />
-  },
-  {
-    path: '/profile',
-    element: <Profile/>
-  },
-  {
-    path: '/profile/level',
-    element: <LevelTree />
-  },
-  {
-    path: '/profile/achievements',
-    element: <Achievements />
-  },
-  {
-    path: '/profile/statistics',
-    element: <Statistics />
-  },
-  {
-    path: '/profile/level-tree',
-    element: <LevelTree/>
-  },
-
-  
-  {
-    path: '/community',
-    element: <CommunityMain />
-  },
-  {
-    path: '/community/settings',
-    element: <CommunitySettings/>
-  },
-
-  
-  {
-    path: '/community/users',
-    element: <People />
-  },
-  {
-    path: '/community/friends',
-    element: <Friends/>
-  },
-  {
-    path: '/user/:userName',
-    element: <UserProfile />
-  },
-
-
-
-
-
-  {
-    path: '/community/organisation/:organisationUniqueName/admin',
-    element: <OrganisationAdmin/>
-  },
-  {
-    path: '/community/organisation/:organisationUniqueName',
-    element: <AnOrganisation/>
-  },
-  {
-    path: '/community/organisations/create',
-    element: <CreateOrganisation/>
-  },
-  {
-    path: '/community/organisations',
-    element: <Organisations/>
-  },
-  {
-    path: '/community/organisations/search',
-    element: <SearchOrganisation/>
-  },
-  {
-    path: '/community/organisation/:organisationUniqueName/settings',
-    element: <OrganisationSettings/>
-  },
-  {
-    path: '/community/organisation/:organisationUniqueName/settings/tasks',
-    element: <OrganisationTaskManagement/>
-  },
-  
-  {
-    path: '/shop',
-    element: <Shop />
-  },
-  {
-    path: '/tasks',
-    element: <TaskList />
-  },
-  {
-    path: '/task/:taskId',
-    element: <TaskDetails />
-  },
-
-  
-  {
-    path: '/admin',
-    element: <AdminMain />
-  },
-  {
-    path: '/admin/organisations',
-    element: <AdminOrganisations />
-  },
-  {
-    path: '/admin/users',
-    element: <AdminUsers />
-  },
-  {
-    path: '/admin/tasks',
-    element: <AdminTasks />
-  },
-  {
-    path: '/admin/organisations/task/:taskId',
-    element: <AdminTaskInfo />
-  },
-  {
-    path: '/admin/organisations/task/:taskId/settings',
-    element: <AdminTaskSettings />
-  },
+    element: <RootLayout />, 
+    children:
+    [
+      {
+        path: '/',
+        element: <Home />,
+        handle: { title: "Strona Główna | Planet's Call" },
+      },
+    
+      // LOGIN
+      {
+        path: '/auth/sign-in',
+        element: <SignIn />,
+        handle: { title: "Zaloguj się | Planet's Call" }
+      },
+      {
+        path: '/auth/sign-up',
+        element: <SignUp />,
+        handle: { title: "Zarejestruj się | Planet's Call" }
+      },
+      {
+        path: '/auth/change-password',
+        element: <ChangePassword />,
+        handle: { title: "Zmień hasło | Planet's Call" },
+      },
+      {
+        path: '/auth/forgot-password',
+        element: <ForgotPassword />,
+        handle: { title: "Zapomniałeś hasła? | Planet's Call" },
+      },
+      {
+        path: '/auth/activate-account',
+        element: <ActivateAccount />,
+        handle: { title: "Aktywuj konto | Planet's Call" },
+      },
+    
+      // PROFILE
+      {
+        path: '/profile/settings',
+        element: <Settings />,
+        handle: { title: "Ustawienia profilu | Planet's Call" }
+      },
+      {
+        path: '/profile',
+        element: <Profile />,
+        handle: { title: "Mój profil | Planet's Call" }
+      },
+      {
+        path: '/profile/ecorus',
+        element: <ProfileItems />,
+        handle: { title: "Ecorus | Planet's Call" }
+      },
+      {
+        path: '/profile/:username/statistics',
+        element: <Statistics />,
+        handle: { title: "Statystyki | Planet's Call" }
+      },
+    
+      // COMMUNITY
+      {
+        path: '/community',
+        element: <CommunityMain />,
+        handle: { title: "Społeczność | Planet's Call" }
+      },
+      {
+        path: '/community/settings',
+        element: <CommunitySettings />,
+        handle: { title: "Ustawienia społeczności | Planet's Call" }
+      },
+      {
+        path: '/community/users',
+        element: <People />,
+        handle: { title: "Użytkownicy | Planet's Call" }
+      },
+      {
+        path: '/community/friends',
+        element: <Friends />,
+        handle: { title: "Znajomi | Planet's Call" }
+      },
+      {
+        path: '/user/:userName',
+        element: <UserProfile />,
+        handle: { title: "Profil użytkownika | Planet's Call" }
+      },
+    
+      // ORGANISATIONS
+      {
+        path: '/community/organisation/:organisationUniqueName/admin',
+        element: <OrganisationAdmin />,
+        handle: { title: "Administracja organizacji | Planet's Call" }
+      },
+      {
+        path: '/community/organisation/:organisationUniqueName',
+        element: <AnOrganisation />,
+        handle: { title: "Organizacja | Planet's Call" }
+      },
+      {
+        path: '/community/organisations/create',
+        element: <CreateOrganisation />,
+        handle: { title: "Utwórz organizację | Planet's Call" }
+      },
+      {
+        path: '/community/organisations',
+        element: <Organisations />,
+        handle: { title: "Organizacje | Planet's Call" }
+      },
+      {
+        path: '/community/organisations/search',
+        element: <SearchOrganisation />,
+        handle: { title: "Szukaj organizacji | Planet's Call" }
+      },
+      {
+        path: '/community/organisation/:organisationUniqueName/settings',
+        element: <OrganisationSettings />,
+        handle: { title: "Ustawienia organizacji | Planet's Call" }
+      },
+      {
+        path: '/community/organisation/:organisationUniqueName/tasks',
+        element: <OrganisationTaskManagement />,
+        handle: { title: "Zarządzanie zadaniami | Planet's Call" }
+      },
+      {
+        path: '/community/organisation/:organisationUniqueName/tasks/create',
+        element: <OrganisationCreateTask />,
+        handle: { title: "Nowe zadanie | Planet's Call" }
+      },
+    
+      // SHOP & TASKS
+      {
+        path: '/shop',
+        element: <Shop />,
+        handle: { title: "Sklep | Planet's Call" }
+      },
+      {
+        path: '/tasks',
+        element: <TaskList />,
+        handle: { title: "Lista zadań | Planet's Call" }
+      },
+      {
+        path: '/task/:taskId',
+        element: <TaskDetails />,
+        handle: { title: "Szczegóły zadania | Planet's Call" }
+      },
+    
+      // ADMIN
+      {
+        path: '/admin',
+        element: <AdminMain />,
+        handle: { title: "Panel administratora | Planet's Call" }
+      },
+      {
+        path: '/admin/organisations',
+        element: <AdminOrganisations />,
+        handle: { title: "Organizacje (Admin) | Planet's Call" }
+      },
+      {
+        path: '/admin/shop',
+        element: <AdminShop />,
+        handle: { title: "Sklep (Admin) | Planet's Call" }
+      },
+      {
+        path: '/admin/shop/category/:id',
+        element: <AdminShopCategory />,
+        handle: { title: "Kategoria sklepu | Planet's Call" }
+      },
+      {
+        path: '/admin/shop/create-category',
+        element: <AdminShopCreateCategory />,
+        handle: { title: "Nowa kategoria | Planet's Call" }
+      },
+      {
+        path: '/admin/shop/category/:categoryId/create-item',
+        element: <AdminShopCreateItem />,
+        handle: { title: "Nowy przedmiot | Planet's Call" }
+      },
+      {
+        path: '/admin/shop/category/:id/edit',
+        element: <AdminShopEditCategory />,
+        handle: { title: "Edytuj kategorię | Planet's Call" }
+      },
+      {
+        path: '/admin/shop/category/:categoryIdParm/item/:itemId/edit',
+        element: <AdminShopEditItem />,
+        handle: { title: "Edytuj przedmiot | Planet's Call" }
+      },
+      {
+        path: '/admin/users',
+        element: <AdminUsers />,
+        handle: { title: "Użytkownicy (Admin) | Planet's Call" }
+      },
+      {
+        path: '/admin/tasks',
+        element: <AdminTasks />,
+        handle: { title: "Zadania (Admin) | Planet's Call" }
+      },
+      {
+        path: '/admin/task/create',
+        element: <AdminTaskCreate />,
+        handle: { title: "Nowe zadanie (Admin) | Planet's Call" }
+      },
+      {
+        path: '/admin/task/overwatch',
+        element: <AdminTaskAllVerification />,
+        handle: { title: "Weryfikacje zadań | Planet's Call" }
+      },
+      {
+        path: '/admin/task/overwatch/:verId',
+        element: <AdminVerificationInfo />,
+        handle: { title: "Szczegóły weryfikacji | Planet's Call" }
+      },
+      {
+        path: '/task/overwatch',
+        element: <AdminTaskAllVerification />,
+        handle: { title: "Weryfikacje zadań | Planet's Call" }
+      },
+      {
+        path: '/task/overwatch/:verId',
+        element: <AdminVerificationInfo />,
+        handle: { title: "Szczegóły weryfikacji | Planet's Call" }
+      },
+      {
+        path: '/admin/organisations/task/:taskId',
+        element: <AdminTaskInfo />,
+        handle: { title: "Informacje o zadaniu | Planet's Call" }
+      },
+      {
+        path: '/admin/organisations/task/:taskId/settings',
+        element: <AdminTaskSettings />,
+        handle: { title: "Ustawienia zadania | Planet's Call" }
+      },
+    
+      // NOT FOUND
+      {
+        path: '*',
+        element: <NotFound />,
+        handle: { title: "Nie znaleziono strony | Planet's Call" }
+      }
+    ]
+},
 ]);
+
 
 
 
@@ -214,8 +315,7 @@ const PrivateRoute: React.FC<{ component: JSX.Element }> = ({ component }) => {
 const AppRoutes: React.FC = () => {
   return (
     <AuthProvider>
-      
-      <RouterProvider router={router} />
+      <RouterProvider router={router}/>
     </AuthProvider>
   );
 };

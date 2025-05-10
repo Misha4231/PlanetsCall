@@ -1,6 +1,6 @@
 
 import { User } from "../context/AuthContext";
-import { authHeader }  from  "./authHeader";
+import { authHeader }  from  "./headers";
 
 export interface Users {
     items: UserProfile[];
