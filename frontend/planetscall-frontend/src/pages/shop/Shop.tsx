@@ -193,7 +193,7 @@ const Shop: React.FC = () => {
                           className={`${styles.actionButton} ${styles.tryButton}`}
                           onClick={() => setSelectedItem(item)}
                         >
-                          Załóż
+                          Sprawdź
                         </button>
                       </div>
                     </div>
@@ -229,7 +229,16 @@ const Shop: React.FC = () => {
          
           <div className={`${styles.previewImage}`}>
             <div className={styles.imageWrapper}>
-              <Ecorus className={styles.characterBody} />
+              
+                {categories.find(c => c.id === selectedCategory)?.title == 'Hełmy' ? (
+                   <Ecorus className={styles.characterBody} variant='hat' />
+
+                ) : categories.find(c => c.id === selectedCategory)?.title == 'Kostiumy całe' ? (
+                   <Ecorus className={styles.characterBody} variant='noHair' />
+
+                ) : (
+                    <Ecorus className={styles.characterBody} />
+                )}
               <img 
                 src={imageUrl() + selectedItem.image} 
                 alt={selectedItem.title} 

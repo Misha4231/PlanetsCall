@@ -32,6 +32,7 @@ const OrganisationAdmin = () => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingForm, setLoadingForm] = useState<boolean>(false);
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -88,7 +89,7 @@ const OrganisationAdmin = () => {
 { /* Accepting request from user to join organisation if its private */} 
 const handleAcceptRequest = async (userId: number) =>{
         if (!isAuthenticated || !token) return;
-        setLoading(true);
+        setLoadingForm(true);
         setError(null);
         setSuccess(null);
     
@@ -109,14 +110,14 @@ const handleAcceptRequest = async (userId: number) =>{
         } catch (err: any) {
           setError(err.message);
         } finally {
-          setLoading(false);
+          setLoadingForm(false);
         }
 }
 
 { /* Decline request from user to join organisation if its private */} 
 const handleDeleteRequest = async (userId: number) =>{
   if (!isAuthenticated || !token) return;
-  setLoading(true);
+  setLoadingForm(true);
   setError(null);
   setSuccess(null);
     
@@ -134,14 +135,14 @@ const handleDeleteRequest = async (userId: number) =>{
       } catch (err: any) {
         setError(err.message);
       } finally {
-        setLoading(false);
+        setLoadingForm(false);
       }
 }
 
 { /* Delete user from organisation */}
 const handleDeleteUser = async (userId: number) =>{
       if (!isAuthenticated || !token) return;
-      setLoading(true);
+      setLoadingForm(true);
       setError(null);
       setSuccess(null);
     
@@ -159,16 +160,17 @@ const handleDeleteUser = async (userId: number) =>{
       } catch (err: any) {
         setError(err.message);
       } finally {
-        setLoading(false);
+        setLoadingForm(false);
       }
 }
 
 { /* Sent Request to verify organisation to main admin */}
 const handleSentRequestToVerify = async () =>{
   if (!isAuthenticated || !token) return;
-  setLoading(true);
+  setLoadingForm(true);
   setError(null);
   setSuccess(null);
+  setShowVerificationModal(false);
 
   try {
     if(!organisationUniqueName) {
@@ -178,17 +180,17 @@ const handleSentRequestToVerify = async () =>{
     const authToken = token || '';
     await sentVerificationRequest(authToken, organisationUniqueName, verificationMessage);
     setSuccess('Prośba o weryfikację została wysłana!');
-    setShowVerificationModal(false);
     setVerificationMessage('');
 
 
   } catch (err: any) {
     if(err.message == "Request was already sent"){
+    setSuccess('Prośba o weryfikację została już wysłana!');
       setRequestSent(true);
     }
     setError(err.message);
   } finally {
-    setLoading(false);
+    setLoadingForm(false);
   }
 }
 
@@ -197,7 +199,7 @@ const handleSentRequestToVerify = async () =>{
 const handleDeleteOrganisation = async () =>{
   if (!isAuthenticated || !token) return;
   setShowDeleteConfirmation(false);
-  setLoading(true);
+  setLoadingForm(true);
   setError(null);
   setSuccess(null);
 
@@ -217,7 +219,7 @@ try {
   } catch (err: any) {
     setError(err.message);
   } finally {
-    setLoading(false);
+    setLoadingForm(false);
   }
 }
 
@@ -225,8 +227,6 @@ return (
   <div className="app-container dark-theme">
     <Header />
     <section className={styles.adminContainer}>
-      {success && <div className={styles.successMessage}>{success}</div>}
-      {error && <div className={styles.errorMessage}>{error}</div>}
       
       {loading ? (
         <Loading/>
@@ -237,28 +237,30 @@ return (
             <button
               className={styles.dangerButton}
               onClick={() => setShowDeleteConfirmation(true)}
-              disabled={loading}
+              disabled={loadingForm}
             >
               Usuń Organizację
             </button>
           </div>
+          {success && <div className={styles.successMessage}>{success}</div>}
+          {error && <div className={styles.errorMessage}>{error}</div>}
 
           <div className={styles.adminNav}>
             <Link 
                 to={`/community/organisation/${organisationUniqueName}`} 
-                className={styles.adminNavLink}
+                className={styles.backButton}
               >
               <i className="fas fa-arrow-left"></i> Powrót
             </Link>
             <Link 
               to={`/community/organisation/${organisationUniqueName}/settings`}
-              className={styles.adminNavLink}
+              className={`${styles.backButton} ${styles.right}`}
             >
               Ustawienia
             </Link>
             <Link 
               to={`/community/organisation/${organisationUniqueName}/tasks`}
-              className={styles.adminNavLink}
+              className={styles.backButton}
             >
               Zadania
             </Link>
@@ -267,9 +269,9 @@ return (
           {(!organisation?.isVerified && !requestSent) && (
             <>
                 <button
-                    className={styles.primaryButton}
+              className={`${styles.primaryButton} ${styles.backButton}`}
                     onClick={() => setShowVerificationModal(true)}
-                    disabled={loading}
+                    disabled={loadingForm}
                 >
                     Wyślij prośbę o weryfikację organizacji
                 </button>
@@ -298,14 +300,14 @@ return (
                         <button
                           className={`${styles.actionButton} ${styles.acceptButton}`}
                           onClick={() => handleAcceptRequest(us.id)}
-                          disabled={loading}
+                          disabled={loadingForm}
                         >
                           Zaakceptuj
                         </button>
                         <button
                           className={`${styles.actionButton} ${styles.rejectButton}`}
                           onClick={() => handleDeleteRequest(us.id)}
-                          disabled={loading}
+                          disabled={loadingForm}
                         >
                           Odrzuć
                         </button>
@@ -352,7 +354,7 @@ return (
                       <button
                         className={`${styles.actionButton} ${styles.removeButton}`}
                         onClick={() => handleDeleteUser(member.id)}
-                        disabled={loading}
+                        disabled={loadingForm}
                       >
                         Usuń
                       </button>
@@ -393,9 +395,9 @@ return (
                     <button
                         className={`${styles.actionButton} ${styles.primaryButton}`}
                         onClick={handleSentRequestToVerify}
-                        disabled={loading}
+                        disabled={loadingForm}
                     >
-                        {loading ? 'Wysyłanie...' : 'Wyślij prośbę'}
+                        {loadingForm ? 'Wysyłanie...' : 'Wyślij prośbę'}
                     </button>
                 </div>
             </div>
@@ -418,9 +420,9 @@ return (
             <button
               className={`${styles.actionButton} ${styles.dangerButton}`}
               onClick={handleDeleteOrganisation}
-              disabled={loading}
+              disabled={loadingForm}
             >
-              {loading ? 'Usuwanie...' : 'Usuń organizację'}
+              {loadingForm ? 'Usuwanie...' : 'Usuń organizację'}
             </button>
           </div>
         </div>

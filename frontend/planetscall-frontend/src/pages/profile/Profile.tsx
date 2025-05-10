@@ -218,8 +218,22 @@ useEffect(() => {
                   
                   <div className={styles.ecorusContent}>
                     <div className={`${styles.profilePreviewImage}`}>
-                        <div className={styles.profileImageWrapper}>
-                            <Ecorus className={styles.profileEcorusImage} />
+                        <div className={styles.profileImageWrapper}>                                
+                          {(() => {
+                            const helmetCategory = categories.find(c => c.title === 'Hełmy');
+                            const costumeCategory = categories.find(c => c.title === 'Kostiumy całe');
+
+                            const hasHelmet = helmetCategory && selectedItems.some(item => item.categoryId === helmetCategory.id);
+                            const hasCostume = costumeCategory && selectedItems.some(item => item.categoryId === costumeCategory.id);
+
+                            if (hasHelmet) {
+                              return <Ecorus className={styles.profileEcorusImage} variant="hat" />;
+                            } else if (hasCostume) {
+                              return <Ecorus className={styles.profileEcorusImage} variant="noHair" />;
+                            } else {
+                              return <Ecorus className={styles.profileEcorusImage} />;
+                            }
+                          })()}
                             {selectedItems.map((item) => (
                             <div key={item.id}>
                                 <img src={imageUrl() + item.image} alt={item.title} className={styles.profileCharacterClothes} />

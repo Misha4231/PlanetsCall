@@ -816,3 +816,63 @@ object-fit: contain;
     background-color: #4CAF50;
     transform: translateX(-3px);
 }
+
+
+.deleteButton:hover:not(:disabled) {
+    font-weight: bold;
+    transform: translateY(-2px);
+    background-color: #b62929;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.deleteButton{
+    background-color: #b62929;
+    font-weight: bold;
+}
+
+  
+.hiddenLinkUser{
+    text-decoration: none;
+    margin-right: 20px;
+    font-weight: normal;
+    font-size: 24px;
+  }
+
+.hiddenLinkUser:hover {
+    transition: all 0.1s ease;
+    font-weight: bold;
+  }
+
+.Instagram{
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.LinkedIn{
+  color: rgb(0, 119, 181);
+}
+
+.YouTube{
+  color: rgb(254, 8, 58);
+}
+
+
+  .notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    animation: slideIn 0.3s forwards;
+    z-index: 1000;
+    font-weight: 500;
+  }
+  
+  .successNotification {
+    background-color: #4CAF50;
+  }
+  
+  .errorNotification {
+    background-color: #f44336;
+  }

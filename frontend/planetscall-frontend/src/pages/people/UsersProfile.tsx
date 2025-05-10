@@ -26,8 +26,10 @@ const UsersProfile = () => {
   const [selectedItems, setSelectedItems] = useState<Items[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingForm, setLoadingForm] = useState<boolean>(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [serverStatus, setServerStatus] = useState<{success: boolean, message: string} | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -72,28 +74,35 @@ const UsersProfile = () => {
   const handleAddFriend = async () => {
     if (!token || !anotherUser) return;
     try {
-      setLoading(true);
+      setLoadingForm(true);
       await addFriend(token, anotherUser.username);
       setIsFriend(true);
-      setSuccess('Znajomy został dodany pomyślnie.');
+      setServerStatus({success: true, message: 'Znajomy został dodany!'});
+      setTimeout(() => setServerStatus(null), 3000);
     } catch (err: any) {
-      setError(err.message);
+      const message = err.message;
+      setServerStatus({success: false, message});
+      setTimeout(() => setServerStatus(null), 3000);
     } finally {
-      setLoading(false);
+      setLoadingForm(false);
     }
   };
+
 
   const handleRemoveFriend = async () => {
     if (!token || !anotherUser) return;
     try {
-      setLoading(true);
+      setLoadingForm(true);
       await removeFriend(token, anotherUser.username);
       setIsFriend(false);
-      setSuccess('Znajomy został usunięty pomyślnie.');
+      setServerStatus({success: true, message: 'Znajomy został usunięty!'});
+      setTimeout(() => setServerStatus(null), 3000);
     } catch (err: any) {
-      setError(err.message);
+      const message = err.message;
+      setServerStatus({success: false, message});
+      setTimeout(() => setServerStatus(null), 3000);
     } finally {
-      setLoading(false);
+      setLoadingForm(false);
     }
   };
 
@@ -118,6 +127,41 @@ const UsersProfile = () => {
                     <i className="fas fa-user"></i>
                   </div>
                 )}
+                
+                    <div className={styles.avatarControls}>
+                      {isAuthenticated && (
+                        !isFriend ? (
+                          <button onClick={handleAddFriend} disabled={loadingForm} className={styles.primaryButton}>
+                            
+                          {loadingForm ? (
+                            <>
+                              <i className="fas fa-spinner fa-spin"></i> Dodawanie...
+                            </>
+                            ) : (
+                            <>
+                           <i className="fas fa-plus"></i>  Dodaj do znajomych
+                            </>
+                            )}
+                          </button>
+                        ) : (
+                          <button onClick={handleRemoveFriend}  disabled={loadingForm} className={`${styles.primaryButton} ${styles.deleteButton}`}>
+                            
+                          {loadingForm ? (
+                            <>
+                              <i className="fas fa-spinner fa-spin"></i> Usuwanie...
+                            </>
+                            ) : (
+                            <>
+                            <i className="fas fa-trash"></i> Usuń znajomego
+                            </>
+                            )}
+                          </button>
+                        )
+                      )}
+                      <Link to={`/profile/${anotherUser.username}/statistics`}>
+                        <button className={`${styles.editButton} ${styles.smallerButton} ${styles.statystyka}`}>Statystyka</button>
+                      </Link>
+                    </div>
               </div>
 
               <div className={styles.flexMeBlock}>
@@ -149,30 +193,26 @@ const UsersProfile = () => {
                       </div>
                     </div>
 
-                    <div>
-                      {isAuthenticated && (
-                        !isFriend ? (
-                          <button onClick={handleAddFriend} className={styles.editButton}>
-                            Dodaj do znajomych
-                          </button>
-                        ) : (
-                          <button onClick={handleRemoveFriend} className={styles.editButton}>
-                            Usuń znajomego
-                          </button>
-                        )
-                      )}
-                      {success && <p style={{ color: 'green' }}>{success}</p>}
-                      {error && <p style={{ color: 'red' }}>{error}</p>}
-                      <Link to={`/profile/${anotherUser.username}/statistics`}>
-                        <button className={`${styles.editButton} ${styles.smallerButton} ${styles.statystyka}`}>Statystyka</button>
-                      </Link>
-                    </div>
                   </div>
                 </section>
 
                 <div className={styles.ecorusContent}>
-                  <div className={styles.profileImageWrapper}>
-                    <Ecorus className={styles.profileEcorusImage} />
+                  <div className={styles.profileImageWrapper}>                             
+                    {(() => {
+                      const helmetCategory = categories.find(c => c.title === 'Hełmy');
+                      const costumeCategory = categories.find(c => c.title === 'Kostiumy całe');
+
+                      const hasHelmet = helmetCategory && selectedItems.some(item => item.categoryId === helmetCategory.id);
+                      const hasCostume = costumeCategory && selectedItems.some(item => item.categoryId === costumeCategory.id);
+
+                      if (hasHelmet) {
+                        return <Ecorus className={styles.profileEcorusImage} variant="hat" />;
+                      } else if (hasCostume) {
+                        return <Ecorus className={styles.profileEcorusImage} variant="noHair" />;
+                      } else {
+                        return <Ecorus className={styles.profileEcorusImage} />;
+                      }
+                    })()}
                     {selectedItems.map((item) => (
                       <div key={item.id}>
                         <img
@@ -206,21 +246,21 @@ const UsersProfile = () => {
                     <ul>
                       {anotherUser.instagramLink && (
                         <li>
-                          <a href={anotherUser.instagramLink} target="_blank" rel="noopener noreferrer">
+                          <a href={anotherUser.instagramLink} target="_blank" rel="noopener noreferrer" className={`${styles.hiddenLinkUser} ${styles.Instagram}`}>
                             <i className="fab fa-instagram"></i> Instagram
                           </a>
                         </li>
                       )}
                       {anotherUser.linkedinLink && (
                         <li>
-                          <a href={anotherUser.linkedinLink} target="_blank" rel="noopener noreferrer">
+                          <a href={anotherUser.linkedinLink} target="_blank" rel="noopener noreferrer" className={`${styles.hiddenLinkUser} ${styles.LinkedIn}`}>
                             <i className="fab fa-linkedin"></i> LinkedIn
                           </a>
                         </li>
                       )}
                       {anotherUser.youtubeLink && (
                         <li>
-                          <a href={anotherUser.youtubeLink} target="_blank" rel="noopener noreferrer">
+                          <a href={anotherUser.youtubeLink} target="_blank" rel="noopener noreferrer" className={`${styles.hiddenLinkUser} ${styles.YouTube}`}>
                             <i className="fab fa-youtube"></i> YouTube
                           </a>
                         </li>
@@ -233,6 +273,11 @@ const UsersProfile = () => {
           </div>
         )}
       </section>
+      {serverStatus && (
+        <div className={`${styles.notification} ${serverStatus.success ? styles.successNotification : styles.errorNotification}`}>
+          {serverStatus.message}
+        </div>
+      )}
       <Footer />
     </div>
   );

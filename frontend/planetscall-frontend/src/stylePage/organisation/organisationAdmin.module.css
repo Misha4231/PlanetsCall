@@ -247,7 +247,10 @@
       align-items: flex-start;
       gap: 12px;
     }
-  
+    .right{
+      margin-left: 0px;
+    }
+      
     .actions {
       width: 100%;
       justify-content: flex-end;
@@ -693,4 +696,9 @@
   text-align: center;
   font-size: 15px;
   border-left: 4px solid #4CAF50;
+}
+
+
+.right{
+  margin-left: 40px;
 }

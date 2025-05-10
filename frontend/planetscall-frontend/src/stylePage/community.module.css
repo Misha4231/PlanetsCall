@@ -516,3 +516,62 @@
   }
 
 
+
+  
+  .notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    animation: slideIn 0.3s forwards;
+    z-index: 1000;
+    font-weight: 500;
+  }
+  
+  .successNotification {
+    background-color: #4CAF50;
+  }
+  
+  .errorNotification {
+    background-color: #f44336;
+  }
+
+
+
+  
+.primaryButton, .secondaryButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.primaryButton {
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+}
+
+.primaryButton:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.deleteButton:hover:not(:disabled) {
+    font-weight: bold;
+    transform: translateY(-2px);
+    background-color: #b62929;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.deleteButton{
+    background-color: #b62929;
+    font-weight: bold;
+}

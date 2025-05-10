@@ -9,6 +9,7 @@ import styles from '../../stylePage/admin/adminUser.module.css';
 import NotAdmin from '../Additional/NotAdmin';
 import NotAuthenticated from '../Additional/NotAuthenticated';
 import { imageUrl } from '../../services/imageConvert';
+import Loading from '../Additional/Loading';
 
 interface OrganisationVerification {
   description:string,
@@ -63,6 +64,7 @@ const AdminOrganisations = () => {
 
     const handleSentResponse = async (organisationUniqueName: string, action: string) => {
         if (!token) return;
+        console.log(organisationUniqueName)
         setLoading(true);
         setError(null);
         setSuccess(null);
@@ -73,7 +75,7 @@ const AdminOrganisations = () => {
             const org = await getOrganisationVerifications(token);
             setOrganisations(org);
         } catch (err: any) {
-            setError(err.message);
+            setError(err.message || "Nie udało się wysłać żądania");
         } finally {
             setLoading(false);
         }
@@ -92,8 +94,7 @@ const AdminOrganisations = () => {
                     <i className="fas fa-arrow-left"></i> Powrót
                   </Link>
               
-              {loading ? (
-                <p>Ładowanie...</p>
+              {loading ? (<Loading/>
               ) : organisations.length > 0 ? (
                 <div className={styles.usersList}>
                 {success && <div className={styles.successMessage}>{success}</div>}

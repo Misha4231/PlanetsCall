@@ -66,14 +66,14 @@ export const getOrganisationVerifications = async (authToken: string ) => {
 
   };
 
-  export const sentResponseToOrganisationVerification = async (authToken: string, organisationUniqueName: string, action:string) => {
+  export const sentResponseToOrganisationVerification = async (authToken: string, organisationName: string, action:string) => {
     if (!authToken) {
       throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
     }
     console.log(action)
     
   
-    const response = await fetch(`${authHeader()}api/admin/organisations/Verification/${organisationUniqueName}/${action}`, {
+    const response = await fetch(`${authHeader()}api/admin/organisations/Verification/${organisationName}/${action}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -81,14 +81,16 @@ export const getOrganisationVerifications = async (authToken: string ) => {
       },
     });
     
+    const data = await response;
+    console.log(data.text())
   
     if (!response.ok) {
-    const errorData = await response.json();  
-    console.log(errorData)
+      const errorData = await response.json();  
+      console.log(errorData)
+      console.log(errorData.errors)
     throw new Error(errorData.errors.CustomValidation[0] ||'Nie udało wysłać żądania.');
     }
   
-    const data = await response;
   
     return true;
   };
