@@ -63,7 +63,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('authToken'));
 
 
-
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
     //console.log(storedToken);
