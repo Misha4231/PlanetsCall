@@ -1,0 +1,2980 @@
+{
+	"info": {
+		"_postman_id": "3adbd59c-15ca-4375-bb6c-057441d5a5b3",
+		"name": "zautomatyzowane_troche",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25457053"
+	},
+	"item": [
+		{
+			"name": "0_SETUP",
+			"item": [
+				{
+					"name": "Create Test1 User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status Code is 200 or 400 (already exists)\", function () {",
+									"    pm.expect([200, 400]).to.include(pm.response.code);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"Test1@gmail.com\",\n  \"username\": \"Test1\",\n  \"passwords\": {\n    \"password\": \"Test123\",\n    \"passwordConfirmation\": \"Test123\"\n  },\n  \"agreedToTermsOfService\": true\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Test1 and Save Token + UserId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"var json = pm.response.json();",
+									"pm.environment.set(\"authToken\", json.accessToken);",
+									"pm.environment.set(\"userId\", json.userId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uniqueIdentifier\": \"user1\",\n  \"password\": \"some_pass123\"\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/sign-in",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "sign_up",
+			"item": [
+				{
+					"name": "Valid_sign_in_username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains accessToken\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"accessToken\");\r",
+									"\r",
+									"    // Zapisujemy token w zmiennej środowiskowej\r",
+									"    pm.environment.set(\"authToken\", jsonData.accessToken);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uniqueIdentifier\": \"user1\",\r\n    \"password\": \"some_pass123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/sign-in",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "InValidTest",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"Test2@gmail,com\",\r\n  \"username\": \"Test2\",\r\n  \"passwords\": {\r\n    \"password\": \"CorrectPassword\",\r\n    \"passwordConfirmation\": \"CorrectPassword\"\r\n  },\r\n  \"agreedToTermsOfService\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth/sign-in",
+			"item": [
+				{
+					"name": "Valid_sign_in_mail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains accessToken\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"accessToken\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uniqueIdentifier\": \"Test1@gmail.com\",\r\n    \"password\": \"Test123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/sign-in",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Valid_sign_in_username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains accessToken\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"accessToken\");\r",
+									"\r",
+									"    // Zapisujemy token w zmiennej środowiskowej\r",
+									"    pm.environment.set(\"authToken\", jsonData.accessToken);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uniqueIdentifier\": \"Test1\",\r\n    \"password\": \"Test123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/sign-in",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid_password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uniqueIdentifier\": \"Test1@gmail.com\",\r\n    \"password\": \"123Test\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/sign-in",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid_email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uniqueIdentifier\": \"nonexistent@example.com\",\r\n    \"password\": \"TestPassword123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/sign-in",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Missing_uniqueIdentifier",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uniqueIdentifier\": \"\",\r\n    \"password\": \"Test123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/sign-in",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Missing_password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uniqueIdentifier\": \"Test1@gmail.com\",\r\n    \"password\": \"\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/sign-in",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Missing_both_fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uniqueIdentifier\": \"\",\r\n    \"password\": \"\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/sign-in",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth/sing-up",
+			"item": [
+				{
+					"name": "Invalid_email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"invalidemail\",\r\n  \"username\": \"user123\",\r\n  \"passwords\": {\r\n    \"password\": \"CorrectPassword\",\r\n    \"passwordConfirmation\": \"CorrectPassword\"\r\n  },\r\n  \"agreedToTermsOfService\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid_password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"username\": \"user123\",\r\n  \"passwords\": {\r\n    \"password\": \"CorrectPassword\",\r\n    \"passwordConfirmation\": \"WrongPassword\"\r\n  },\r\n  \"agreedToTermsOfService\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Terms_not_agreed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"username\": \"user123\",\r\n  \"passwords\": {\r\n    \"password\": \"CorrectPassword\",\r\n    \"passwordConfirmation\": \"CorrectPassword\"\r\n  },\r\n  \"agreedToTermsOfService\": \"false\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate_email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"Test1@gmail.com\",\r\n    \"username\": \"Test1\",\r\n    \"password\": \"Test123\",\r\n    \"passwordConfirmation\": \"Test123\",\r\n    \"agreedToTermsOfService\": true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate_username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"Test@gmail.com\",\r\n  \"username\": \"Test1\",\r\n  \"passwords\": {\r\n    \"password\": \"Test123\",\r\n    \"passwordConfirmation\": \"Test123\"\r\n  },\r\n  \"agreedToTermsOfService\": \"true\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Password_too_short",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"username\": \"user123\",\r\n  \"passwords\": {\r\n    \"password\": \"W123\",\r\n    \"passwordConfirmation\": \"W123\"\r\n  },\r\n  \"agreedToTermsOfService\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upper_case_letter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"username\": \"user123\",\r\n  \"passwords\": {\r\n    \"password\": \"incorrectpassword\",\r\n    \"passwordConfirmation\": \"incorrectpassword\"\r\n  },\r\n  \"agreedToTermsOfService\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Passwords_do_not_match",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"username\": \"user1\",\r\n  \"passwords\": {\r\n    \"password\": \"CorrectPassword\",\r\n    \"passwordConfirmation\": \"Incorrectpassword\"\r\n  },\r\n  \"agreedToTermsOfService\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Missing_username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@example.com\",\r\n  \"username\": \"\",\r\n  \"passwords\": {\r\n    \"password\": \"CorrectPassword\",\r\n    \"passwordConfirmation\": \"CorrectPassword\"\r\n  },\r\n  \"agreedToTermsOfService\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Missing_email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"\",\r\n  \"username\": \"user1\",\r\n  \"passwords\": {\r\n    \"password\": \"CorrectPassword\",\r\n    \"passwordConfirmation\": \"CorrectPassword\"\r\n  },\r\n  \"agreedToTermsOfService\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/development-sign-up",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"development-sign-up"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Friends",
+			"item": [
+				{
+					"name": "list of friends (Test1)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains array of friends\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.items).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/Friends",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Friends"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add non-existent user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Proper error message for not found user\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.title).to.include(\"Not Found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/Friends/{{nonExistentUser}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Friends",
+								"{{nonExistentUser}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add Test1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/Friends/Test1",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Friends",
+								"Test1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "non-existent user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Proper error message for not found user on delete\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.title).to.include(\"Not Found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/Friends/{{nonExistentUser}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Friends",
+								"{{nonExistentUser}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete Test1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/Friends/Test1",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Friends",
+								"Test1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Items",
+			"item": [
+				{
+					"name": "create item - valid data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": 11,\n  \"price\": 0,\n  \"image\": \"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\",\n  \"rarity\": \"white\",\n  \"title\": \"cap\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"head wearings\",\r\n  \"image\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAdElEQVQIWwFpAJb/ARYfFf9iytsA43EuABkh4QDJpsIAAbE87P+RSpsAsbiPANXbOQBQy8cAAW/mCP/WClEA3fuzAHXQ2QAnHVcAAfx8mv8rs1YAfMFKANRPjgC3uk4AAdT4KP8kKFQA2293AP5emgAeskcAXDAso2bi+SoAAAAASUVORK5CYII=\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items/categories",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create item - missing price",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": 11,\n  \"price\": \"\",\n  \"image\": \"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\",\n  \"rarity\": \"white\",\n  \"title\": \"cap\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create item - missing category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": \"\",\n  \"price\": 120,\n  \"image\": \"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\",\n  \"rarity\": \"white\",\n  \"title\": \"cap\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create item - missing image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 500\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": 11,\n  \"price\": 120,\n  \"image\": \"\",\n  \"rarity\": \"white\",\n  \"title\": \"cap\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create item - negative price",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": 11,\n  \"price\": -3,\n  \"image\": \"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\",\n  \"rarity\": \"white\",\n  \"title\": \"cap\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create item - non-existent category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": \"1000000000000\",\n  \"price\": 3,\n  \"image\": \"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\",\n  \"rarity\": \"white\",\n  \"title\": \"cap\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create item - non-numeric price",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": 11,\n  \"price\": \"maslo\",\n  \"image\": \"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\",\n  \"rarity\": \"white\",\n  \"title\": \"cap\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update item - missing price",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": 11,\n  \"price\": \"\",\n  \"image\": \"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\",\n  \"rarity\": \"white\",\n  \"title\": \"cap\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items/1",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update item - non-existent item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": 11,\n  \"price\": 120,\n  \"image\": \"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\",\n  \"rarity\": \"white\",\n  \"title\": \"cap\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Items/999",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items",
+								"999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get item - existing item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/Items/1",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete item - non-existent item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/Items/999",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items",
+								"999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buy item - non-existent item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/Items/buy/999",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Items",
+								"buy",
+								"999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profiles",
+			"item": [
+				{
+					"name": "Auth/me/min",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Auth/me/min",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"me",
+								"min"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auth/me/full",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{domain}}/api/Auth/me/full",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"me",
+								"full"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Not_valid_Base64",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"User1@gmail.com\",\r\n  \"username\": \"User1\",\r\n  \"firstName\": \"User\",\r\n  \"lastName\": \"User\",\r\n  \"birthDate\": \"2025-02-26T21:49:07.362Z\",\r\n  \"passwords\": {\r\n    \"password\": \"User123\",\r\n    \"passwordConfirmation\": \"User123\"\r\n  },\r\n    \"profileImage\": \"profileImage.jpg\",\r\n  \"preferredLanguage\": \"en\",\r\n  \"isNotifiable\": true,\r\n  \"isVisible\": true,\r\n  \"description\": \"Zaawansowany programista\",\r\n  \"instagramLink\": \"https://instagram.com/ania_dev\",\r\n  \"linkedinLink\": \"https://linkedin.com/in/ania-dev\",\r\n  \"youtubeLink\": \"https://youtube.com/c/ania_dev\",\r\n  \"mailsSubscribed\": true,\r\n  \"themePreference\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Profiles/{{userId}}/set-settings",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Profiles",
+								"{{userId}}",
+								"set-settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid_passwords",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"User1@gmail.com\",\r\n  \"username\": \"User1\",\r\n  \"firstName\": \"User\",\r\n  \"lastName\": \"User\",\r\n  \"birthDate\": \"2025-02-26T21:49:07.362Z\",\r\n  \"passwords\": {\r\n    \"password\": \"12\",\r\n    \"passwordConfirmation\": \"12\"\r\n  },\r\n    \"profileImage\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC\",\r\n  \"preferredLanguage\": \"en\",\r\n  \"isNotifiable\": true,\r\n  \"isVisible\": true,\r\n  \"description\": \"Zaawansowany programista\",\r\n  \"instagramLink\": \"https://instagram.com/ania_dev\",\r\n  \"linkedinLink\": \"https://linkedin.com/in/ania-dev\",\r\n  \"youtubeLink\": \"https://youtube.com/c/ania_dev\",\r\n  \"mailsSubscribed\": true,\r\n  \"themePreference\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Profiles/{{userId}}/set-settings",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Profiles",
+								"{{userId}}",
+								"set-settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid_passwords_2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"User1@gmail.com\",\r\n  \"username\": \"User1\",\r\n  \"firstName\": \"User\",\r\n  \"lastName\": \"User\",\r\n  \"birthDate\": \"2025-02-26T21:49:07.362Z\",\r\n  \"passwords\": {\r\n    \"password\": \"user\",\r\n    \"passwordConfirmation\": \"user\"\r\n  },\r\n    \"profileImage\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC\",\r\n  \"preferredLanguage\": \"en\",\r\n  \"isNotifiable\": true,\r\n  \"isVisible\": true,\r\n  \"description\": \"Zaawansowany programista\",\r\n  \"instagramLink\": \"https://instagram.com/ania_dev\",\r\n  \"linkedinLink\": \"https://linkedin.com/in/ania-dev\",\r\n  \"youtubeLink\": \"https://youtube.com/c/ania_dev\",\r\n  \"mailsSubscribed\": true,\r\n  \"themePreference\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Profiles/{{userId}}/set-settings",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Profiles",
+								"{{userId}}",
+								"set-settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid_email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"User1gmail.com\",\r\n  \"username\": \"User1\",\r\n  \"firstName\": \"User\",\r\n  \"lastName\": \"User\",\r\n  \"birthDate\": \"2025-02-26T21:49:07.362Z\",\r\n  \"passwords\": {\r\n    \"password\": \"User123\",\r\n    \"passwordConfirmation\": \"User123\"\r\n  },\r\n    \"profileImage\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC\",\r\n  \"preferredLanguage\": \"en\",\r\n  \"isNotifiable\": true,\r\n  \"isVisible\": true,\r\n  \"description\": \"Zaawansowany programista\",\r\n  \"instagramLink\": \"https://instagram.com/ania_dev\",\r\n  \"linkedinLink\": \"https://linkedin.com/in/ania-dev\",\r\n  \"youtubeLink\": \"https://youtube.com/c/ania_dev\",\r\n  \"mailsSubscribed\": true,\r\n  \"themePreference\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Profiles/{{userId}}/set-settings",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Profiles",
+								"{{userId}}",
+								"set-settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Missing_password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"User1@gmail.com\",\r\n  \"username\": \"User1\",\r\n  \"firstName\": \"User\",\r\n  \"lastName\": \"User\",\r\n  \"birthDate\": \"2025-02-26T21:49:07.362Z\",\r\n  \"passwords\": {\r\n    \"password\": \"\",\r\n    \"passwordConfirmation\": \"\"\r\n  },\r\n    \"profileImage\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC\",\r\n  \"preferredLanguage\": \"en\",\r\n  \"isNotifiable\": true,\r\n  \"isVisible\": true,\r\n  \"description\": \"Zaawansowany programista\",\r\n  \"instagramLink\": \"https://instagram.com/ania_dev\",\r\n  \"linkedinLink\": \"https://linkedin.com/in/ania-dev\",\r\n  \"youtubeLink\": \"https://youtube.com/c/ania_dev\",\r\n  \"mailsSubscribed\": true,\r\n  \"themePreference\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Profiles/{{userId}}/set-settings",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Profiles",
+								"{{userId}}",
+								"set-settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Missing_uniqueIndentifier",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"User1@gmail.com\",\r\n  \"username\": \"\",\r\n  \"firstName\": \"User\",\r\n  \"lastName\": \"User\",\r\n  \"birthDate\": \"2025-02-26T21:49:07.362Z\",\r\n  \"passwords\": {\r\n    \"password\": \"User123\",\r\n    \"passwordConfirmation\": \"User123\"\r\n  },\r\n    \"profileImage\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC\",\r\n  \"preferredLanguage\": \"en\",\r\n  \"isNotifiable\": true,\r\n  \"isVisible\": true,\r\n  \"description\": \"Zaawansowany programista\",\r\n  \"instagramLink\": \"https://instagram.com/ania_dev\",\r\n  \"linkedinLink\": \"https://linkedin.com/in/ania-dev\",\r\n  \"youtubeLink\": \"https://youtube.com/c/ania_dev\",\r\n  \"mailsSubscribed\": true,\r\n  \"themePreference\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Profiles/{{userId}}/set-settings",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Profiles",
+								"{{userId}}",
+								"set-settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Diffrent_passwords",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"User1@gmail.com\",\r\n  \"username\": \"User1\",\r\n  \"firstName\": \"User\",\r\n  \"lastName\": \"User\",\r\n  \"birthDate\": \"2025-02-26T21:49:07.362Z\",\r\n  \"passwords\": {\r\n    \"password\": \"User123\",\r\n    \"passwordConfirmation\": \"User123456\"\r\n  },\r\n    \"profileImage\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC\",\r\n  \"preferredLanguage\": \"en\",\r\n  \"isNotifiable\": true,\r\n  \"isVisible\": true,\r\n  \"description\": \"Zaawansowany programista\",\r\n  \"instagramLink\": \"https://instagram.com/ania_dev\",\r\n  \"linkedinLink\": \"https://linkedin.com/in/ania-dev\",\r\n  \"youtubeLink\": \"https://youtube.com/c/ania_dev\",\r\n  \"mailsSubscribed\": true,\r\n  \"themePreference\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Profiles/{{userId}}/set-settings",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Profiles",
+								"{{userId}}",
+								"set-settings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Community",
+			"item": [
+				{
+					"name": "create organisation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"game\",\r\n  \"uniqueName\": \"my_org\",\r\n  \"description\": \"\",\r\n  \"organizationLogo\": \"\",\r\n  \"instagramLink\": \"\",\r\n  \"linkedinLink\": \"\",\r\n  \"youtubeLink\": \"\",\r\n  \"isPrivate\": true,\r\n  \"minimumJoinLevel\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create organisation bad request no name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"\",\r\n  \"uniqueName\": \"my_org\",\r\n  \"description\": \"\",\r\n  \"organizationLogo\": \"\",\r\n  \"instagramLink\": \"\",\r\n  \"linkedinLink\": \"\",\r\n  \"youtubeLink\": \"\",\r\n  \"isPrivate\": true,\r\n  \"minimumJoinLevel\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create organisation bad request no name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"game\",\r\n  \"uniqueName\": \"\",\r\n  \"description\": \"\",\r\n  \"organizationLogo\": \"\",\r\n  \"instagramLink\": \"\",\r\n  \"linkedinLink\": \"\",\r\n  \"youtubeLink\": \"\",\r\n  \"isPrivate\": true,\r\n  \"minimumJoinLevel\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create organisation no data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"\",\r\n  \"uniqueName\": \"\",\r\n  \"description\": \"\",\r\n  \"organizationLogo\": \"\",\r\n  \"instagramLink\": \"\",\r\n  \"linkedinLink\": \"\",\r\n  \"youtubeLink\": \"\",\r\n  \"isPrivate\": true,\r\n  \"minimumJoinLevel\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create organisation no data Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"\",\r\n  \"uniqueName\": \"\",\r\n  \"description\": \"\",\r\n  \"organizationLogo\": \"\",\r\n  \"instagramLink\": \"\",\r\n  \"linkedinLink\": \"\",\r\n  \"youtubeLink\": \"\",\r\n  \"isPrivate\": true,\r\n  \"minimumJoinLevel\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get roles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/organisations/my_org/roles",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"organisations",
+								"my_org",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verification requests list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/admin/organisations/Verification/",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"organisations",
+								"Verification",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "my organisations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations/my",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations",
+								"my"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "join organisation as a member",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations/join/my_org/",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations",
+								"join",
+								"my_org",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete organisation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations/my_org",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations",
+								"my_org"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "create task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"testtask1\",\r\n  \"description\": \"asdasdasd\",\r\n  \"isGroup\": false,\r\n  \"reward\": 50,\r\n  \"type\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/TasksAdministration/template-task/",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"TasksAdministration",
+								"template-task",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create organisation Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"my_task_org123\",\r\n  \"uniqueName\": \"my_task_org123\",\r\n  \"description\": \"\",\r\n  \"organizationLogo\": \"\",\r\n  \"instagramLink\": \"\",\r\n  \"linkedinLink\": \"\",\r\n  \"youtubeLink\": \"\",\r\n  \"isPrivate\": true,\r\n  \"minimumJoinLevel\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/TasksAdministration/template-task/",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"TasksAdministration",
+								"template-task",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get active tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/Tasks",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete organisation Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/community/Organisations/my_task_org123",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"community",
+								"Organisations",
+								"my_task_org123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate Org Task (Invalid ID)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/TasksAdministration/organisation-task/my_org/9999",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"TasksAdministration",
+								"organisation-task",
+								"my_org",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Proof Invalid (missing field)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/Tasks/1/upload-proof",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"Tasks",
+								"1",
+								"upload-proof"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Non-Existent Template Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status Code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/TasksAdministration/template-task/99999",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"TasksAdministration",
+								"template-task",
+								"99999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMiIsInVuaXF1ZV9uYW1lIjoidXNlcjEiLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTc0NzE2NTI2NywiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo4MCJ9.My_W2QY8sGeSUfFPmtWYdpVcU_3_6_VwKHFQYP4DfnM",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "domain",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"value": "",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}
