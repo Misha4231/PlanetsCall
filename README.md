@@ -1,7 +1,7 @@
 # Planets Call
 
 ## Linki dla Pana Kleina
-- **Opis projektu**: [google dysk](https://drive.google.com/drive/folders/1WGLecc5QaRtHFz-dAEhdEfy6voCcCo1-?usp=sharing)
+- **Opis projektu + Grafiki**: [google dysk](https://drive.google.com/drive/folders/1WGLecc5QaRtHFz-dAEhdEfy6voCcCo1-?usp=sharing)
 - **Design strony**: [Figma](https://www.figma.com/design/IfSCTVFqL1G8eWHvPDkjxc/Planet's-call?node-id=0-1&t=3FIRcBGiThk3vFtZ-1)
 
 > Ania pracuje głównie na branchu `frontend_develop`, Ja (Mykhailo) robię dla różnych controllerów osobny branch
