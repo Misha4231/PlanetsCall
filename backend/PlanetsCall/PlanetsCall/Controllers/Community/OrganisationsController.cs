@@ -10,7 +10,7 @@ namespace PlanetsCall.Controllers.Community;
 
 [ApiController]
 [Route("/api/community/[controller]")]
-public class OrganisationsController(IOrganisationsRepository organisationsRepository) : ControllerBase
+public class OrganisationsController(IOrganisationsRepository organisationsRepository, IVerificationRepository verificationRepository) : ControllerBase
 {
     [HttpGet]
     [UserCache]
@@ -222,7 +222,14 @@ public class OrganisationsController(IOrganisationsRepository organisationsRepos
         
         try
         {
+            // check if organisation has unresolved verification request
+            Organisations organisation = organisationsRepository.GetObjOrganisation(organisationUniqueName);
+            if (organisation.VerificationRequest != null)
+                verificationRepository.DeleteRequest(organisation.VerificationRequest);
+
+            // remove organisation
             if (requestUser != null) organisationsRepository.RemoveOrganisation(organisationUniqueName, requestUser);
+
             return Ok();
         } catch (CodeException e)
         {
