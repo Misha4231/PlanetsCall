@@ -200,12 +200,27 @@ const AdminShopCategory = () => {
                 filteredItems.map(item => (
                   <div key={item.id} className={styles.itemCard}>
                     <h3 className={styles.itemTitle}>{item.title}</h3>
-                    <p className={styles.itemPrice}>Cena: {item.price} zł</p>
+                    <p className={styles.itemPrice}>Koszt: {item.price}</p>
                     <p className={styles.itemRarity}>Rzadkość: {item.rarity}</p>
                     <div className={styles.imageWrapper }>
                       <div className={styles.characterContainer}>
                         <div className={styles.imageWrapper}>
-                          <Ecorus className={styles.characterBody} />
+                          
+                          
+              
+                {category.title == 'Hełmy' ? (
+                   <Ecorus className={styles.characterBody} variant='hat' />
+
+                ) : category.title == 'Kostiumy bez hełmów' ? (
+                   <Ecorus className={styles.characterBody} variant='noHair' />
+
+                ) : category.title == 'Kostiumy całe' ? (
+                   <Ecorus className={styles.characterBody} variant='hat' />
+
+                ) : (
+                    <Ecorus className={styles.characterBody} />
+                )}
+
                           <img 
                                 src={imageUrl() + item.image} 
                             alt={category.title} 

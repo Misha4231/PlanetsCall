@@ -592,3 +592,23 @@
     border-color: #4CAF50;
   }
   
+
+
+  .purchasedItem {
+    border: 2px solid #4CAF50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    position: relative;
+}
+
+.purchasedItem::after {
+    content: "✔ KUPIONE";
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 4px;
+}

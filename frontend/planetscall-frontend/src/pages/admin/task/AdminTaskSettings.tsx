@@ -10,6 +10,7 @@ import NotAdmin from '../../Additional/NotAdmin';
 const AdminTaskSettings = () => {
     const { user, isAuthenticated, token } = useAuth();
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingForm, setLoadingForm] = useState<boolean>(false);
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [task, setTask] = useState<TaskTemplate>();
@@ -78,7 +79,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
 
     try {
-        setLoading(true);
+        setLoadingForm(true);
         await updateTemplateTask(token!, taskId, formData);
         sessionStorage.setItem('successInfo', "Pomyślnie zaaktulizowane dane.");
         navigate(`/admin/organisations/task/${taskId}`); 
@@ -86,7 +87,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     } catch (err: any) {
         setError(err.message || 'Failed to update organisation settings.');
     } finally {
-        setLoading(false);
+        setLoadingForm(false);
     }
 };
 
@@ -117,7 +118,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   return (
     <div className="app-container dark-theme">
       <Header />
-      <section className={styles.taskAdminContainer}>
+      <section className={styles.taskAdminTaskContainer}>
         <div className={styles.taskAdminContent}>
           <h1 className={styles.taskAdminTitle}>Edytuj zadanie</h1>
           
@@ -185,8 +186,17 @@ const handleSubmit = async (e: React.FormEvent) => {
               </div>
               
               <div className={styles.taskFormSubmit}>
-                <button type="submit" className="submit-button" disabled={loading}>
-                  {loading ? 'Zapisywanie...' : 'Zapisz zmiany'}
+                <button type="submit"
+                            className={styles.primaryButton} disabled={loadingForm}>
+                            {loadingForm ? (
+                                <>
+                                    <i className="fas fa-spinner fa-spin"></i> Zapisywanie...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-save"></i> Zapisz zmiany
+                                </>
+                            )}
                 </button>
               </div>
             </form>

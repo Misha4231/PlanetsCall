@@ -17,17 +17,46 @@ const Statistics = () => {
 
   useEffect(() => {
     const fetchAttendance = async () => {
-      if (!isAuthenticated || !token) return;
-      try {
-        const data = await getUserAttendance(token, (username + ""));
-        setAttendanceData(data);
-      } catch (err: any) {
-        console.log(err);
-      }
+        if (!isAuthenticated || !token) return;
+        try {
+          const data = await getUserAttendance(token, (username + ""));
+          setAttendanceData(data);
+        } catch (err: any) {
+          console.log(err);
+        }
     };
+  
+   const simulateAttendance = () => {
+    const startDate = new Date('2024-11-01');
+    const endDate = new Date('2025-04-30');
+    const simulatedData = [];
 
-    fetchAttendance();
+    let current = new Date(startDate);
+    while (current <= endDate) {
+      if (Math.random() > 0.4) {
+        simulatedData.push({ createdAt: current.toISOString() });
+      }
+      current.setDate(current.getDate() + 1);
+    }
+
+    if(username=="user1"){
+      simulatedData.push({ createdAt: new Date('2025-05-11').toISOString() });
+      simulatedData.push({ createdAt: new Date('2025-05-10').toISOString() });
+      simulatedData.push({ createdAt: new Date('2025-05-9').toISOString() });
+    }
+
+    setAttendanceData(simulatedData);
+  };
+
+  simulateAttendance();
+
+  simulateAttendance();
+
+    //fetchAttendance();
   }, [isAuthenticated, token, user]);
+
+
+
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();

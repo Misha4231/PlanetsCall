@@ -11,7 +11,6 @@ const Footer: React.FC = () => {
                         <li><Link to="/profile">Profil</Link></li>
                         <li><Link to="/tasks">Zadania</Link></li>
                         <li><Link to="/community">Społeczność</Link></li>
-                        <li><Link to="/discuss">Dyskusje</Link></li>
                         <li><Link to="/auth/sign-in">Logowanie</Link></li>
                         <li><Link to="/auth/sign-up">Rejestracja</Link></li>
                     </ul>

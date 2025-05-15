@@ -206,7 +206,7 @@ useEffect(() => {
                     </Link>
                     <div className={styles.statItem}>
                       <span className={styles.statLabel}>Ostatnie logowanie:</span>
-                      <span className={styles.statValue}>{formatLastLogin(user.lastLogin)}</span>
+                      <span className={styles.statValue}>Dzisiaj</span>
                     </div>
                     <div className={styles.statItem}>
                       <span className={styles.statLabel}>Postęp:</span>
@@ -222,17 +222,20 @@ useEffect(() => {
                           {(() => {
                             const helmetCategory = categories.find(c => c.title === 'Hełmy');
                             const costumeCategory = categories.find(c => c.title === 'Kostiumy całe');
+                            const costumeWHelmetCategory = categories.find(c => c.title === 'Kostiumy bez hełmów');
 
                             const hasHelmet = helmetCategory && selectedItems.some(item => item.categoryId === helmetCategory.id);
                             const hasCostume = costumeCategory && selectedItems.some(item => item.categoryId === costumeCategory.id);
+                            const hasCostumeWHelmet = costumeWHelmetCategory && selectedItems.some(item => item.categoryId === costumeWHelmetCategory.id);
 
-                            if (hasHelmet) {
+                            if (hasHelmet || hasCostume) {
                               return <Ecorus className={styles.profileEcorusImage} variant="hat" />;
-                            } else if (hasCostume) {
+                            } else if (hasCostumeWHelmet) {
                               return <Ecorus className={styles.profileEcorusImage} variant="noHair" />;
                             } else {
                               return <Ecorus className={styles.profileEcorusImage} />;
                             }
+
                           })()}
                             {selectedItems.map((item) => (
                             <div key={item.id}>

@@ -183,6 +183,18 @@
     cursor: not-allowed;
   }
   
+  .haveButton{
+    background-color: #294129;
+    color: white;
+  }
+  
+  .haveButton:disabled {
+    background-color: #333;
+    color: #666;
+    cursor: not-allowed;
+  }
+  
+
   .tryButton {
     background-color: #2196F3;
     color: white;

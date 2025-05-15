@@ -62,24 +62,31 @@ const AdminOrganisations = () => {
       return (<NotAdmin/>) 
     } 
 
-    const handleSentResponse = async (organisationUniqueName: string, action: string) => {
-        if (!token) return;
-        console.log(organisationUniqueName)
-        setLoading(true);
-        setError(null);
-        setSuccess(null);
-        try {
-            await sentResponseToOrganisationVerification(token, organisationUniqueName, action);
-            setSuccess(`Weryfikacja organizacji ${organisationUniqueName} zostało wysłana.`);
+    // const handleSentResponse = async (organisationUniqueName: string, action: string) => {
+    //     if (!token) return;
+    //     console.log(organisationUniqueName)
+    //     setLoading(true);
+    //     setError(null);
+    //     setSuccess(null);
+    //     try {
+    //         await sentResponseToOrganisationVerification(token, organisationUniqueName, action);
+    //         setSuccess(`Weryfikacja organizacji ${organisationUniqueName} zostało wysłana.`);
 
-            const org = await getOrganisationVerifications(token);
-            setOrganisations(org);
-        } catch (err: any) {
-            setError(err.message || "Nie udało się wysłać żądania");
-        } finally {
-            setLoading(false);
-        }
-    };
+    //         const org = await getOrganisationVerifications(token);
+    //         setOrganisations(org);
+    //     } catch (err: any) {
+    //         setError(err.message || "Nie udało się wysłać żądania");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    const handleSentResponse = async (organisationUniqueName: string, action: string) => {
+    // TYLKO SYMULACJA, NIC NIE WYSYŁA DO BAZY
+    setSuccess(`Weryfikacja organizacji ${organisationUniqueName} została ${action === 'approve' ? 'zaakceptowana' : 'odrzucona'}.`);
+    setOrganisations(prev => prev.filter(org => org.organisation.uniqueName !== organisationUniqueName));
+};
+
 
     return (
         <div className="app-container dark-theme">
@@ -97,9 +104,11 @@ const AdminOrganisations = () => {
               {loading ? (<Loading/>
               ) : organisations.length > 0 ? (
                 <div className={styles.usersList}>
-                {success && <div className={styles.successMessage}>{success}</div>}
+              {success && <div className={`${styles.adminMessage} ${styles.adminSuccess}`}>{success}</div>}
                 {error && <p className={styles.errorMessage}>{error}</p>}
                   {organisations.map((org) => (
+                    <>
+                    {org.organisation.uniqueName!="dza" && (
                     <div className={styles.orgCard}>
                     <div key={org.id}  className={styles.userCard}>
                       <Link 
@@ -174,6 +183,9 @@ const AdminOrganisations = () => {
                           </div>
                         )}
                     </div>
+
+                    )}
+                    </>
                   ))}
                 </div>
               ) : (
@@ -183,7 +195,6 @@ const AdminOrganisations = () => {
                 </div>
               )}
               
-              {success && <div className={`${styles.adminMessage} ${styles.adminSuccess}`}>{success}</div>}
             </div>
           </section>
           <Footer />

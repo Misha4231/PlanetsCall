@@ -473,6 +473,7 @@
     border-radius: 20px;
     font-size: 13px;
     display: inline-flex;
+    width:125px ;
     align-items: center;
     gap: 6px;
     margin-top: 8px;
@@ -496,6 +497,7 @@
     border: none;
     padding: 8px 16px;
     border-radius: 6px;
+    width: 105px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;

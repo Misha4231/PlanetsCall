@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import {
   buyItem,
    getCategories,
-   getItemsByCategory
+   getItemsByCategory,
+   getUserItems,
+   Items
 } from '../../services/shopService';
-import { getFullUser, getUser } from '../../services/userService';
+import { getFullUser, getUser, getUserSelectedItems } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 import Header from '../../components/shared/Header';
 import styles from '../../stylePage/shop.module.css';
@@ -39,6 +41,7 @@ const Shop: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [currency, setCurrency] = useState<number>(0);
   const [selectedItem, setSelectedItem] = useState<ItemShop | null>(null);
+  const [ownedItems, setOwnedItems] = useState<number[]>([]);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [purchaseStatus, setPurchaseStatus] = useState<{success: boolean, message: string} | null>(null);
 
@@ -77,8 +80,27 @@ const Shop: React.FC = () => {
         console.error(error);
       }
     };
+    const fetchAllSelectedItems = async () => {
+        if (!token || categories.length === 0) return;
+      
+        try {
+          const allItems: Items[] = [];
+      
+          for (const category of categories) {
+            const response = await getUserItems(token, category.id, 1);
+            allItems.push(...response.items);
+            
+          }
+           setOwnedItems(allItems.map((item:Items) => item.id));
+
+        } catch (error) {
+          console.error(error);
+        }
+      };
     fetchItems();
+    fetchAllSelectedItems();
   }, [selectedCategory, token]);
+
 
   const handleBuyClick = (item: ItemShop) => {
     setSelectedItem(item);
@@ -175,20 +197,25 @@ const Shop: React.FC = () => {
               
               <div className={styles.itemsGrid}>
                 {filteredItems.map((item) => (
-                  <div key={item.id} className={styles.shopItem}>
+                  <div key={item.id}  className={`${styles.shopItem} ${ownedItems.includes(item.id) ? styles.ownedItem : ''}`}>
                     <img src={imageUrl()+item.image} alt={item.title} className={styles.itemImage} />
                     <div className={styles.itemDetails}>
                       <h3 className={styles.itemTitle}>{item.title}</h3>
                       <p className={styles.itemRarity}>Rzadkość: {item.rarity}</p>
                       <p className={styles.itemPrice}>Cena: {item.price}</p>
                       <div className={styles.itemActions}>
-                        <button 
-                          className={`${styles.actionButton} ${styles.buyButton}`}
-                          onClick={() => handleBuyClick(item)}
-                          disabled={currency < item.price}
-                        >
-                          Kup
-                        </button>
+                        {ownedItems.includes(item.id) ? (
+                          <button
+                            className={`${styles.actionButton} ${styles.haveButton}`}>Posiadane</button>
+                        ) : (
+                          <button 
+                            className={`${styles.actionButton} ${styles.buyButton}`}
+                            onClick={() => handleBuyClick(item)}
+                          >
+                            Kup
+                          </button>
+                        )}
+
                         <button 
                           className={`${styles.actionButton} ${styles.tryButton}`}
                           onClick={() => setSelectedItem(item)}
@@ -233,8 +260,11 @@ const Shop: React.FC = () => {
                 {categories.find(c => c.id === selectedCategory)?.title == 'Hełmy' ? (
                    <Ecorus className={styles.characterBody} variant='hat' />
 
-                ) : categories.find(c => c.id === selectedCategory)?.title == 'Kostiumy całe' ? (
+                ) : categories.find(c => c.id === selectedCategory)?.title == 'Kostiumy bez hełmów' ? (
                    <Ecorus className={styles.characterBody} variant='noHair' />
+
+                ) : categories.find(c => c.id === selectedCategory)?.title == 'Kostiumy całe' ? (
+                   <Ecorus className={styles.characterBody} variant='hat' />
 
                 ) : (
                     <Ecorus className={styles.characterBody} />

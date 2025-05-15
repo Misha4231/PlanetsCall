@@ -253,22 +253,27 @@ const [currentPage, setCurrentPage] = useState<number>(1);
             <div className={styles.ecorusContent}>
                     <h2>Wybrane itemy:</h2>
                 <div className={`${styles.profilePreviewImage}`}>
-                    <div className={styles.profileImageWrapper}>                                     
-                        {(() => {
-                          const helmetCategory = categories.find(c => c.title === 'Hełmy');
-                          const costumeCategory = categories.find(c => c.title === 'Kostiumy całe');
+                    <div className={styles.profileImageWrapper}>                            
+                          {(() => {
+                            const helmetCategory = categories.find(c => c.title === 'Hełmy');
+                            const costumeCategory = categories.find(c => c.title === 'Kostiumy całe');
+                            const costumeWHelmetCategory = categories.find(c => c.title === 'Kostiumy bez hełmów');
 
-                          const hasHelmet = helmetCategory && selectedItems.some(item => item.categoryId === helmetCategory.id);
-                          const hasCostume = costumeCategory && selectedItems.some(item => item.categoryId === costumeCategory.id);
+                            const hasHelmet = helmetCategory && selectedItems.some(item => item.categoryId === helmetCategory.id);
+                            const hasCostume = costumeCategory && selectedItems.some(item => item.categoryId === costumeCategory.id);
+                            const hasCostumeWHelmet = costumeWHelmetCategory && selectedItems.some(item => item.categoryId === costumeWHelmetCategory.id);
 
-                          if (hasHelmet) {
-                            return <Ecorus className={styles.profileEcorusImage} variant="hat" />;
-                          } else if (hasCostume) {
-                            return <Ecorus className={styles.profileEcorusImage} variant="noHair" />;
-                          } else {
-                            return <Ecorus className={styles.profileEcorusImage} />;
-                          }
-                        })()}
+                            if (hasHelmet || hasCostume) {
+                              return <Ecorus className={styles.profileEcorusImage} variant="hat" />;
+                            } else if (hasCostumeWHelmet) {
+                              return <Ecorus className={styles.profileEcorusImage} variant="noHair" />;
+                            } else {
+                              return <Ecorus className={styles.profileEcorusImage} />;
+                            }
+
+                          })()}
+
+                        
                         {selectedItems.map((item) => (
                         <div key={item.id}>
                             <img src={imageUrl() + item.image} alt={item.title} className={styles.profileCharacterClothes} />
