@@ -62,30 +62,30 @@ const AdminOrganisations = () => {
       return (<NotAdmin/>) 
     } 
 
-    // const handleSentResponse = async (organisationUniqueName: string, action: string) => {
-    //     if (!token) return;
-    //     console.log(organisationUniqueName)
-    //     setLoading(true);
-    //     setError(null);
-    //     setSuccess(null);
-    //     try {
-    //         await sentResponseToOrganisationVerification(token, organisationUniqueName, action);
-    //         setSuccess(`Weryfikacja organizacji ${organisationUniqueName} zostało wysłana.`);
-
-    //         const org = await getOrganisationVerifications(token);
-    //         setOrganisations(org);
-    //     } catch (err: any) {
-    //         setError(err.message || "Nie udało się wysłać żądania");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const handleSentResponse = async (organisationUniqueName: string, action: string) => {
-    // TYLKO SYMULACJA, NIC NIE WYSYŁA DO BAZY
-    setSuccess(`Weryfikacja organizacji ${organisationUniqueName} została ${action === 'approve' ? 'zaakceptowana' : 'odrzucona'}.`);
-    setOrganisations(prev => prev.filter(org => org.organisation.uniqueName !== organisationUniqueName));
-};
+        if (!token) return;
+        console.log(organisationUniqueName)
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
+        try {
+            await sentResponseToOrganisationVerification(token, organisationUniqueName, action);
+            setSuccess(`Weryfikacja organizacji ${organisationUniqueName} zostało wysłana.`);
+
+            const org = await getOrganisationVerifications(token);
+            setOrganisations(org);
+        } catch (err: any) {
+            setError(err.message || "Nie udało się wysłać żądania");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+//     const handleSentResponse = async (organisationUniqueName: string, action: string) => {
+//     // TYLKO SYMULACJA, NIC NIE WYSYŁA DO BAZY
+//     setSuccess(`Weryfikacja organizacji ${organisationUniqueName} została ${action === 'approve' ? 'zaakceptowana' : 'odrzucona'}.`);
+//     setOrganisations(prev => prev.filter(org => org.organisation.uniqueName !== organisationUniqueName));
+// };
 
 
     return (
@@ -108,7 +108,6 @@ const AdminOrganisations = () => {
                 {error && <p className={styles.errorMessage}>{error}</p>}
                   {organisations.map((org) => (
                     <>
-                    {org.organisation.uniqueName!="dza" && (
                     <div className={styles.orgCard}>
                     <div key={org.id}  className={styles.userCard}>
                       <Link 
@@ -183,8 +182,6 @@ const AdminOrganisations = () => {
                           </div>
                         )}
                     </div>
-
-                    )}
                     </>
                   ))}
                 </div>
