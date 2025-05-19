@@ -6,7 +6,7 @@ import Footer from '../../components/Footer/Footer';
 import { Link } from 'react-router-dom';
 import { convertImageToBase64, imageUrl } from '../../services/imageConvert';
 import NotAdmin from '../Additional/NotAdmin';
-import styles from '../../stylePage/admin/adminShop.module.css';
+import styles from '../../stylePage/styles.module.css';
 import Ecorus from '../../components/Ecorus';
 
 interface Category {
@@ -56,9 +56,9 @@ const AdminShop: React.FC = () => {
   return (
     <div className="app-container">
       <Header />
-      <section className={styles.adminContainer}>
-        <div className={styles.adminContent}>
-          <h1 className={styles.categoryPageTitle}>Panel administracyjny sklepu</h1>
+      <section className={styles.container}>
+        <div className={styles.content}>
+          <h1 className={styles.pageTitle}>Panel administracyjny sklepu</h1>
           <Link to="/admin/" className={styles.backButton}>
             <i className="fas fa-arrow-left"></i> Powrót
           </Link>

@@ -1,3 +1,4 @@
+@import './globals.css';
 .heroContainer {
     position: relative;
     width: 100%;
@@ -5,9 +6,9 @@
     max-width: 1600px;
     margin: 0 auto;
     overflow: hidden;
-    background-color: #1a1a1a;
+    background-color: var(--bg-main);
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-1);
   }
   
   .heroImage {
@@ -36,26 +37,26 @@
   }
   
   .title {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 3rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    text-shadow: 1px 1px 3px #000;
+    text-shadow: 1px 1px 3px var(--shadow-text);
   }
   
   .subtitle {
-    color: #ccc;
+    color: var(--border-light);
     font-size: 1.5rem;
     margin-bottom: 2rem;
     max-width: 800px;
-    text-shadow: 1px 1px 2px #000;
+    text-shadow: 1px 1px 2px var(--shadow-text);
   }
   
   .startButton {
     padding: 0.75rem 2rem;
     font-size: 1rem;
     font-weight: bold;
-    background-color: #4CAF50;
+    background-color: var(--primary);
     color: white;
     border: none;
     border-radius: 0.5rem;
@@ -64,14 +65,14 @@
   }
   
   .startButton:hover {
-    background-color: #43a047;
-    box-shadow: 0 0 10px #4CAF50;
+    background-color: var(--primary-dark);
+    box-shadow: 0 0 10px var(--primary);
   }
   
   .startLink {
     font-size: 1rem;
     font-weight: bold;
-    color: #ffffff;
+    color: var(--text-primary)fff;
     text-decoration: none;
     display: inline-block;
     transition: color 0.3s ease;

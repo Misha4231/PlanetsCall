@@ -1,8 +1,9 @@
+@import './globals.css';
 /* profile.css */
 
 .darkTheme {
-  background-color: #0f0f0f;
-  color: #f0f0f0;
+  background-color: var(--dark-bg);
+  color: var(--input-bg-disabled);
 }
 
 .profileContainer {
@@ -13,11 +14,11 @@
 }
 
 .profileContent {
-  background-color: #1a1a1a;
+  background-color: var(--bg-main);
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px var(--color-shadow-2);
   padding: 40px;
-  border: 1px solid #2c2c2c;
+  border: 1px solid var(--surface-2);
 }
 
 .profileHeader {
@@ -26,7 +27,7 @@
   gap: 30px;
   margin-bottom: 30px;
   padding-bottom: 30px;
-  border-bottom: 1px solid #2c2c2c;
+  border-bottom: 1px solid var(--surface-2);
 }
 
 .profileAvatar {
@@ -41,15 +42,15 @@
   height: 200px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #4CAF50;
+  border: 4px solid var(--primary);
   margin-bottom: 16px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 6px 20px var(--primary-border-translucent);
 }
 
 .avatarImage:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.5);
+  box-shadow: 0 8px 30px var(--primary-shadow);
 }
 
 .avatarControls {
@@ -76,14 +77,15 @@
 
 .usernameSection h2 {
   margin: 0;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 30px;
   font-weight: 600;
 }
 
 .adminBadge {
   background-color: #ea8d01;
-  color: #fff;
+  box-shadow: var(--shadow-1);
+  color: var(--button-bg);
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 13px;
@@ -92,13 +94,13 @@
 }
 
 .userName {
-  color: #aaa;
+  color: var(--text-quaternary);
   font-size: 16px;
   margin-bottom: 20px;
 }
 
 .userDescription {
-  color: #bbb;
+  color: var(--text-tertiary);
   font-size: 15px;
   line-height: 1.6;
   margin-bottom: 20px;
@@ -113,10 +115,10 @@
 }
 
 .statItem {
-  background-color: #212121;
+  background-color: var(--surface-1);
   padding: 14px 18px;
   border-radius: 6px;
-  border-left: 4px solid #4CAF50;
+  border-left: 4px solid var(--primary);
   transition: all 0.3s ease;
   flex: 1 1 calc(50% - 16px);
   min-width: 130px;
@@ -126,12 +128,12 @@
 
 .statItem:hover {
   transform: translateY(-3px);
-  background-color: #272727;
+  background-color: var(--surface-hover);
 }
 
 .statLabel {
   display: block;
-  color: #888;
+  color: var(--text-label);
   font-size: 13px;
   margin-bottom: 6px;
   text-transform: uppercase;
@@ -140,7 +142,7 @@
 
 .statValue {
   font-weight: bold;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 17px;
 }
 
@@ -153,15 +155,15 @@
 }
 
 .detailSection h3 {
-  color: #fff;
+  color: var(--text-primary);
   font-size: 20px;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #2c2c2c;
+  border-bottom: 1px solid var(--surface-2);
 }
 
 .detailContent {
-  background-color: #212121;
+  background-color: var(--surface-1);
   padding: 18px;
   border-radius: 6px;
   line-height: 1.6;
@@ -169,11 +171,11 @@
 
 .detailContent p {
   margin: 0;
-  color: #ccc;
+  color: var(--border-light);
 }
 
 .noData {
-  color: #666 !important;
+  color: var(--text-tertiary-1) !important;
   font-style: italic;
 }
 
@@ -194,17 +196,17 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #4CAF50;
+  color: var(--primary);
   text-decoration: none;
   padding: 10px 14px;
-  background-color: #212121;
+  background-color: var(--surface-1);
   border-radius: 6px;
   transition: all 0.3s ease;
 }
 
 .socialLink:hover {
-  background-color: #4CAF50;
-  color: #fff;
+  background-color: var(--primary);
+  color: var(--text-primary);
   transform: translateX(4px);
 }
 
@@ -213,8 +215,8 @@
 }
 
 .editButton {
-  background-color: #4CAF50;
-  color: #fff;
+  background-color: var(--primary);
+  color: var(--button-bg);
   border: none;
   padding: 10px 16px;
   border-radius: 6px;
@@ -226,8 +228,8 @@
 }
 
 .editButton.smallerButton {
-  background-color: #4CAF50;
-  color: #fff;
+  background-color: var(--primary);
+  color: var(--button-bg);
   border: none;
   padding: 9px 12px;
   border-radius: 6px;
@@ -239,15 +241,15 @@
 }
 
 .editButton:hover {
-  background-color: #45a049;
+  background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px var(--color-shadow-1);
 }
 
 .editButton.smallerButton.statystyka {
   background-color: #ea8d01;
   font-size: 11px;
-  color: #fff;
+  color: var(--button-bg);
 }
 
 .editButton.statystyka:hover {
@@ -261,7 +263,7 @@
 }
 
 .errorMessage {
-  color: #f44336;
+  color: var(--danger);
 }
 
 @media (max-width: 992px) {
@@ -312,21 +314,21 @@
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background-color: #2c2c2c;
+  background-color: var(--surface-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 4px solid #4CAF50;
+  border: 4px solid var(--primary);
   margin-bottom: 16px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 6px 20px rgba(63, 121, 65, 0.3);
-  color: #ffffff;
+  color: var(--text-primary)fff;
   font-size: 80px;
 }
 
 .avatarPlaceholder:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 30px rgba(76, 175, 80, 0.5);
+  box-shadow: 0 8px 30px var(--primary-shadow);
 }
 
 
@@ -339,7 +341,7 @@
 
 
 .settingsTitle {
-  color: #fff;
+  color: var(--text-primary);
   font-size: 28px;
   margin-bottom: 30px;
   text-align: center;
@@ -355,7 +357,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background-color: #4CAF50;
+  background-color: var(--primary);
 }
 
 .settingsForm {
@@ -383,17 +385,17 @@
 }
 
 .formLabel {
-  color: #bbb;
+  color: var(--text-tertiary);
   font-size: 14px;
   font-weight: 500;
 }
 
 .formInput, .formSelect, .formTextarea {
-  background-color: #212121;
-  border: 1px solid #333;
+  background-color: var(--surface-1);
+  border: 1px solid var(--surface-3);
   border-radius: 6px;
   padding: 12px 15px;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 15px;
   transition: all 0.3s ease;
   max-height: fit-content;
@@ -401,12 +403,12 @@
 
 .formInput:focus, .formSelect:focus, .formTextarea:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
 .formInput::placeholder {
-  color: #555;
+  color: var(--text-placeholder);
 }
 
 .formTextarea {
@@ -433,7 +435,7 @@
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid #4CAF50;
+  border: 3px solid var(--primary);
 }
 
 .previewImage {
@@ -453,8 +455,8 @@
 }
 
 .fileInputButton {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--surface-3);
+  color: var(--text-primary);
   padding: 10px 15px;
   border-radius: 6px;
   cursor: pointer;
@@ -463,22 +465,22 @@
 }
 
 .fileInputButton:hover {
-  background-color: #444;
+  background-color: var(--surface-4);
 }
 
 .fileName {
-  color: #aaa;
+  color: var(--text-quaternary);
   font-size: 13px;
 }
 
 .formSection {
-  background-color: #212121;
+  background-color: var(--surface-1);
   padding: 20px;
   border-radius: 8px;
 }
 
 .sectionTitle {
-  color: #fff;
+  color: var(--text-primary);
   font-size: 18px;
   margin-bottom: 15px;
   display: flex;
@@ -491,7 +493,7 @@
   display: block;
   width: 4px;
   height: 18px;
-  background-color: #4CAF50;
+  background-color: var(--primary);
   border-radius: 2px;
 }
 
@@ -526,14 +528,14 @@
   position: relative;
   height: 18px;
   width: 18px;
-  background-color: #212121;
-  border: 2px solid #4CAF50;
+  background-color: var(--surface-1);
+  border: 2px solid var(--primary);
   border-radius: 4px;
   transition: all 0.2s ease;
 }
 
 .checkboxInput:checked ~ .checkboxCustom {
-  background-color: #4CAF50;
+  background-color: var(--primary);
 }
 
 .checkboxInput:checked ~ .checkboxCustom::after {
@@ -549,7 +551,7 @@
 }
 
 .checkboxText {
-  color: #ddd;
+  color: var(--border-bg-hover);
   font-size: 14px;
 }
 
@@ -573,30 +575,30 @@
 }
 
 .primaryButton {
-  background-color: #4CAF50;
-  color: #fff;
+  background-color: var(--primary);
+  color: var(--button-bg);
   border: none;
 }
 
 .primaryButton:hover {
-  background-color: #45a049;
+  background-color: var(--primary-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .secondaryButton {
   background-color: transparent;
-  color: #bbb;
-  border: 1px solid #555;
+  color: var(--text-tertiary);
+  border: 1px solid var(--text-placeholder);
 }
 
 .secondaryButton:hover {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--surface-3);
+  color: var(--text-primary);
 }
 
 .socialLinksSection {
-  background-color: #212121;
+  background-color: var(--surface-1);
   padding: 20px;
   border-radius: 8px;
 }
@@ -626,27 +628,27 @@
 
 
 .successMessage {
-  color: #4CAF50;
-  background-color: rgba(76, 175, 80, 0.1);
+  color: var(--primary);
+  background-color: var(--primary-bg-translucent);
   padding: 16px;
   border-radius: 10px;
   margin-bottom: 28px;
   text-align: center;
   font-size: 15px;
-  border-left: 4px solid #4CAF50;
+  border-left: 4px solid var(--primary);
 }
 
 
 
 .errorMessage {
-  color: #ff6b6b;
-  background-color: rgba(255, 107, 107, 0.1);
+  color: var(--danger-light);
+  background-color: var(--danger-bg-light);
   padding: 16px;
   border-radius: 10px;
   margin-bottom: 28px;
   text-align: center;
   font-size: 15px;
-  border-left: 4px solid #ff6b6b;
+  border-left: 4px solid var(--danger-light);
 }
 
 
@@ -736,7 +738,7 @@ object-fit: contain;
 }
 
 .calendarNavigation button {
-    background-color: #333;
+    background-color: var(--text-tertiary);
     color: white;
     border: none;
     padding: 10px;
@@ -746,7 +748,7 @@ object-fit: contain;
 }
 
 .calendarNavigation button:hover {
-    background-color: #4CAF50;
+    background-color: var(--primary);
 }
 
 .monthName {
@@ -766,8 +768,8 @@ object-fit: contain;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #2c2c2c;
-    color: #fff;
+    background-color: var(--surface-2);
+    color: var(--text-primary);
     border-radius: 4px;
     height: 50px;
     font-size: 18px;
@@ -776,11 +778,11 @@ object-fit: contain;
 }
 
 .calendarDay:hover {
-    background-color: #4CAF50;
+    background-color: var(--primary);
 }
 
 .present {
-    background-color: #4CAF50; 
+    background-color: var(--primary); 
 }
 
 .emptyDay {
@@ -789,11 +791,11 @@ object-fit: contain;
 
 .calendarDay:first-child,
 .calendarDay:nth-child(7) {
-    background-color: #333;
+    background-color: var(--surface-3);
 }
 
 .calendarDay:nth-child(7n+1) {
-    color: #FF6347; 
+    color: var(--calendar-sunday); 
 }
 
 
@@ -803,17 +805,17 @@ object-fit: contain;
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background-color: #212121;
-    color: #fff;
+    background-color: var(--surface-1);
+    color: var(--text-primary);
     text-decoration: none;
     border-radius: 6px;
     margin-bottom: 10px;
     transition: all 0.3s ease;
-    border: 1px solid #2c2c2c;
+    border: 1px solid var(--surface-2);
 }
 
 .backButton:hover {
-    background-color: #4CAF50;
+    background-color: var(--primary);
     transform: translateX(-3px);
 }
 
@@ -821,11 +823,11 @@ object-fit: contain;
 .deleteButton:hover:not(:disabled) {
     font-weight: bold;
     transform: translateY(-2px);
-    background-color: #b62929;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: var(--delete);
+    box-shadow: 0 4px 8px var(--color-shadow-1);
 }
 .deleteButton{
-    background-color: #b62929;
+    background-color: var(--delete);
     font-weight: bold;
 }
 
@@ -870,9 +872,9 @@ object-fit: contain;
   }
   
   .successNotification {
-    background-color: #4CAF50;
+    background-color: var(--primary);
   }
   
   .errorNotification {
-    background-color: #f44336;
+    background-color: var(--danger);
   }

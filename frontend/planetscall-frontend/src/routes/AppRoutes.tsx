@@ -23,7 +23,6 @@ import ActivateAccount from '../pages/auth/ActivateAccount';
 import Settings from '../pages/profile/Settings';
 import Friends from '../pages/people/Friends';
 import CommunityMain from '../pages/community/CommunityMain';
-import CommunitySettings from '../pages/community/CommunitySettings';
 import Organisations from '../pages/organisations/Organisations';
 import CreateOrganisation from '../pages/organisations/CreateOrganisation';
 import AnOrganisation from '../pages/organisations/AnOrganisation';
@@ -121,11 +120,6 @@ const router = createBrowserRouter([
         path: '/community',
         element: <CommunityMain />,
         handle: { title: "Społeczność | Planet's Call" }
-      },
-      {
-        path: '/community/settings',
-        element: <CommunitySettings />,
-        handle: { title: "Ustawienia społeczności | Planet's Call" }
       },
       {
         path: '/community/users',

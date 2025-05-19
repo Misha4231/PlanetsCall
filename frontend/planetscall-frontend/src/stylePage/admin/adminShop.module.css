@@ -1,3 +1,5 @@
+
+@import '../globals.css';
 /* adminShop.module.css */
 
 .adminContainer {
@@ -9,17 +11,17 @@
 }
 
 .adminContent {
-    background-color: #1a1a1a;
+    background-color: var(--bg-main);
     border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-1);
 }
 
 .categoryPageTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 28px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #2c2c2c;
+    border-bottom: 1px solid var(--surface-2);
 }
 
 .categoryManagementContainer {
@@ -50,7 +52,7 @@
     height: 150px;
     object-fit: cover;
     border-radius: 8px;
-    border: 2px solid #2c2c2c;
+    border: 2px solid var(--surface-2);
 }
 
 
@@ -62,13 +64,13 @@
 }
 
 .itemsSection {
-    background-color: #212121;
+    background-color: var(--surface-1);
     padding: 25px;
     border-radius: 8px;
 }
 
 .sectionTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 17x;
     margin-bottom: 20px;
     display: flex;
@@ -84,17 +86,17 @@
 }
 
 .itemCard {
-    background-color: #1a1a1a;
+    background-color: var(--bg-main);
     border-radius: 8px;
     padding: 5px;
     transition: all 0.3s ease;
-    border: 1px solid #2c2c2c;
+    border: 1px solid var(--surface-2);
 }
 
 .itemCard:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    border-color: #4CAF50;
+    box-shadow: 0 8px 16px  var(--color-shadow-3);
+    border-color: var(--primary);
 }
 
 .itemImage {
@@ -110,7 +112,7 @@
 }
 
 .itemTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 14px;
     text-align: center;
     min-height: 37px;
@@ -119,13 +121,13 @@
 
 .itemPrice {
     margin-left: 10px;
-    color: #4CAF50;
+    color: var(--primary);
     font-weight: 600;
 }
 
 .itemRarity {
     margin-left: 10px;
-    color: #2196F3;
+    color: var(--info);
     font-style: italic;
 }
 
@@ -144,7 +146,7 @@
 }
 
 .createForm {
-    background-color: #212121;
+    background-color: var(--surface-1);
     padding: 30px;
     border-radius: 8px;
 }
@@ -163,10 +165,10 @@
 }
 
 .imageUploadWrapper {
-    background-color: #1a1a1a;
+    background-color: var(--bg-main);
     padding: 20px;
     border-radius: 8px;
-    border: 2px dashed #2c2c2c;
+    border: 2px dashed var(--surface-2);
 }
 
 .previewContainer {
@@ -188,7 +190,7 @@
 }
 
 .editFormContainer {
-    background-color: #212121;
+    background-color: var(--surface-1);
     padding: 30px;
     border-radius: 8px;
 }
@@ -208,17 +210,17 @@
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background-color: #212121;
-    color: #fff;
+    background-color: var(--surface-1);
+    color: var(--text-primary);
     text-decoration: none;
     border-radius: 6px;
     transition: all 0.3s ease;
-    border: 1px solid #2c2c2c;
+    border: 1px solid var(--surface-2);
     margin-bottom: 20px;
 }
 
 .backButton:hover {
-    background-color: #4CAF50;
+    background-color: var(--primary);
     transform: translateX(-3px);
 }
 
@@ -232,7 +234,7 @@
 
 .primaryButton {
     padding: 12px 24px;
-    background-color: #4CAF50;
+    background-color: var(--primary);
     color: white;
     border: none;
     text-decoration: none;
@@ -262,36 +264,36 @@
 
 }
 .actionButton:hover:not(:disabled) {
-    background-color: #45a049;
+    background-color: var(--primary-hover);
     font-weight: bold;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px  var(--color-shadow-1);
 }
 .deleteButton:hover:not(:disabled) {
     font-weight: bold;
     transform: translateY(-2px);
-    background-color: #b62929;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: var(--delete);
+    box-shadow: 0 4px 8px var(--color-shadow-1);
 }
 .deleteButton{
-    background-color: #b62929;
+    background-color: var(--delete);
     font-weight: bold;
 }
 .editButton{
-    background-color: #45a049;
+    background-color: var(--primary-hover);
 }
 
 .primaryButton:hover:not(:disabled) {
-    background-color: #45a049;
+    background-color: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px var(--color-shadow-1);
 }
 
 .secondaryButton {
     padding: 12px 24px;
-    background-color: #212121;
+    background-color: var(--surface-1);
     color: white;
-    border: 1px solid #2c2c2c;
+    border: 1px solid var(--surface-2);
     border-radius: 6px;
     font-weight: 500;
     cursor: pointer;
@@ -302,16 +304,16 @@
 }
 
 .secondaryButton:hover {
-    background-color: #2c2c2c;
+    background-color: var(--surface-2);
     transform: translateY(-2px);
 }
 
 .dangerButton {
-    background-color: #f44336;
+    background-color: var(--danger);
 }
 
 .dangerButton:hover:not(:disabled) {
-    background-color: #d32f2f;
+    background-color: var(--danger-hover);
 }
 
 .buttonIcon {
@@ -330,33 +332,33 @@
 .formLabel {
     display: block;
     margin-bottom: 8px;
-    color: #fff;
+    color: var(--text-primary);
     font-weight: 500;
 }
 
 .formInput {
     width: 100%;
     padding: 12px 15px;
-    background-color: #1a1a1a;
-    border: 1px solid #2c2c2c;
+    background-color: var(--bg-main);
+    border: 1px solid var(--surface-2);
     border-radius: 6px;
-    color: #fff;
+    color: var(--text-primary);
     transition: all 0.3s ease;
 }
 
 .formInput:focus {
     outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-border-translucent);
 }
 
 .formSelect {
     width: 100%;
     padding: 12px 15px;
-    background-color: #1a1a1a;
-    border: 1px solid #2c2c2c;
+    background-color: var(--bg-main);
+    border: 1px solid var(--surface-2);
     border-radius: 6px;
-    color: #fff;
+    color: var(--text-primary);
     transition: all 0.3s ease;
 }
 
@@ -368,8 +370,8 @@
 }
 
 .successMessage {
-    color: #4CAF50;
-    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--primary);
+    background-color: var(--primary-bg-translucent);
     padding: 12px;
     border-radius: 6px;
     margin-bottom: 20px;
@@ -377,8 +379,8 @@
   }
   
   .errorMessage {
-    color: #f44336;
-    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--danger);
+    background-color: var(--danger-bg-translucent);
     padding: 12px;
     border-radius: 6px;
     margin-bottom: 20px;
@@ -388,11 +390,11 @@
   .loading {
     text-align: center;
     padding: 40px;
-    color: #bbb;
+    color: var(--text-tertiary);
   }
 
 .loadingMessage {
-    color: #aaa;
+    color: var(--text-quaternary);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -409,7 +411,7 @@
 
 .fileInputButton {
     padding: 10px 20px;
-    background-color: #2196F3;
+    background-color: var(--info);
     color: white;
     border-radius: 6px;
     transition: all 0.3s ease;
@@ -419,12 +421,12 @@
 }
 
 .fileInputButton:hover {
-    background-color: #0b7dda;
+    background-color: var(--info-hover);
 }
 
 .imageNote {
     margin-top: 10px;
-    color: #aaa;
+    color: var(--text-quaternary);
     font-size: 14px;
 }
 
@@ -576,27 +578,27 @@
   
   .filterButton {
     padding: 6px 12px;
-    border: 1px solid #ccc;
-    background-color: #eee;
+    border: 1px solid var(--border-light);
+    background-color: var(--border-bg);
     cursor: pointer;
     border-radius: 6px;
   }
   
   .filterButton:hover {
-    background-color: #ddd;
+    background-color: var(--border-bg-hover);
   }
   
   .filterButton.active {
-    background-color: #4CAF50;
+    background-color: var(--primary);
     color: white;
-    border-color: #4CAF50;
+    border-color: var(--primary);
   }
   
 
 
-  .purchasedItem {
-    border: 2px solid #4CAF50;
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+.purchasedItem {
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 10px var(--primary-shadow);
     position: relative;
 }
 
@@ -605,7 +607,7 @@
     position: absolute;
     top: 8px;
     left: 8px;
-    background-color: #4CAF50;
+    background-color: var(--primary);
     color: white;
     padding: 4px 8px;
     font-size: 10px;

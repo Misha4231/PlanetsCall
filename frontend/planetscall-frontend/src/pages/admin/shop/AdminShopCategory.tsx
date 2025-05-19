@@ -6,7 +6,7 @@ import Header from '../../../components/shared/Header';
 import Footer from '../../../components/Footer/Footer';
 import { convertImageToBase64, imageUrl } from '../../../services/imageConvert';
 import NotAdmin from '../../Additional/NotAdmin';
-import styles from '../../../stylePage/admin/adminShop.module.css';
+import styles from '../../../stylePage/styles.module.css';
 import Ecorus from '../../../components/Ecorus';
 import { RarityType } from '../../shop/Shop';
 import NotAuthenticated from '../../Additional/NotAuthenticated';
@@ -125,10 +125,10 @@ const AdminShopCategory = () => {
   return (
     <div className="app-container">
       <Header />
-      <section className={styles.adminContainer}>
-      <div className={styles.adminContent}>
+      <section className={styles.container}>
+      <div className={styles.content}>
           <div className={styles.categoryHeaderWrapper}>
-        <h1 className={styles.categoryPageTitle}>Zarządzanie kategorią: {category.title}</h1>
+        <h1 className={styles.pageTitle}>Zarządzanie kategorią: {category.title}</h1>
             <div className={styles.categoryInfo}>
               <div className={styles.categoryImageContainer}>
                 <div className={styles.categoryContainer}>

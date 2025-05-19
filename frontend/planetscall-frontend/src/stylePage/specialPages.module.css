@@ -1,3 +1,4 @@
+@import './globals.css';
 /* specialPages.module.css */
 
 .specialContainer {
@@ -14,12 +15,12 @@
 
 .specialMessage {
     font-size: 18px;
-    color: #ccc;
+    color: var(--border-light);
     margin: 20px 0;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--surface-glass);
     border-radius: 8px;
-    border-left: 4px solid #4CAF50;
+    border-left: 4px solid var(--primary);
     max-width: 600px;
     width: 100%;
 }
@@ -28,9 +29,9 @@
     display: inline-block;
     width: 50px;
     height: 50px;
-    border: 5px solid rgba(76, 175, 80, 0.3);
+    border: 5px solid var(--primary-border-translucent);
     border-radius: 50%;
-    border-top-color: #4CAF50;
+    border-top-color: var(--primary);
     animation: spin 1s ease-in-out infinite;
 }
 
@@ -39,7 +40,7 @@
 }
 
 .adminWarning {
-    border-left-color: #f44336;
+    border-left-color: var(--danger);
 }
 
 @media (max-width: 768px) {
