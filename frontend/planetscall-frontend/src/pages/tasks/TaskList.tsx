@@ -9,6 +9,7 @@ import styles from '../../stylePage/task/task.module.css';
 import NotAuthenticated from '../Additional/NotAuthenticated';
 import { PaginationResponse } from '../../services/headers';
 import { imageUrl } from '../../services/imageConvert';
+import Loading from '../Additional/Loading';
 
 const TaskList = () => {
   const { isAuthenticated, token } = useAuth();
@@ -123,7 +124,7 @@ return (
         {error && <div className={`${styles.taskMessage} ${styles.taskError}`}>{error}</div>}
 
         {loading ? (
-          <p>Ładowanie...</p>
+          <Loading/>
         ) : activeTab === 'available' ? (
           tasks.length > 0 ? (<>
             <h3 className={styles.taskListTitle}>Lista zadań szablonowych</h3>

@@ -5,6 +5,7 @@
   --surface-2: #2c2c2c;
   --surface-3: #333;
   --surface-4: #444;
+  --surface-5: #645555;
   --surface-selected: #666666;
   --border-selected: #000000;
   --dark-bg: #0f0f0f;
@@ -17,6 +18,7 @@
   --primary-bg-translucent: rgba(76,175,80,0.1);
   --primary-border-translucent: rgba(76,175,80,0.3);
   --primary-shadow: rgba(76,175,80,0.5);
+  --home-text-color: #ccc;
 
   --danger: #f44336;
   --danger-hover: #d32f2f;
@@ -33,7 +35,9 @@
   --text-tertiary-1: #666;
   --text-quaternary: #aaa;
 
+
   --border-light: #ccc;
+  --home-text-color: #ccc;
 
   --button-bg: #eee;
   --button-bg-hover: #ddd;
@@ -66,10 +70,14 @@
   --text-label: #888;
   --text-empty: #777;
   --meta-bg: rgba(220, 227, 217, 0.5);
+  --meta-bg-1: rgba(51, 51, 50, 0.5);
   --surface-hover: #272727;
+  --surface-hover-1: #272727;
   --primary-deep: #3d8b40;
 
   --points: #ffc107;
+
+  
 }
 
 
@@ -88,7 +96,8 @@
   --surface-1: #f5f5f5;
   --surface-2: #eaeaea;
   --surface-3: #e0e0e0;
-  --surface-4: #8ca884;
+  --surface-4: #799471;
+  --surface-5: #f5f5f5;
   --surface-selected: #c3e6cb;
   --border-selected: #2196f3;
   --dark-bg: #f2f2f2;
@@ -142,7 +151,7 @@
   --input-bg-disabled: #f0f0f0;
   --primary-dark: #43a047;
   --shadow-text: #000;
-  --reward-gold-bg: rgba(255, 215, 0, 0.1);
+  --reward-gold-bg: rgba(212, 212, 212, 0.356);
   --completed-task-date: #93b868;
   --calendar-sunday: #bc280e;
   --surface-cancel-hover: #3c3c3c;
@@ -150,7 +159,9 @@
   --text-label: #888;
   --text-empty: #777;
   --meta-bg: rgba(180, 218, 185, 0.5);
+  --meta-bg-1: rgba(220, 227, 217, 0.5);
   --surface-hover: #272727;
+  --surface-hover-1: rgb(190, 224, 190);
   --primary-deep: #3d8b40;
 
   

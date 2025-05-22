@@ -515,13 +515,14 @@
   .filterButton {
     padding: 6px 12px;
     border: 1px solid var(--border-light);
-    background-color: var(--border-bg);
+    background-color: var(--surface-4);
+    color: white;
     cursor: pointer;
     border-radius: 6px;
   }
   
   .filterButton:hover {
-    background-color: var(--border-bg-hover);
+    background-color: var(--text-tertiary-1);
   }
   
   .filterButton.active {

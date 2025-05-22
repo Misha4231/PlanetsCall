@@ -48,7 +48,7 @@ useEffect(() => {
   };
   
   const fetchAllSelectedItems = async () => {
-    if (!isAuthenticated || !token) return;  
+    if (!isAuthenticated || !token || !user?.id) return;  
     setLoading(true);
     try {
       const [categoriesData] = await Promise.all([
@@ -60,7 +60,7 @@ useEffect(() => {
         const allItems: Items[] = [];
     
         for (const category of categoriesData) {
-          const response = await getUserSelectedItems(token, category.id, 1);
+          const response = await getUserSelectedItems(token, user.id, category.id, 1);
           allItems.push(...response.items);
         }
     

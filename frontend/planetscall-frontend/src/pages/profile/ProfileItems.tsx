@@ -56,13 +56,13 @@ const [currentPage, setCurrentPage] = useState<number>(1);
     
 
     const fetchAllSelectedItems = async () => {
-        if (!token || categories.length === 0) return;
+        if (!token || !user?.id || categories.length === 0) return;
       
         try {
           const allItems: Items[] = [];
       
           for (const category of categories) {
-            const response = await getUserSelectedItems(token, category.id, 1);
+            const response = await getUserSelectedItems(token, user?.id, category.id, 1);
             allItems.push(...response.items);
                   
             setPagination({
@@ -206,7 +206,7 @@ const [currentPage, setCurrentPage] = useState<number>(1);
                               
                                   const allItems: Items[] = [];
                                   for (const category of categories) {
-                                    const response = await getUserSelectedItems(token, category.id, 1);
+                                    const response = await getUserSelectedItems(token, user?.id ? user.id : 0, category.id, 1);
                                     allItems.push(...response.items);
                                   }
                                   setSelectedItems(allItems);

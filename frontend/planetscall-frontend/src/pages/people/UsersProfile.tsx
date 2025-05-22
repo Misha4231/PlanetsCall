@@ -40,7 +40,7 @@ const UsersProfile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!userName || !token) return;
+      if (!userName || !token || !user?.id) return;
       try {
         setLoading(true);
         const userData = await getAnotherUser(token, userName);
@@ -55,7 +55,7 @@ const UsersProfile = () => {
 
         const allItems: Items[] = [];
         for (const category of categoriesData) {
-          const response = await getUserSelectedItems(token, category.id, userData.id);
+          const response = await getUserSelectedItems(token, userData.id, category.id, userData.id);
           allItems.push(...response.items);
         }
         setSelectedItems(allItems);

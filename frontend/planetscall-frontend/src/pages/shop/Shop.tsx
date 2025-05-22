@@ -148,6 +148,7 @@ const Shop: React.FC = () => {
     <div className="app-container">
       <Header/>
       <section className="blockCode">
+        <div className={styles.content}>
         <h1 className={styles.title}>Sklep</h1>
           <div className={styles.shopLayout}>
             <div className={styles.sidebar}>
@@ -229,6 +230,8 @@ const Shop: React.FC = () => {
               </div>
             </div>
           </div>
+
+        </div>
       </section>
 
       {showConfirmModal && selectedItem && (

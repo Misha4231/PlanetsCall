@@ -18,7 +18,7 @@
 }
 
 .form {
-  background-color: var(--surface-auth);
+  background-color:  var(--bg-main);
   border-radius: 16px;
   box-shadow: 0 8px 32px  var(--color-shadow-2);
   padding: 20px 50px 50px;
@@ -73,9 +73,9 @@
 .input {
   width: calc(100% - 40px);
   padding: 16px 20px;
-  border: 1px solid var(--surface-3);
   border-radius: 10px;
-  background-color: var(--input-bg);
+  background-color: var(--surface-1);
+  border: 1px solid var(--surface-3);
   color: var(--text-primary);
   font-size: 16px;
   transition: all 0.3s ease;
@@ -85,7 +85,6 @@
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-border-translucent);
-  background-color: var(--input-bg-focus);
 }
 
 .submitButton {

@@ -138,7 +138,7 @@
     gap: 6px;
     font-size: 12px;
     color: var(--text-tertiary);
-    background-color: var(--meta-bg);
+    background-color: var(--meta-bg-1);
     padding: 4px 8px;
     border-radius: 20px;
 }
@@ -148,7 +148,7 @@
 }
 
 .taskReward {
-    color: #FFD700;
+    color: var(--points);
     font-weight: 500;
     background-color: var(--reward-gold-bg);
     padding: 5px 10px;
@@ -188,7 +188,7 @@
     align-items: center;
     gap: 8px;
     color: var(--text-tertiary);
-    background-color: var(--meta-bg);
+    background-color: var(--meta-bg-1);
     padding: 8px 15px;
     border-radius: 20px;
     font-size: 14px;
@@ -325,7 +325,7 @@
     text-align: center;
     padding: 40px;
     color: var(--text-tertiary-1);
-    background-color: var(--meta-bg);
+    background-color: var(--meta-bg-1);
     border-radius: 8px;
     margin-top: 20px;
 }

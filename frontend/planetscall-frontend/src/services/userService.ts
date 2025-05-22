@@ -150,11 +150,11 @@ export const getAnotherUser  = async (authToken: string, anotherUser : string) =
 
 
 
-export const getUserSelectedItems  = async (authToken: string, categoryId: number, page: number) => {
+export const getUserSelectedItems  = async (authToken: string, userId:number, categoryId: number, page: number) => {
   if (!authToken) {
     throw new Error('Brak tokenu. Użytkownik nie jest zalogowany.');
   }
-  const response = await fetch(`${authHeader()}api/SelectedItems?categoryId=${categoryId}&?page=${page}`, {
+  const response = await fetch(`${authHeader()}api/SelectedItems/${userId}?categoryId=${categoryId}&?page=${page}`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${authToken}`,

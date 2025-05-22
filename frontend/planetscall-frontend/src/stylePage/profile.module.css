@@ -128,7 +128,7 @@
 
 .statItem:hover {
   transform: translateY(-3px);
-  background-color: var(--surface-hover);
+  background-color: var(--surface-hover-1);
 }
 
 .statLabel {
@@ -253,7 +253,7 @@
 }
 
 .editButton.statystyka:hover {
-  background-color: rgb(176, 107, 4);
+  background-color: #ffa114;
 }
 
 .loading, .errorMessage {

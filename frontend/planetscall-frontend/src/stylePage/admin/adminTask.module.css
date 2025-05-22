@@ -276,7 +276,7 @@
 
 .createButton, .searchButton {
     background-color: var(--primary);
-    color: var(--text-primary);
+    color: var(--button-bg);
     border: none;
     padding: 10px 15px;
     border-radius: 6px;
