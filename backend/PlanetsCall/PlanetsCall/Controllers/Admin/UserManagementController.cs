@@ -14,7 +14,7 @@ public class UserManagementController(IUsersRepository usersRepository) : Contro
 {
     [HttpGet]
     [Cache]
-    [AdminOnlyFilter]
+    [TokenAuthorizeFilter]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetAllUsers([FromQuery] int page = 1) // get paginated list of users
     {
