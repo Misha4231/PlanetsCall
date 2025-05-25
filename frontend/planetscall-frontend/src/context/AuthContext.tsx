@@ -67,7 +67,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const storedToken = localStorage.getItem('authToken');
     //console.log(storedToken);
     if (storedToken) {
-      setLoading(true);
+      setLoading(true);    
       getUser(storedToken)
         .then(basicUser => {
           setUser(basicUser);
@@ -88,6 +88,13 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+  if (user && typeof user.themePreference !== 'undefined') {
+    const themeValue = user.themePreference.toString();
+    document.documentElement.setAttribute('data-theme', themeValue);
+  }
+}, [user?.themePreference]);
 
   const login = async (uniqueIdentifier: string, password: string) => {
     try {
@@ -121,6 +128,8 @@ export { AuthProvider, AuthContext };
 export const useAuth = (): AuthContextType => {
   const navigate = useNavigate();  
   const context = useContext(AuthContext);
+  
+
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }

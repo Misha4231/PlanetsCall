@@ -1,3 +1,6 @@
+
+
+@import '../globals.css';
 /* adminTasks.module.css */
 
 .taskAdminContainer {
@@ -15,14 +18,14 @@
     min-height: calc(100vh - 120px);
 }
 .taskAdminContent {
-    background-color: #1a1a1a;
+    background-color: var(--bg-main);
     border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-1);
 }
 
 .taskAdminTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 24px;
     margin-bottom: 30px;
     font-weight: 600;
@@ -36,7 +39,7 @@
 }
 
 .taskInfoTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 28px;
     margin: 0 0 10px 0;
 }
@@ -51,19 +54,19 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #bbb;
+    color: var(--text-tertiary);
 }
 
 .taskInfoMetaItem i {
-    color: #4CAF50;
+    color: var(--primary);
 }
 
 .taskInfoDescription {
-    color: #ccc;
+    color: var(--border-light);
     line-height: 1.6;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #2c2c2c;
+    border-bottom: 1px solid var(--surface-2);
 }
 
 .taskInfoActions {
@@ -86,7 +89,7 @@
 
 .taskFormLabel {
     display: block;
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 8px;
     font-weight: 500;
 }
@@ -95,10 +98,10 @@
 .taskFormSelect,
 .taskFormTextarea {
     padding: 10px 15px;
-    background-color: #212121;
-    border: 1px solid #2c2c2c;
+    background-color: var(--surface-1);
+    border: 1px solid var(--surface-2);
     border-radius: 6px;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 14px;
     transition: all 0.3s ease;
 }
@@ -116,6 +119,9 @@
     width: 250px;
 }
 
+.taskFormTextareaCHECK {
+    min-width: 550px;
+}
 
 .taskFormTextarea {
     min-height: 120px;
@@ -126,9 +132,9 @@
 .taskFormInput:focus,
 .taskFormSelect:focus,
 .taskFormTextarea:focus {
-    border-color: #4CAF50;
+    border-color: var(--primary);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    box-shadow: 0 0 0 2px  var(--primary-border-translucent);
 }
 
 .taskFormCheckbox {
@@ -151,7 +157,7 @@
 }
 
 .taskListTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 20px;
     margin-bottom: 20px;
     padding-bottom: 10px;
@@ -165,7 +171,7 @@
 
 .taskListItem {
     height: 75%;
-    background-color: #212121;
+    background-color: var(--surface-1);
     border-radius: 8px;
     padding: 20px;
     border-left: 4px solid transparent;
@@ -173,19 +179,19 @@
 }
 
 .taskListItem:hover {
-    border-left-color: #4CAF50;
+    border-left-color: var(--primary);
     transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 12px  var(--color-shadow-1);
 }
 
 .taskListItemTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 18px;
     margin: 0 0 10px 0;
 }
 
 .taskListItemDescription {
-    color: #aaa;
+    color: var(--text-quaternary);
     font-size: 14px;
     margin: 0 0 15px 0;
     -webkit-box-orient: vertical;
@@ -195,7 +201,7 @@
 .taskListItemMeta {
     display: flex;
     justify-content: space-between;
-    color: #666;
+    color: var(--text-tertiary-1);
     font-size: 13px;
 }
 
@@ -208,19 +214,19 @@
 }
 
 .taskListItemStatus.active {
-    background-color: rgba(76, 175, 80, 0.2);
-    color: #4CAF50;
+    background-color:  var(--primary-border-translucent);
+    color: var(--primary);
 }
 
 .taskListItemStatus.inactive {
-    background-color: rgba(244, 67, 54, 0.2);
-    color: #f44336;
+    background-color: var(--danger-bg-translucent);
+    color: var(--danger);
 }
 
 .taskEmptyState {
     text-align: center;
     padding: 40px;
-    color: #666;
+    color: var(--text-tertiary-1);
 }
 
 .taskEmptyState i {
@@ -269,8 +275,8 @@
 
 
 .createButton, .searchButton {
-    background-color: #4CAF50;
-    color: #fff;
+    background-color: var(--primary);
+    color: var(--button-bg);
     border: none;
     padding: 10px 15px;
     border-radius: 6px;
@@ -285,7 +291,7 @@
   }
   
   .createButton:hover, .searchButton:hover {
-    background-color: #45a049;
+    background-color: var(--primary-hover);
     transform: translateY(-2px);
   }
    
@@ -295,7 +301,7 @@
   }
   
 .searchTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 24px;
     margin-bottom: 20px;
     font-weight: 600;
@@ -310,7 +316,7 @@
     gap: 15px;
     margin-bottom: 30px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #2c2c2c;
+    border-bottom: 1px solid var(--surface-2);
   }
 
 
@@ -335,7 +341,7 @@
   
   .filterButton {
     padding: 0.5rem 1rem;
-    background-color: #444;
+    background-color: var(--surface-4);
     color: white;
     border: none;
     border-radius: 5px;
@@ -343,13 +349,13 @@
   }
   
   .filterButton:hover {
-    background-color: #666;
+    background-color: var(--text-tertiary-1);
     transform: translateY(-2px);
   }
   
   .filterButton.active {
     font-weight: bold;
-    background-color: #45a049;
+    background-color: var(--primary-hover);
   }
   
 
@@ -358,32 +364,32 @@
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background-color: #212121;
-    color: #fff;
+    background-color: var(--surface-1);
+    color: var(--text-primary);
     text-decoration: none;
     border-radius: 6px;
     transition: all 0.3s ease;
-    border: 1px solid #2c2c2c;
+    border: 1px solid var(--surface-2);
 }
 
 .backButton:hover {
-    background-color: #4CAF50;
+    background-color: var(--primary);
     transform: translateX(-3px);
 }
 
 .deleteButton:hover:not(:disabled) {
     font-weight: bold;
     transform: translateY(-2px);
-    background-color: #b62929;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: var(--delete);
+    box-shadow: 0 4px 8px  var(--color-shadow-1);
 }
 .deleteButton{
-    background-color: #b62929;
+    background-color: var(--delete);
     font-weight: bold;
 }
 
 .isActive{
-    background-color: #b62929;
+    background-color: var(--delete);
     cursor: pointer;
 }
 
@@ -394,7 +400,7 @@
 
 .primaryButton {
     padding: 12px 24px;
-    background-color: #4CAF50;
+    background-color: var(--primary);
     color: white;
     border: none;
     text-decoration: none;
@@ -410,9 +416,9 @@
 
 
 .primaryButton:hover:not(:disabled) {
-    background-color: #45a049;
+    background-color: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px  var(--color-shadow-1);
 }
 
 
@@ -435,33 +441,33 @@
 .actionButton:hover:not(:disabled) {
     font-weight: bold;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px  var(--color-shadow-1);
 }
 .editButton{
-    background-color: #45a049;
+    background-color: var(--primary-hover);
 }
 
 
 .successMessage {
-    color: #4CAF50;
-    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--primary);
+    background-color: var(--primary-bg-translucent);
     padding: 16px;
     border-radius: 10px;
     margin-bottom: 28px;
     text-align: center;
     font-size: 15px;
-    border-left: 4px solid #4CAF50;
+    border-left: 4px solid var(--primary);
   }
 
   .errorMessage {
-    color: #ff6b6b;
-    background-color: rgba(255, 107, 107, 0.1);
+    color: var(--danger-light);
+    background-color: var(--danger-bg-light);
     padding: 16px;
     border-radius: 10px;
     margin-bottom: 28px;
     text-align: center;
     font-size: 15px;
-    border-left: 4px solid #ff6b6b;
+    border-left: 4px solid var(--danger-light);
   }
   
 
@@ -489,7 +495,7 @@
 
 .taskListItemOrg {
     height: auto;
-    background-color: #212121;
+    background-color: var(--surface-1);
     border-radius: 8px;
     padding: 12px;
     border-left: 4px solid transparent;
@@ -497,7 +503,7 @@
 }
 
 .taskListItemOrg:hover {
-    border-left-color: #4CAF50;
+    border-left-color: var(--primary);
     transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 12px  var(--color-shadow-1);
 }

@@ -6,7 +6,7 @@ import Header from '../../../components/shared/Header';
 import Footer from '../../../components/Footer/Footer';
 import { convertImageToBase64, imageUrl } from '../../../services/imageConvert';
 import NotAdmin from '../../Additional/NotAdmin';
-import styles from '../../../stylePage/admin/adminShop.module.css';
+import styles from '../../../stylePage/styles.module.css';
 import Ecorus from '../../../components/Ecorus';
 import { RarityType } from '../../shop/Shop';
 import NotAuthenticated from '../../Additional/NotAuthenticated';
@@ -125,10 +125,10 @@ const AdminShopCategory = () => {
   return (
     <div className="app-container">
       <Header />
-      <section className={styles.adminContainer}>
-      <div className={styles.adminContent}>
+      <section className={styles.container}>
+      <div className={styles.content}>
           <div className={styles.categoryHeaderWrapper}>
-        <h1 className={styles.categoryPageTitle}>Zarządzanie kategorią: {category.title}</h1>
+        <h1 className={styles.pageTitle}>Zarządzanie kategorią: {category.title}</h1>
             <div className={styles.categoryInfo}>
               <div className={styles.categoryImageContainer}>
                 <div className={styles.categoryContainer}>
@@ -200,12 +200,27 @@ const AdminShopCategory = () => {
                 filteredItems.map(item => (
                   <div key={item.id} className={styles.itemCard}>
                     <h3 className={styles.itemTitle}>{item.title}</h3>
-                    <p className={styles.itemPrice}>Cena: {item.price} zł</p>
+                    <p className={styles.itemPrice}>Koszt: {item.price}</p>
                     <p className={styles.itemRarity}>Rzadkość: {item.rarity}</p>
                     <div className={styles.imageWrapper }>
                       <div className={styles.characterContainer}>
                         <div className={styles.imageWrapper}>
-                          <Ecorus className={styles.characterBody} />
+                          
+                          
+              
+                {category.title == 'Hełmy' ? (
+                   <Ecorus className={styles.characterBody} variant='hat' />
+
+                ) : category.title == 'Kostiumy bez hełmów' ? (
+                   <Ecorus className={styles.characterBody} variant='noHair' />
+
+                ) : category.title == 'Kostiumy całe' ? (
+                   <Ecorus className={styles.characterBody} variant='hat' />
+
+                ) : (
+                    <Ecorus className={styles.characterBody} />
+                )}
+
                           <img 
                                 src={imageUrl() + item.image} 
                             alt={category.title} 

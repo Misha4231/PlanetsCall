@@ -1,11 +1,23 @@
 import React from 'react'
 import styles from '../stylePage/admin/adminShop.module.css';
 
-const Ecorus = ({ className }:any) => {
+type EcorusProps = {
+  className?: string;
+  variant?: 'default' | 'noHair' | 'hat';
+};
+
+const Ecorus = ({ className, variant = 'default'}: EcorusProps) => {
+  
+  const imageMap: Record<string, string> = {
+    default: require('../assets/postac.png'),
+    noHair: require('../assets/stworek_bez_wlosow.png'),
+    hat: require('../assets/stworek_do_czapek.png'),
+  };
+
   return (
     <div className={styles.ecorusContainer}>
       <img 
-        src={require('../assets/stworek_bez_wlosow.png')} 
+        src={imageMap[variant]} 
         alt="Ecorus" 
         className={className} 
       />

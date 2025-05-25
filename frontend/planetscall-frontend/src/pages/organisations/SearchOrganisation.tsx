@@ -218,25 +218,28 @@ const SearchOrganisation = () => {
                 })}
               </div>
 
-              <div className={styles.pagination}>
-                <button
-                  onClick={() => setPagination(prev => ({ ...prev, pageIndex: prev.pageIndex - 1 }))}
-                  disabled={!pagination.hasPreviousPage || loading}
-                  className={styles.paginationButton}
-                >
-                  <i className="fas fa-chevron-left"></i> Poprzednia
-                </button>
-                <span className={styles.pageInfo}>
-                  Strona {pagination.pageIndex} z {pagination.totalPages}
-                </span>
-                <button
-                  onClick={() => setPagination(prev => ({ ...prev, pageIndex: prev.pageIndex + 1 }))}
-                  disabled={!pagination.hasNextPage || loading}
-                  className={styles.paginationButton}
-                >
-                  Następna <i className="fas fa-chevron-right"></i>
-                </button>
-              </div>
+                {pagination && pagination.totalPages>1 &&(
+                    <div className={styles.pagination}>
+                      <button
+                        onClick={() => setPagination(prev => ({ ...prev, pageIndex: prev.pageIndex - 1 }))}
+                        disabled={!pagination.hasPreviousPage || loading}
+                        className={styles.paginationButton}
+                      >
+                        <i className="fas fa-chevron-left"></i> Poprzednia
+                      </button>
+                      <span className={styles.pageInfo}>
+                        Strona {pagination.pageIndex} z {pagination.totalPages}
+                      </span>
+                      <button
+                        onClick={() => setPagination(prev => ({ ...prev, pageIndex: prev.pageIndex + 1 }))}
+                        disabled={!pagination.hasNextPage || loading}
+                        className={styles.paginationButton}
+                      >
+                        Następna <i className="fas fa-chevron-right"></i>
+                      </button>
+                    </div>
+
+                )}
             </>
           ) : searchPhrase ? (
             <div className={styles.noResults}>

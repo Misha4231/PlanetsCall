@@ -113,8 +113,8 @@ const AdminVerificationInfo = () => {
               {error && <p className={styles.errorMessage}>{error}</p>}
     
                   <div className={styles.taskInfoDescription}>
-                    <h3>Opis zadania</h3>
-                    <p>{verification.message}</p>
+                    <h3>Zadania {verification.task.title}</h3>
+                    <p>Opis zadania {verification.task.description}</p>
                         <span className={styles.taskInfoMetaItem}>
                         {verification.proof && (
                           <div className={styles.proofPreview}>
@@ -137,7 +137,7 @@ const AdminVerificationInfo = () => {
                       value={formData.message || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
                       placeholder="Dodaj wiadomość dla wykonawcy (opcjonalne)"
-                      className={styles.taskFormInput}
+                      className={`${styles.taskFormInput} ${styles.taskFormTextareaCHECK}`}
                     />
                   </div>
                   <div className={styles.taskInfoActions}>

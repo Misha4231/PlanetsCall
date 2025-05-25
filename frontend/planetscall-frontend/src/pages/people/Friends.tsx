@@ -14,8 +14,10 @@ const Friends = () => {
     const [friends, setFriends] = useState<Friend[]>([]);
     const [search, setSearch] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingForm, setLoadingForm] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+     const [serverStatus, setServerStatus] = useState<{success: boolean, message: string} | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,7 +27,7 @@ const Friends = () => {
 
     const fetchFriends = async () => {
         if (!isAuthenticated || !token) return;
-        setLoading(true);
+        setLoadingForm(true);
         setError(null);
         try {
             const data = await getFriends(token, 1, '');
@@ -38,23 +40,26 @@ const Friends = () => {
         } catch (err: any) {
             setError(err.message);
         } finally {
-            setLoading(false);
+            setLoadingForm(false);
         }
     };
 
     const handleRemoveFriend = async (username: string) => {
         if (!isAuthenticated || !token) return;
-        setLoading(true);
+        setLoadingForm(true);
         setError(null);
         setSuccess(null);
         try {
             await removeFriend(token, username);
-            setSuccess('Znajomy został usunięty pomyślnie.');
+            setServerStatus({success: true, message: 'Znajomy został usunięty!'});
+            setTimeout(() => setServerStatus(null), 3000);
             fetchFriends();
         } catch (err: any) {
-            setError(err.message);
+            const message = err.message;
+            setServerStatus({success: false, message});
+            setTimeout(() => setServerStatus(null), 3000);
         } finally {
-            setLoading(false);
+            setLoadingForm(false);
         }
     };
 
@@ -97,17 +102,6 @@ const Friends = () => {
                         </div>
                     </div>
 
-                    {error && (
-                        <div className={styles.errorMessage}>
-                            <i className="fas fa-exclamation-circle"></i> {error}
-                        </div>
-                    )}
-                    {success && (
-                        <div className={styles.successMessage}>
-                            <i className="fas fa-check-circle"></i> {success}
-                        </div>
-                    )}
-
                     {loading ? (
                         <Loading />
                     ) : friends.length > 0 ? (
@@ -146,8 +140,8 @@ const Friends = () => {
                                         </div>
                                         <button
                                             onClick={() => handleRemoveFriend(friend.username)}
-                                            className={styles.removeButton}
-                                            disabled={loading}
+                                            className={`${styles.primaryButton} ${styles.deleteButton}`}
+                                            disabled={loadingForm}
                                         >
                                             <i className="fas fa-user-minus"></i> Usuń
                                         </button>
@@ -168,6 +162,11 @@ const Friends = () => {
                     )}
                 </div>
             </section>
+      {serverStatus && (
+        <div className={`${styles.notification} ${serverStatus.success ? styles.successNotification : styles.errorNotification}`}>
+          {serverStatus.message}
+        </div>
+      )}
             <Footer />
         </div>
     );

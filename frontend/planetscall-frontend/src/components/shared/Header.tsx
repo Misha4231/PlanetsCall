@@ -36,7 +36,8 @@ const Header: React.FC = () => {
               >
                 <Link to="/profile">Profil</Link>
                 <ul className={`dropdown-menu ${activeDropdown === 'profile' ? 'show' : ''}`}>
-                  <li><Link to="/profile/statistics">Statystyka</Link></li>
+                  <li><Link to={`/profile/${user?.username}/statistics`}>Statystyka</Link></li>
+                  <li><Link to={`/profile/ecorus`}>Ecorus</Link></li>
                   <li><Link to="/profile/settings">Ustawienia</Link></li>
                 </ul>
               </li>
@@ -47,7 +48,7 @@ const Header: React.FC = () => {
               >
                 <Link to="/community">Społeczność</Link>
                 <ul className={`dropdown-menu ${activeDropdown === 'community' ? 'show' : ''}`}>
-                  <li><Link to="/community/users">Ludzie</Link></li>
+                  <li><Link to="/community/users">Użytkownicy</Link></li>
                   <li><Link to="/community/friends">Znajomi</Link></li>
                   <li><Link to="/community/organisations/search">Organizacje</Link></li>
                   <li><Link to="/community/organisations">Moje Organizacje</Link></li>

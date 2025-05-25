@@ -1,3 +1,4 @@
+@import './globals.css';
 .container {
     max-width: 1600px;
     margin: 0 auto;
@@ -6,14 +7,14 @@
   }
   
   .content {
-    background-color: #1a1a1a;
+    background-color: var(--bg-main);
     border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-1);
   }
   
   .title {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 24px;
     font-weight: 600;
     text-align: center;
@@ -29,18 +30,18 @@
   
   .sidebar {
     width: 250px;
-    background-color: #212121;
+    background-color: var(--surface-1);
     border-radius: 10px;
     padding: 20px;
-    border: 1px solid #2c2c2c;
+    border: 1px solid var(--surface-2);
   }
   
   .mainContent {
     flex: 3;
-    background-color: #212121;
+    background-color: var(--surface-1);
     border-radius: 10px;
     padding: 20px;
-    border: 1px solid #2c2c2c;
+    border: 1px solid var(--surface-2);
   }
   
   .categoryList {
@@ -58,16 +59,16 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: #2c2c2c;
-    color: #fff;
+    background-color: var(--surface-2);
+    color: var(--text-primary);
   }
   
   .categoryItem:hover {
-    background-color: #333;
+    background-color: var(--surface-3);
   }
   
   .categoryItem.active {
-    background-color: #4CAF50;
+    background-color: var(--primary);
     font-weight: 600;
   }
   
@@ -79,8 +80,8 @@
   }
   
   .currencyDisplay {
-    background-color: #2c2c2c;
-    color: #fff;
+    background-color: var(--surface-2);
+    color: var(--text-primary);
     height: 60px;
     border-radius: 8px;
     padding: 10px 15px;
@@ -90,7 +91,7 @@
   }
   
   .currencyAmount {
-    color: #4CAF50;
+    color: var(--primary);
     font-weight: 600;
     padding-left: 10px;
     font-size: 28px;
@@ -105,24 +106,24 @@
   
   .shopItem {
     width: 200px;
-    background-color: #2c2c2c;
+    background-color: var(--surface-2);
     border-radius: 10px;
     overflow: hidden;
     transition: all 0.3s ease;
     margin: 0 0;
     padding: 10px 10px;
-    border: 1px solid #333;
+    border: 1px solid var(--surface-3);
   }
   
   .shopItem:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    border-color: #4CAF50;
+    box-shadow: 0 10px 20px var(--color-shadow-1);
+    border-color: var(--primary);
   }
 
   .shopItem.selectedItem{
-    background-color: #666666;
-    border-color: #000000;
+    background-color: var(--surface-selected);
+    border-color: var(--border-selected);
   }
   
   .itemImage {
@@ -134,7 +135,7 @@
   
   .itemDetails {
     padding: 15px;
-    color: #fff;
+    color: var(--text-primary);
   }
   
   .itemTitle {
@@ -144,7 +145,7 @@
   }
   
   .itemRarity {
-    color: #2196F3;
+    color: var(--info);
     font-style: italic;
     margin-top: 8px;
     margin-bottom: 5px;
@@ -152,7 +153,7 @@
   
   .itemPrice {
     margin-top: 5px;
-    color: #4CAF50;
+    color: var(--primary);
     font-weight: 600;
     margin-bottom: 15px;
   }
@@ -173,18 +174,30 @@
   }
   
   .buyButton {
-    background-color: #4CAF50;
+    background-color: var(--primary);
     color: white;
   }
   
   .buyButton:disabled {
-    background-color: #333;
-    color: #666;
+    background-color: var(--surface-3);
+    color: var(--text-tertiary-1);
     cursor: not-allowed;
   }
   
+  .haveButton{
+    background-color: var(--have-bg);
+    color: white;
+  }
+  
+  .haveButton:disabled {
+    background-color: var(--surface-3);
+    color: var(--text-tertiary-1);
+    cursor: not-allowed;
+  }
+  
+
   .tryButton {
-    background-color: #2196F3;
+    background-color: var(--info);
     color: white;
   }
   
@@ -194,7 +207,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--modal-overlay);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -202,23 +215,23 @@
   }
   
   .confirmationModal {
-    background-color: #212121;
+    background-color: var(--surface-1);
     padding: 25px;
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
-    border: 1px solid #333;
+    border: 1px solid var(--surface-3);
   }
   
   .modalTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 20px;
     margin-bottom: 15px;
     font-weight: 600;
   }
   
   .modalText {
-    color: #aaa;
+    color: var(--text-quaternary);
     margin-bottom: 20px;
   }
   
@@ -229,12 +242,12 @@
   }
   
   .confirmButton {
-    background-color: #4CAF50;
+    background-color: var(--primary);
     color: white;
   }
   
   .cancelButton {
-    background-color: #f44336;
+    background-color: var(--danger);
     color: white;
   }
   
@@ -242,17 +255,17 @@
     position: fixed;
     bottom: 20px;
     left: 20px;
-    background-color: #212121;
+    background-color: var(--surface-1);
     padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 1px solid #4CAF50;
+    box-shadow: var(--shadow-2);
+    border: 1px solid var(--primary);
     max-width: 250px;
     z-index: 999;
   }
   
   .previewTitle {
-    color: #fff;
+    color: var(--text-primary);
     font-size: 16px;
     margin-bottom: 10px;
   }
@@ -269,8 +282,8 @@
   .closePreview {
     width: 100%;
     padding: 8px;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--surface-3);
+    color: var(--text-primary);
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -278,7 +291,7 @@
   }
   
   .closePreview:hover {
-    background-color: #444;
+    background-color: var(--surface-4);
   }
   
   .notification {
@@ -294,11 +307,11 @@
   }
   
   .successNotification {
-    background-color: #4CAF50;
+    background-color: var(--primary);
   }
   
   .errorNotification {
-    background-color: #f44336;
+    background-color: var(--danger);
   }
   
 
@@ -312,10 +325,10 @@
 .ecorusContent{
     flex: 1;
     min-width: 250px;
-    background-color: #212121;
+    background-color: var(--surface-1);
     border-radius: 10px;
     padding: 20px;
-    border: 1px solid #2c2c2c;
+    border: 1px solid var(--surface-2);
 
 }
 .profilePreviewImage {
@@ -501,19 +514,59 @@
   
   .filterButton {
     padding: 6px 12px;
-    border: 1px solid #ccc;
-    background-color: #eee;
+    border: 1px solid var(--border-light);
+    background-color: var(--surface-4);
+    color: white;
     cursor: pointer;
     border-radius: 6px;
   }
   
   .filterButton:hover {
-    background-color: #ddd;
+    background-color: var(--text-tertiary-1);
   }
   
   .filterButton.active {
-    background-color: #4CAF50;
+    background-color: var(--primary);
     color: white;
-    border-color: #4CAF50;
+    border-color: var(--primary);
   }
   
+
+
+  
+.adminPagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.adminPaginationButton {
+    padding: 8px 15px;
+    background-color: var(--surface-1);
+    border: 1px solid var(--surface-2);
+    color: var(--text-primary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.adminPaginationButton:hover:not(:disabled) {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.adminPaginationButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.adminPaginationInfo {
+    color: var(--text-quaternary);
+    font-size: 14px;
+}
+
+.removeButton {
+  background-color: var(--primary);
+}

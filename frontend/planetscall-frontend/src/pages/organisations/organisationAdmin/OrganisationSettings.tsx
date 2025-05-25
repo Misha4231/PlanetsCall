@@ -142,10 +142,10 @@ const handleSubmit = async (e: React.FormEvent) => {
             ) : (
               <div className={styles.adminContent}>
                 <div className={styles.adminHeader}>
-                  <h1 className={styles.sectionTitle}>Ustawienia Organizacji</h1>
+                  <h1>Ustawienia Organizacji</h1>
                   <Link 
                     to={`/community/organisation/${organisationUniqueName}/admin`} 
-                    className={styles.primaryButton}
+                    className={styles.backButton}
                   >
                     <i className="fas fa-arrow-left"></i> Powrót
                   </Link>

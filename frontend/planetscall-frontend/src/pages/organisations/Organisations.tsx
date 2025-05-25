@@ -138,7 +138,7 @@ const Organisations: React.FC = () => {
             </div>
           )}
 
-          {myOrganisations.length > 0 && (
+          {pagination.totalPages> 1 && (
             <div className={styles.pagination}>
               <button
                 onClick={handlePreviousPage}

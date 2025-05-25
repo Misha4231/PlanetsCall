@@ -3,7 +3,7 @@ import { authHeader }  from  "./headers";
 let token = "";
 
 export const signUpUser = async (username: string, email: string, password: string, passwordConfirmation: string, agreedToTermsOfService: boolean): Promise<string> => {
-  const response = await fetch(`${authHeader()}api/Auth/sign-up`, {
+  const response = await fetch(`${authHeader()}api/Auth/development-sign-up`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

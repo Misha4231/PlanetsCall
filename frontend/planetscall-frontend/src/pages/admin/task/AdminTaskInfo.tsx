@@ -8,6 +8,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import styles from '../../../stylePage/admin/adminTask.module.css';
 import NotAdmin from '../../Additional/NotAdmin';
 import Loading from '../../Additional/Loading';
+import NotAuthenticated from '../../Additional/NotAuthenticated';
 
 const AdminTaskInfo = () => {
     const { user, isAuthenticated, token } = useAuth();
@@ -42,12 +43,7 @@ const AdminTaskInfo = () => {
 
 
     if (!isAuthenticated) {
-        return (
-            <div>
-                <Header/>
-                <p style={{ color: 'red' }}>Użytkownik nie jest zalogowany.</p>
-                <Footer/>
-            </div>
+        return (<NotAuthenticated/>
         );   
     }
 
@@ -76,7 +72,8 @@ const AdminTaskInfo = () => {
                   setTimeout(() => navigate('/admin/tasks'), 1000);
               } else {
                   await deleteTemplateTask(token, id);
-                  navigate('/admin/organisations');
+                  setSuccess('Zadanie zostało usunięte!');
+                  setTimeout(() => navigate('/admin/tasks'), 1000);
               }
   
           } catch (err: any) {

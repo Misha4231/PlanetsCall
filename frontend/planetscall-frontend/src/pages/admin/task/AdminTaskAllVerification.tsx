@@ -103,7 +103,7 @@ const AdminTaskAllVerification = () => {
                                         {verification.message ? (
                                             <p className={styles.taskListItemDescription}>{verification.message}</p>
                                         ) : (
-                                            <p className={styles.taskListItemDescription}>Brak informacji</p>
+                                            <p className={styles.taskListItemDescription}></p>
                                         )}
                                     </div>
                                 </Link>

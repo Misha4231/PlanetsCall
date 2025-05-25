@@ -9,6 +9,7 @@ import styles from '../../stylePage/admin/adminUser.module.css';
 import NotAdmin from '../Additional/NotAdmin';
 import NotAuthenticated from '../Additional/NotAuthenticated';
 import { imageUrl } from '../../services/imageConvert';
+import Loading from '../Additional/Loading';
 
 interface OrganisationVerification {
   description:string,
@@ -63,6 +64,7 @@ const AdminOrganisations = () => {
 
     const handleSentResponse = async (organisationUniqueName: string, action: string) => {
         if (!token) return;
+        console.log(organisationUniqueName)
         setLoading(true);
         setError(null);
         setSuccess(null);
@@ -73,11 +75,18 @@ const AdminOrganisations = () => {
             const org = await getOrganisationVerifications(token);
             setOrganisations(org);
         } catch (err: any) {
-            setError(err.message);
+            setError(err.message || "Nie udało się wysłać żądania");
         } finally {
             setLoading(false);
         }
     };
+
+//     const handleSentResponse = async (organisationUniqueName: string, action: string) => {
+//     // TYLKO SYMULACJA, NIC NIE WYSYŁA DO BAZY
+//     setSuccess(`Weryfikacja organizacji ${organisationUniqueName} została ${action === 'approve' ? 'zaakceptowana' : 'odrzucona'}.`);
+//     setOrganisations(prev => prev.filter(org => org.organisation.uniqueName !== organisationUniqueName));
+// };
+
 
     return (
         <div className="app-container dark-theme">
@@ -92,13 +101,13 @@ const AdminOrganisations = () => {
                     <i className="fas fa-arrow-left"></i> Powrót
                   </Link>
               
-              {loading ? (
-                <p>Ładowanie...</p>
+              {loading ? (<Loading/>
               ) : organisations.length > 0 ? (
                 <div className={styles.usersList}>
-                {success && <div className={styles.successMessage}>{success}</div>}
+              {success && <div className={`${styles.adminMessage} ${styles.adminSuccess}`}>{success}</div>}
                 {error && <p className={styles.errorMessage}>{error}</p>}
                   {organisations.map((org) => (
+                    <>
                     <div className={styles.orgCard}>
                     <div key={org.id}  className={styles.userCard}>
                       <Link 
@@ -173,6 +182,7 @@ const AdminOrganisations = () => {
                           </div>
                         )}
                     </div>
+                    </>
                   ))}
                 </div>
               ) : (
@@ -182,7 +192,6 @@ const AdminOrganisations = () => {
                 </div>
               )}
               
-              {success && <div className={`${styles.adminMessage} ${styles.adminSuccess}`}>{success}</div>}
             </div>
           </section>
           <Footer />

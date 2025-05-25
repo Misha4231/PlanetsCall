@@ -56,13 +56,13 @@ const [currentPage, setCurrentPage] = useState<number>(1);
     
 
     const fetchAllSelectedItems = async () => {
-        if (!token || categories.length === 0) return;
+        if (!token || !user?.id || categories.length === 0) return;
       
         try {
           const allItems: Items[] = [];
       
           for (const category of categories) {
-            const response = await getUserSelectedItems(token, category.id, 1);
+            const response = await getUserSelectedItems(token, user?.id, category.id, 1);
             allItems.push(...response.items);
                   
             setPagination({
@@ -157,9 +157,7 @@ const [currentPage, setCurrentPage] = useState<number>(1);
             </div>
 
             <div className={styles.mainContent}>
-              <div className={styles.currencyDisplay}>
                 <h2>Twoje Itemy:</h2>
-              </div>
               
               <h2 className={styles.title}>
                 {categories.find(c => c.id === selectedCategory)?.title || 'Wybierz kategorię'}
@@ -188,7 +186,7 @@ const [currentPage, setCurrentPage] = useState<number>(1);
                       <h3 className={styles.itemTitle}>{item.title}</h3>
                       <div className={styles.itemActions}>
                         <button 
-                            className={`${styles.actionButton} ${styles.tryButton}`}
+                            className={`${styles.actionButton} ${styles.tryButton} ${isItemSelected(item.id) ? styles.removeButton : ''}`}
                             onClick={async () => {
                                 if (!token || selectedCategory === null) return;
                               
@@ -208,7 +206,7 @@ const [currentPage, setCurrentPage] = useState<number>(1);
                               
                                   const allItems: Items[] = [];
                                   for (const category of categories) {
-                                    const response = await getUserSelectedItems(token, category.id, 1);
+                                    const response = await getUserSelectedItems(token, user?.id ? user.id : 0, category.id, 1);
                                     allItems.push(...response.items);
                                   }
                                   setSelectedItems(allItems);
@@ -223,39 +221,59 @@ const [currentPage, setCurrentPage] = useState<number>(1);
 
                       </div>
                     </div>
-                    {pagination && pagination.totalPages!=1 && (
-                        <div className={styles.pagination}>
-                            <button 
-                                onClick={() => goToPage(currentPage - 1)} 
-                                disabled={!pagination.hasPreviousPage}
-                            >
-                                Poprzednia
-                            </button>
-                            
-                            <span>
-                                Strona {pagination.pageIndex} z {pagination.totalPages}
-                            </span>
-                            
-                            <button 
-                                onClick={() => goToPage(currentPage + 1)} 
-                                disabled={!pagination.hasNextPage}
-                            >
-                                Następna
-                            </button>
-                        </div>
-                    )}
+                    
                   </div>
                 ))}
               </div>
+              {pagination && pagination.totalPages > 1 && (
+                      <div className={styles.adminPagination}>
+                          <button 
+                              onClick={() => goToPage(currentPage - 1)} 
+                              disabled={!pagination.hasPreviousPage}
+                              className={styles.adminPaginationButton}
+                          >
+                              Poprzednia
+                          </button>
+                          
+                          <span>
+                              Strona {pagination.pageIndex} z {pagination.totalPages}
+                          </span>
+                          
+                          <button 
+                              onClick={() => goToPage(currentPage + 1)} 
+                              disabled={!pagination.hasNextPage}
+                              className={styles.adminPaginationButton}
+                          >
+                              Następna
+                          </button>
+                      </div>
+                    )}
             </div>
 
             <div className={styles.ecorusContent}>
-                <div className={styles.currencyDisplay}>
                     <h2>Wybrane itemy:</h2>
-                </div>  
                 <div className={`${styles.profilePreviewImage}`}>
-                    <div className={styles.profileImageWrapper}>
-                        <Ecorus className={styles.profileEcorusImage} />
+                    <div className={styles.profileImageWrapper}>                            
+                          {(() => {
+                            const helmetCategory = categories.find(c => c.title === 'Hełmy');
+                            const costumeCategory = categories.find(c => c.title === 'Kostiumy całe');
+                            const costumeWHelmetCategory = categories.find(c => c.title === 'Kostiumy bez hełmów');
+
+                            const hasHelmet = helmetCategory && selectedItems.some(item => item.categoryId === helmetCategory.id);
+                            const hasCostume = costumeCategory && selectedItems.some(item => item.categoryId === costumeCategory.id);
+                            const hasCostumeWHelmet = costumeWHelmetCategory && selectedItems.some(item => item.categoryId === costumeWHelmetCategory.id);
+
+                            if (hasHelmet || hasCostume) {
+                              return <Ecorus className={styles.profileEcorusImage} variant="hat" />;
+                            } else if (hasCostumeWHelmet) {
+                              return <Ecorus className={styles.profileEcorusImage} variant="noHair" />;
+                            } else {
+                              return <Ecorus className={styles.profileEcorusImage} />;
+                            }
+
+                          })()}
+
+                        
                         {selectedItems.map((item) => (
                         <div key={item.id}>
                             <img src={imageUrl() + item.image} alt={item.title} className={styles.profileCharacterClothes} />
