@@ -113,7 +113,7 @@ const Settings: React.FC = () => {
 
       await updateUserSettings(authToken, userId, formData);
       setSuccess("Pomyślnie zaktulizowano ustawienia");
-      setTimeout(() => navigate('/profile'), 1000);
+      setTimeout(() => window.location.href = '/profile', 1000);
     } catch (err: any) {
       alert(err.message || 'Nie udało się zapisać ustawień');
     }
