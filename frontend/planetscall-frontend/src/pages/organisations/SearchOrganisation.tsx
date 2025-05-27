@@ -32,7 +32,7 @@ const SearchOrganisation = () => {
         checkMembership(org.uniqueName);
       });
     }
-  }, [organisations]);
+  }, [organisations, searchPhrase]);
 
   if (!isAuthenticated) {
     return  <NotAuthenticated/> 
