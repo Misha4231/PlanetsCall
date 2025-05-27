@@ -35,7 +35,7 @@ const SignUp: React.FC = () => {
         const response = await signUpUser(username, email, password, passwordConfirmation, agreedToTerms);
     
         setSuccess('Rejestracja przebiegła pomyślnie! Sprawdź swój email, aby aktywować konto.');
-        setTimeout(() => navigate('/auth/activate-account'), 3000);
+        setTimeout(() => navigate('/auth/sign-in'), 1000);
       }
     } catch (err: any) {
       console.log('Error:', err); 
@@ -140,9 +140,9 @@ const SignUp: React.FC = () => {
                   <li className={authStyles.linkItem}>
                     <Link to="/auth/sign-in" className={authStyles.link}><i className="fas fa-sign-in-alt"></i> Zaloguj się</Link>
                   </li>
-                  <li className={authStyles.linkItem}>
+                  {/* <li className={authStyles.linkItem}>
                       <Link to="/auth/forgot-password" className={authStyles.link}><i className="fas fa-key"></i>Nie pamiętam hasła</Link>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </>
