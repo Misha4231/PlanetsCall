@@ -31,8 +31,7 @@ const Header: React.FC = () => {
             <>
               <li 
                 className="nav-item dropdown"
-                onMouseEnter={() => toggleDropdown('profile')}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => toggleDropdown('profile')}
               >
                 <Link to="/profile">Profil</Link>
                 <ul className={`dropdown-menu ${activeDropdown === 'profile' ? 'show' : ''}`}>
@@ -43,8 +42,7 @@ const Header: React.FC = () => {
               </li>
               <li 
                 className="nav-item dropdown"
-                onMouseEnter={() => toggleDropdown('community')}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => toggleDropdown('community')}
               >
                 <Link to="/community">Społeczność</Link>
                 <ul className={`dropdown-menu ${activeDropdown === 'community' ? 'show' : ''}`}>
@@ -57,8 +55,7 @@ const Header: React.FC = () => {
 
               <li 
                 className="nav-item dropdown"
-                onMouseEnter={() => toggleDropdown('task')}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => toggleDropdown('task')}
               ><Link to="/tasks">Zadania</Link>
                 {((user?.progress ? user.progress : 0) >= 5 || user?.isAdmin) && (
                   <ul className={`dropdown-menu ${activeDropdown === 'task' ? 'show' : ''}`}>
@@ -72,8 +69,7 @@ const Header: React.FC = () => {
               {user?.isAdmin && (
                 <li 
                   className="nav-item dropdown"
-                  onMouseEnter={() => toggleDropdown('admin')}
-                  onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => toggleDropdown('admin')}
                 >
                   <Link to="/admin">Panel Administracyjny</Link>
                   <ul className={`dropdown-menu ${activeDropdown === 'admin' ? 'show' : ''}`}>

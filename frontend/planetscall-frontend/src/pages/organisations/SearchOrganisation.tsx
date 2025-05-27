@@ -7,6 +7,7 @@ import { Organisation, OrganisationsResponse } from './communityTypes';
 import { Link, useNavigate } from 'react-router-dom';
 import { imageUrl } from '../../services/imageConvert';
 import styles from '../../stylePage/community.module.css';
+import NotAuthenticated from '../Additional/NotAuthenticated';
 
 const SearchOrganisation = () => {
   const { user, isAuthenticated, token } = useAuth();
@@ -16,6 +17,7 @@ const SearchOrganisation = () => {
   const [requestStatus, setRequestStatus] = useState<{ [key: string]: boolean }>({});
   const [error, setError] = useState<string | null>(null);
   const [searchPhrase, setSearchPhrase] = useState<string>("");
+  const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
   const [pagination, setPagination] = useState({
     pageIndex: 1,
@@ -30,22 +32,10 @@ const SearchOrganisation = () => {
         checkMembership(org.uniqueName);
       });
     }
-  }, [organisations]);
+  }, [organisations, searchPhrase]);
 
   if (!isAuthenticated) {
-    return (
-      <div className="app-container dark-theme">
-        <Header />
-        <section className={styles.userSearchContainer}>
-          <div className={styles.searchContent}>
-            <p className={styles.errorMessage}>
-              Musisz być zalogowany, aby przeglądać organizacje.
-            </p>
-          </div>
-        </section>
-        <Footer />
-      </div>
-    );   
+    return  <NotAuthenticated/> 
   }
 
   { /* Function to search organisations by search phrase */} 
@@ -80,14 +70,14 @@ const SearchOrganisation = () => {
       if (success) {
         if (isPrivate) {    
           setRequestStatus(prev => ({ ...prev, [organisationUniqueName]: true }));
-          alert('Prośba o dołączenie została wysłana.');
+          setSuccess('Prośba o dołączenie została wysłana.');
         } else {
           setMembershipStatus(prev => ({ ...prev, [organisationUniqueName]: true }));
-          alert('Dołączono do organizacji.');
+          setSuccess('Dołączono do organizacji.');
         }
       } else {
         setRequestStatus(prev => ({ ...prev, [organisationUniqueName]: true }));
-        alert('Już wysłałeś prośbę lub jesteś członkiem');
+        setSuccess('Już wysłałeś prośbę lub jesteś członkiem');
       }
     } catch (err) {
       console.log('Błąd podczas dołączania do organizacji:', err);
@@ -116,6 +106,7 @@ const SearchOrganisation = () => {
       <section className={styles.userSearchContainer}>
         <div className={styles.searchContent}>
           <h2 className={styles.searchTitle}>Wyszukaj Organizacje</h2>
+                {success && <div className={styles.successMessage}>{success}</div>}
 
           <form onSubmit={handleSearch} className={styles.searchForm}>
             <div className={styles.searchGroup}>
@@ -162,10 +153,9 @@ const SearchOrganisation = () => {
                   const hasRequested = requestStatus[org.uniqueName] || false;
 
                   return (
-                    <div key={org.uniqueName} className={styles.organisationCard}>
+                    <div key={org.uniqueName} className={styles.organisationCard}  onClick={() => navigate(`/community/organisation/${org.uniqueName}`)}>
                       <div 
                         className={styles.orgImageContainer}
-                        onClick={() => navigate(`/community/organisation/${org.uniqueName}`)}
                       >
                         <img 
                           src={org.organizationLogo ? imageUrl() + org.organizationLogo : '/default-org.png'} 

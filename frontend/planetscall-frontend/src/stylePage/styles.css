@@ -23,3 +23,14 @@ html, body, #root {
     background-color: var(--bg-main-alt);
     color: var(--text-secondary);
   }
+
+
+  
+  @media (max-width: 480px) {
+      .app-container {
+      max-width: 480px;
+    min-height: 100vh;
+      box-sizing: content-box;
+      overflow: hidden;
+  }
+  }

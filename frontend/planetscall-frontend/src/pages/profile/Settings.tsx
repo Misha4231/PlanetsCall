@@ -237,7 +237,6 @@ const Settings: React.FC = () => {
                     >
                       <option value={0}>Ciemny</option>
                       <option value={1}>Jasny</option>
-                      <option value={2}>Mieszany</option>
                     </select>
                   </div>
 

@@ -4,18 +4,20 @@ import Footer from '../../components/Footer/Footer';
 import { useNavigate } from 'react-router-dom';
 import { imageUrl } from '../../services/imageConvert';
 import { useAuth } from '../../context/AuthContext';
-import { searchUsers, UserProfile, Users } from '../../services/peopleService';
+import {  getUsersAdmin } from '../../services/adminService';
+import { searchUsers,  UserProfile, Users } from '../../services/peopleService';
 import { getFriends } from '../../services/communityService';
 import styles from '../../stylePage/community.module.css';
 import Loading from '../Additional/Loading';
 import NotAuthenticated from '../Additional/NotAuthenticated';
 
 const People = () => {
-    const { isAuthenticated, token, user: currentUser } = useAuth();
+    const { isAuthenticated, token } = useAuth();
     const [users, setUsers] = useState<UserProfile[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
+    const [loadingData, setLoadingData] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [searchPhrase, setSearchPhrase] = useState<string>("");
+    const [searchPhrase, setSearchPhrase] = useState("");
     const [friendsStatus, setFriendsStatus] = useState<{[key: string]: boolean}>({});
     const navigate = useNavigate();
     const [pagination, setPagination] = useState({
@@ -26,77 +28,89 @@ const People = () => {
     });
 
     useEffect(() => {
-        if (pagination.pageIndex !== 1 && searchPhrase) {
-            handleSearch();
-        }
-    }, [pagination.pageIndex]);
+    if (!isAuthenticated || !token) return;
+
+    if (searchPhrase.length >= 3) {
+        handleSearch();
+    } else {
+        loadAllUsers();
+    }
+}, [pagination.pageIndex, searchPhrase]);
 
     const checkIsFriend = async (username: string) => {
         if (!isAuthenticated || !token) return false;
-        
         try {
             const response = await getFriends(token, 1, username);
             return response.length > 0 && response[0].username === username;
-        } catch (err) {
-            console.error("Error checking friend status:", err);
+        } catch {
             return false;
         }
     };
 
     const updateFriendsStatus = async (users: UserProfile[]) => {
         const statusMap: {[key: string]: boolean} = {};
-        
         for (const user of users) {
             statusMap[user.username] = await checkIsFriend(user.username);
         }
-        
         setFriendsStatus(statusMap);
     };
 
-    if (!isAuthenticated) {
-        return (
-            <NotAuthenticated/>
-        );
-    }
-
-    const handleSearch = async (e?: React.FormEvent) => {
-        e?.preventDefault();
-        if (!isAuthenticated || !token) return;
-
+    const loadAllUsers = async () => {
         try {
             setLoading(true);
-            const response: Users = await searchUsers(token, searchPhrase, pagination.pageIndex);
+            setError(null);
+            const response: Users = await getUsersAdmin(token!, pagination.pageIndex);
             setUsers(response.items);
-            await updateFriendsStatus(response.items); 
+            await updateFriendsStatus(response.items);
             setPagination({
                 pageIndex: response.pageIndex,
                 totalPages: response.totalPages,
                 hasPreviousPage: response.hasPreviousPage,
                 hasNextPage: response.hasNextPage,
             });
-            setError(null);
         } catch (err: any) {
-            setError(err.message || 'Wystąpił błąd podczas wyszukiwania');
+            setError(err.message || "Błąd podczas ładowania użytkowników");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSearch = async (e?: React.FormEvent) => {
+        e?.preventDefault();
+        if (!isAuthenticated || !token) return;
+        if (searchPhrase.length < 3) return;
+        try {
+            setLoading(true);
+            setError(null);
+            const response: Users = await searchUsers(token, searchPhrase, pagination.pageIndex);
+            setUsers(response.items);
+            await updateFriendsStatus(response.items);
+            setPagination({
+                pageIndex: response.pageIndex,
+                totalPages: response.totalPages,
+                hasPreviousPage: response.hasPreviousPage,
+                hasNextPage: response.hasNextPage,
+            });
+        } catch (err: any) {
+            setError(err.message || 'Błąd podczas wyszukiwania');
         } finally {
             setLoading(false);
         }
     };
 
     const handlePageChange = (newPage: number) => {
+        if (newPage < 1 || newPage > pagination.totalPages) return;
         setPagination(prev => ({ ...prev, pageIndex: newPage }));
     };
+
+    if (!isAuthenticated) return <NotAuthenticated />;
 
     return (
         <div className="app-container dark-theme">
             <Header />
             <section className={styles.userSearchContainer}>
-                {loading ? (
-                        <Loading />
-                ) : (
                     <div className={styles.searchContent}>
-                        <h2 className={styles.searchTitle}>
-                            Wyszukaj użytkowników
-                        </h2>
+                        <h2 className={styles.searchTitle}>Wyszukaj użytkowników</h2>
 
                         <form onSubmit={handleSearch} className={styles.searchForm}>
                             <div className={styles.searchGroup}>
@@ -106,14 +120,17 @@ const People = () => {
                                         id="search"
                                         type="text"
                                         value={searchPhrase}
-                                        onChange={(e) => setSearchPhrase(e.target.value)}
+                                        onChange={(e) => {
+                                            setSearchPhrase(e.target.value);
+                                            setPagination(prev => ({ ...prev, pageIndex: 1 })); 
+                                        }}
                                         placeholder="Wpisz nazwę użytkownika lub email..."
                                         className={styles.searchInput}
                                     />
                                     <button
                                         type="submit"
                                         className={styles.searchButton}
-                                        disabled={!searchPhrase.trim() || loading}
+                                        disabled={loading || searchPhrase.length < 3}
                                     >
                                         {loading ? (
                                             <span className={styles.smallLoader}></span>
@@ -131,11 +148,19 @@ const People = () => {
                             </div>
                         )}
 
-                        {users.length > 0 ? (
+                        {loading ? (
+                            <Loading />
+                        ) : (
+                            <>
+                                {users.length > 0 ? (
                             <>
                                 <div className={styles.usersList}>
-                                    {users.map((user) => (
-                                        <div key={user.id} className={styles.userCard} onClick={() => navigate(`/user/${user.username}`)}>
+                                    {users.map(user => (
+                                        <div
+                                            key={user.id}
+                                            className={styles.userCard}
+                                            onClick={() => navigate(`/user/${user.username}`)}
+                                        >
                                             <div className={styles.avatarContainer}>
                                                 {user.profileImage ? (
                                                     <img
@@ -155,12 +180,12 @@ const People = () => {
                                                         {user.username}
                                                         {user.isAdmin && (
                                                             <span className={styles.adminBadge}>
-                                                                <i className="fas fa-crown"></i> Admin
+                                                                <i className="fas fa-crown"></i>
                                                             </span>
                                                         )}
                                                         {friendsStatus[user.username] && (
                                                             <span className={styles.friendBadge}>
-                                                                <i className="fas fa-user-friends"></i> Znajomy
+                                                                <i className="fas fa-user-friends"></i>
                                                             </span>
                                                         )}
                                                     </h3>
@@ -177,7 +202,9 @@ const People = () => {
                                                 </div>
                                                 <div className={styles.progressSection}>
                                                     <div className={styles.pointsBadge}>
-                                                        <span className={styles.progressText}><i className="fas fa-star"></i>  {user.progress} Level</span>
+                                                        <span className={styles.progressText}>
+                                                            <i className="fas fa-star"></i> {user.progress} Level
+                                                        </span>
                                                     </div>
                                                     <div className={styles.pointsBadge}>
                                                         <i className="fas fa-star"></i> {user.points} pkt
@@ -188,7 +215,9 @@ const People = () => {
                                     ))}
                                 </div>
 
-                                <div className={styles.pagination}>
+
+                                {pagination.totalPages> 1 && (
+                                    <div className={styles.pagination}>
                                     <button
                                         onClick={() => handlePageChange(pagination.pageIndex - 1)}
                                         disabled={!pagination.hasPreviousPage || loading}
@@ -207,8 +236,10 @@ const People = () => {
                                         Następna <i className="fas fa-chevron-right"></i>
                                     </button>
                                 </div>
+                                )}
+                                
                             </>
-                        ) : searchPhrase ? (
+                        ) : searchPhrase.length >= 3 ? (
                             <div className={styles.noResults}>
                                 <i className="fas fa-search"></i>
                                 <p>Nie znaleziono użytkowników pasujących do wyszukiwania "{searchPhrase}"</p>
@@ -216,11 +247,12 @@ const People = () => {
                         ) : (
                             <div className={styles.noResults}>
                                 <i className="fas fa-users"></i>
-                                <p>Wpisz frazę, by znaleźć użytkownika</p>
+                                <p>Wpisz min. 3 znaki, by znaleźć użytkownika</p>
                             </div>
                         )}
+                        </>)}
+                        
                     </div>
-                )}
             </section>
             <Footer />
         </div>
