@@ -153,10 +153,9 @@ const SearchOrganisation = () => {
                   const hasRequested = requestStatus[org.uniqueName] || false;
 
                   return (
-                    <div key={org.uniqueName} className={styles.organisationCard}>
+                    <div key={org.uniqueName} className={styles.organisationCard}  onClick={() => navigate(`/community/organisation/${org.uniqueName}`)}>
                       <div 
                         className={styles.orgImageContainer}
-                        onClick={() => navigate(`/community/organisation/${org.uniqueName}`)}
                       >
                         <img 
                           src={org.organizationLogo ? imageUrl() + org.organizationLogo : '/default-org.png'} 
