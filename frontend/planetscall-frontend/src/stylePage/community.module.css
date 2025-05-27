@@ -9,6 +9,8 @@
     min-height: 50vh;
 }
 
+
+
 .loadingContainer {
     display: flex;
     justify-content: center;
@@ -189,10 +191,20 @@
     align-items: center;
     gap: 8px;
 }
+.successMessage {
+  color: var(--primary);
+  background-color: var(--primary-bg-translucent);
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 28px;
+  text-align: center;
+  font-size: 15px;
+  border-left: 4px solid var(--primary);
+}
 
 .adminBadge {
     background-color: #ff9800;
-    color: var(--text-primary);
+    color: var(--text-primary-1);
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 11px;
@@ -323,7 +335,7 @@
 
 .friendBadge {
     background-color: var(--primary);
-    color: var(--text-primary);
+    color: var(--text-primary-1);
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 11px;
@@ -451,12 +463,12 @@
   
   .orgPrivacy.private {
     background-color: var(--danger);
-    color: var(--text-primary);
+    color: var(--text-primary-1);
   }
   
   .orgPrivacy.public {
     background-color: var(--primary);
-    color: var(--text-primary);
+    color: var(--text-primary-1);
   }
   
   .orgLevel {
@@ -469,7 +481,7 @@
   
   .memberBadge {
     background-color: var(--primary);
-    color: var(--text-primary);
+    color: var(--text-primary-1);
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 13px;
@@ -494,7 +506,7 @@
   
   .joinButton {
     background-color: var(--info);
-    color: var(--text-primary);
+    color: var(--text-primary-1);
     border: none;
     padding: 8px 16px;
     border-radius: 6px;
@@ -577,4 +589,57 @@
 .deleteButton{
     background-color: var(--delete);
     font-weight: bold;
+}
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+    
+    .userSearchContainer {
+        min-width: 0;
+        max-width: 90%;
+    }
+
+    .userCard {
+      padding: 4px;
+    }
+    
+}
+
+@media (max-width: 480px) {
+
+    .userCard {
+      padding: 4px;
+    }
+
+    .progressSection {
+      align-items: start;
+      width: 10%;
+    }
+
+    .username {
+      font-size: 1rem;
+    }
+
+    .fullName {
+      font-size: 0.6rem;
+      
+    }
+
+    .friendBadge {
+      margin-left: 0;
+      margin-right: 5px;
+    }
+
+    .primaryButton {
+      font-size: 10px;
+      padding: 6px 12px;
+      margin-left: 6px;
+    }
+  
 }

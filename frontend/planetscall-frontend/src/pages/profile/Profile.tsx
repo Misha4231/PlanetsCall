@@ -134,7 +134,7 @@ useEffect(() => {
   
 
   if (loadingUser) {
-    return <div className="loading">Ładowanie danych użytkownika...</div>;
+    return  <Loading/>;
   }
 
   if (!isAuthenticated || !user) {

@@ -40,3 +40,18 @@
   font-size: 0.9rem;
   color: var(--text-quaternary);
 }
+
+
+
+@media (max-width: 480px) {
+  .footer-links li a {
+  font-size: 0.6rem;
+}
+  .footer-contact p {
+  margin: 5px 0;
+}
+.footer {
+  margin-top: auto;
+}
+
+}

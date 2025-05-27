@@ -611,7 +611,7 @@
   
   .primaryButton {
     background-color: var(--primary);
-    color: var(--text-primary);
+    color: var(--text-primary-1);
     border: none;
   }
   

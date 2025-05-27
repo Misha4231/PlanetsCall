@@ -188,6 +188,7 @@ return (
                   <Link to={`/task/${taskInfo.task.id}`} className={styles.taskCardTitle}>
                     <h3>{taskInfo.task.title}</h3>
                   </Link>
+                  <span><strong>Wiadomość: </strong>{taskInfo.message}</span>
                   <p className={styles.completedTaskDate}>
                     <i className="fas fa-calendar-check"></i> Wykonano: {new Date(taskInfo.completedAt).toLocaleDateString()}
                     <i className="fas fa-calendar-check"></i> Sprawdzono: {new Date(taskInfo.checkedAt).toLocaleDateString()}

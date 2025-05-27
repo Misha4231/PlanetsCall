@@ -310,6 +310,7 @@
 
 
 
+
 .avatarPlaceholder {
   width: 200px;
   height: 200px;
@@ -738,7 +739,7 @@ object-fit: contain;
 }
 
 .calendarNavigation button {
-    background-color: var(--text-tertiary);
+    background-color: var(--text-tertiary-1);
     color: white;
     border: none;
     padding: 10px;
@@ -878,3 +879,147 @@ object-fit: contain;
   .errorNotification {
     background-color: var(--danger);
   }
+
+
+
+  @media (max-width: 480px) {
+  .profileContainer {
+    padding: 0;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .profileContent {
+    padding: 16px;
+    border-radius: 0;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+  }
+
+  .profileHeader {
+    gap: 15px;
+    padding-bottom: 20px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profileAvatar {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 180px;
+  }
+
+  .avatarImage, 
+  .avatarPlaceholder {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 12px;
+  }
+
+  .usernameSection {
+    justify-content: center;
+  }
+
+  .usernameSection h2 {
+    font-size: 22px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .quickStats {
+    width: 100%;
+    max-width: 100%;
+    gap: 8px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .statItem {
+    padding: 8px 10px;
+    min-width: calc(50% - 4px);
+    max-width: calc(50% - 4px);
+    box-sizing: border-box;
+    margin: 0;
+  }
+
+  .statValue {
+    font-size: 14px;
+  }
+
+  .flexMeBlock {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .userData {
+    margin-right: 0;
+    margin-bottom: 20px;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  .ecorusContent {
+    width: 100%;
+    max-width: 150px;
+    padding: 0;
+    margin: 20px auto 0;
+  }
+
+  .avatarControls {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .editButton,
+  .editButton.smallerButton {
+    padding: 8px 12px;
+    font-size: 12px;
+    width: auto;
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  .detailContent {
+    padding: 12px;
+    width: calc(100% - 20px);
+    margin: 0 auto;
+  }
+
+  .socialLinks ul {
+    justify-content: center;
+  }
+
+  .socialLink {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .backButton {
+    padding: 8px 12px;
+    font-size: 13px;
+    margin: 0 10px 10px;
+    width: calc(100% - 20px);
+    box-sizing: border-box;
+  }
+
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  
+.calendarNavigation button {
+  font-size: 0.6rem;
+}
+}
